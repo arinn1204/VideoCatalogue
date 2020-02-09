@@ -1,8 +1,12 @@
 param (
+    [string] $projectLocation = '.',
     [string] $Configuration = 'Release',
     [string] $DebugPreference = 'Continue'
 )
 $global:ProgressPreference = 'SilentlyContinue'
+
+Write-Host "Changing to... $projectLocation"
+Push-Location $projectLocation
 
 function createArtifact() {
     param (
@@ -11,7 +15,7 @@ function createArtifact() {
 
     Write-Host "`nStarting on Project: $Project"
 
-    Push-Location $Project | Write-Debug
+    Push-Location $Project
 
     dotnet clean -c $Configuration | Write-Debug
     dotnet build -c $Configuration | Write-Debug
@@ -24,7 +28,7 @@ function createArtifact() {
     Write-Host "Creating archive..."
     Compress-Archive -Path "bin\$Configuration\netcoreapp3.0\*" -DestinationPath "..\$Project.zip" -Force | Write-Debug
 
-    Pop-Location | Write-Debug
+    Pop-Location
 
 
     Write-Host "Archive $Project.zip created."
@@ -34,3 +38,5 @@ function createArtifact() {
 
 createArtifact -Configuration $Configuration -DebugPreference $DebugPreference -Project "Silo"
 createArtifact -Configuration $Configuration -DebugPreference $DebugPreference -Project "RenamerClient"
+
+Pop-Location

@@ -24,6 +24,8 @@ stages:
         azureSubscription: $(azure_subscription)
         scriptType: filePath
         scriptPath: '$(Build.SourcesDirectory)\azure\createArtifact.ps1'
+        scriptArguments:
+          -projectLocation $(Build.SourcesDirectory)
 - stage: Test
   dependsOn: Build
   jobs:
@@ -35,6 +37,8 @@ stages:
         azureSubscription: $(azure_subscription)
         scriptType: filePath
         scriptPath: '$(Build.SourcesDirectory)\azure\unitTest.ps1'
+        scriptArguments:
+          -projectLocation $(Build.SourcesDirectory)
   - job: IntegrationTests
     steps:
     - task: AzurePowerShell@4
@@ -43,3 +47,5 @@ stages:
         azureSubscription: $(azure_subscription)
         scriptType: filePath
         scriptPath: '$(Build.SourcesDirectory)\azure\integrationTests.ps1'
+        scriptArguments:
+          -projectLocation $(Build.SourcesDirectory)

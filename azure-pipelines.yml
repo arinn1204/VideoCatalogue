@@ -36,9 +36,10 @@ stages:
         azurePowerShellVersion: latestVersion
         azureSubscription: $(azure_subscription)
         scriptType: filePath
-        scriptPath: '$(Build.SourcesDirectory)\azure\unitTest.ps1'
+        scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
         scriptArguments:
-          -projectLocation $(Build.SourcesDirectory)
+          -projectLocation $(Build.SourcesDirectory) `
+          -type Unit
   - job: IntegrationTests
     steps:
     - task: AzurePowerShell@4
@@ -46,6 +47,7 @@ stages:
         azurePowerShellVersion: latestVersion
         azureSubscription: $(azure_subscription)
         scriptType: filePath
-        scriptPath: '$(Build.SourcesDirectory)\azure\integrationTests.ps1'
+        scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
         scriptArguments:
-          -projectLocation $(Build.SourcesDirectory)
+          -projectLocation $(Build.SourcesDirectory) `
+          -type Integration

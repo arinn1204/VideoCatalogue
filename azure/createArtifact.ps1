@@ -18,7 +18,7 @@ function createArtifact() {
     Push-Location $Project
 
     dotnet clean -c $Configuration | Write-Debug
-    dotnet build -c $Configuration | Write-Debug
+    dotnet build -c $Configuration
 
     if ( ! $? ) {
         Pop-Location

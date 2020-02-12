@@ -26,7 +26,7 @@ foreach($testProject in $tests) {
         throw 'Build failed. See build output'
     }
 
-    dotnet test -c $Configuration --no-build --logger:trx /p:CollectCoverage=true $testProject
+    dotnet test -c $Configuration --no-build --logger:trx /p:CollectCoverage=true "$testProject.csproj"
     if (!$?) {
         Pop-Location
         throw 'Test failed. See test output'

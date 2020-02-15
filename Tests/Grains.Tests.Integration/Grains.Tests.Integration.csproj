@@ -18,6 +18,7 @@
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="SpecFlow" Version="3.1.82" />
     <PackageReference Include="SpecFlow.xUnit" Version="3.1.82" />
+    <PackageReference Include="WireMock.Net" Version="1.1.7" />
   </ItemGroup>
 
   <ItemGroup>

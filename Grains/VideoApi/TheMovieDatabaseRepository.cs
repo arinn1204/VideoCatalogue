@@ -28,7 +28,7 @@ namespace Grains.VideoApi
         {
             var config = _configuration.GetSection(ClientFactoryKey);
             var client = _httpClientFactory.CreateClient(ClientFactoryKey);
-            client.DefaultRequestHeaders.Authorization = BuildAuthentication(client, config);
+            client.DefaultRequestHeaders.Authorization = BuildAuthentication(config);
 
             var request = new HttpRequestMessage()
             {
@@ -54,7 +54,7 @@ namespace Grains.VideoApi
             return processResponse(responseMessage);
         }
 
-        private AuthenticationHeaderValue BuildAuthentication(HttpClient client, IConfiguration config)
+        private AuthenticationHeaderValue BuildAuthentication(IConfiguration config)
         {
             var authToken = config.GetSection("Authorization").Value;
             return new AuthenticationHeaderValue("Bearer", authToken);

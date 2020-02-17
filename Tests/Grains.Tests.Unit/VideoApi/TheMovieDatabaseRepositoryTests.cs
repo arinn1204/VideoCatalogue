@@ -36,18 +36,6 @@ namespace Grains.Tests.Unit.VideoApi
                     Id = 24428,
                     Title = "The Avengers",
                     ReleaseDate = new DateTime(2012, 4, 25)
-                },
-                new SearchResults
-                {
-                    Id = 24429,
-                    Title = "Not The Avengers",
-                    ReleaseDate = new DateTime(2012, 4, 19)
-                },
-                new SearchResults
-                {
-                    Id = 2447,
-                    Title = "Other Avengers",
-                    ReleaseDate = new DateTime(1980, 4, 25)
                 }
             };
             var stringResponse = JsonConvert.SerializeObject(results);

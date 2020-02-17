@@ -15,6 +15,8 @@ namespace Grains.Tests.Unit.TestUtilities
         {
             private readonly HttpContent _responseContent;
             private readonly HttpStatusCode _statusCode;
+            
+            public HttpRequestMessage Request;
 
             public MockHandler(HttpContent responseContent, HttpStatusCode statusCode = HttpStatusCode.OK)
             {
@@ -24,6 +26,7 @@ namespace Grains.Tests.Unit.TestUtilities
 
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
+                Request = request;
                 return Task.FromResult(new HttpResponseMessage()
                 {
                     Content = _responseContent,
@@ -32,13 +35,13 @@ namespace Grains.Tests.Unit.TestUtilities
             }
         }
 
-        public static HttpClient GetFakeHttpClient(string response)
+        public static Func<(HttpClient client, HttpRequestMessage request)> GetFakeHttpClient(string response)
         {
             var content = new StringContent(response, Encoding.UTF8, "application/json");
 
             var handler = new MockHandler(content);
 
-            return new HttpClient(handler);
+            return () => (new HttpClient(handler), handler.Request);
         }
     }
 }

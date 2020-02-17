@@ -44,7 +44,7 @@ namespace Silo
                     opt.ClusterId = "dev";
                     opt.ServiceId = "OrleansBasic";
                 })
-                .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(OmdbApi).Assembly).WithReferences())
+                .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(TheMovieDatabase).Assembly).WithReferences())
                 .ConfigureLogging((ILoggingBuilder log) => log.AddConsole());
 
             var silo = builder.Build();

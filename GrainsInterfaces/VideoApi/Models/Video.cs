@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grains.VideoApi
+namespace GrainsInterfaces.VideoApi.Models
 {
-    public class OmdbApi
+    public class Video
     {
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Grains.VideoApi
             _configuration = configuration;
         }
 
-        public async Task<IEnumerable<SearchResults>> Search(string title, int year)
+        public async Task<IEnumerable<SearchResults>> Search(string title, int? year = null)
         {
             var config = _configuration.GetSection(ClientFactoryKey);
             var client = _httpClientFactory.CreateClient(ClientFactoryKey);
@@ -60,20 +61,26 @@ namespace Grains.VideoApi
             return new AuthenticationHeaderValue("Bearer", authToken);
         }
 
-        private Uri BuildSearchUri(string title, int year)
+        private Uri BuildSearchUri(string title, int? year)
         {
             var baseUri = BuildBaseUri();
 
-            var parameters = QueryHelpers.BuildQueryParameters(
-                new KeyValuePair<string, string>[]
-                {
-                    new KeyValuePair<string, string>("query", title),
-                    new KeyValuePair<string, string>("language", "en-US"),
-                    new KeyValuePair<string, string>("include_adult", "true"),
-                    new KeyValuePair<string, string>("year", year.ToString())
-                });
 
-            return new Uri($"{baseUri}/search/movie{parameters}"); ;
+            IEnumerable<KeyValuePair<string, string>> parameters =
+                Enumerable.Empty<KeyValuePair<string, string>>()
+                    .Append(new KeyValuePair<string, string>("query", title))
+                    .Append(new KeyValuePair<string, string>("language", "en-US"))
+                    .Append(new KeyValuePair<string, string>("include_adult", "true"));
+
+
+            if (year.HasValue)
+            {
+                parameters = parameters.Append(new KeyValuePair<string, string>("year", year.Value.ToString()));
+            }
+
+            var queryParameters = QueryHelpers.BuildQueryParameters(parameters);
+
+            return new Uri($"{baseUri}/search/movie{queryParameters}"); ;
         }
 
         private string BuildBaseUri()

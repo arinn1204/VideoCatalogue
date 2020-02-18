@@ -4,6 +4,7 @@ using FluentAssertions;
 using Grains.Tests.Unit.TestUtilities;
 using Grains.VideoApi;
 using Grains.VideoApi.Models;
+using Grains.VideoApi.tmdb;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;
@@ -21,8 +22,18 @@ namespace Grains.Tests.Unit.VideoApi
 
         public TheMovieDatabaseRepositoryTests()
         {
+            var personRepository = new TheMovieDatabasePersonRepository();
+            var searchRepository = new TheMovieDatabaseSearchRepository();
+            var movieRepository = new TheMovieDatabaseMovieRepository();
+            var tvEpisodeRepository = new TheMovieDatabaseTvEpisodeRepository();
+
             _fixture = new Fixture();
             _fixture.Customize(new AutoMoqCustomization());
+            _fixture.Inject<ITheMovieDatabasePersonRepository>(personRepository);
+            _fixture.Inject<ITheMovieDatabaseSearchRepository>(searchRepository);
+            _fixture.Inject<ITheMovieDatabaseMovieRepository>(movieRepository);
+            _fixture.Inject<ITheMovieDatabaseTvEpisodeRepository>(tvEpisodeRepository);
+
             var config = _fixture.Freeze<Mock<IConfiguration>>();
             config.Setup(s => s.GetSection("TheMovieDatabase"))
                 .Returns(() =>

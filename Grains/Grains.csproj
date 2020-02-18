@@ -19,8 +19,4 @@
     <ProjectReference Include="..\GrainsInterfaces\GrainsInterfaces.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="VideoApi\Interfaces\" />
-  </ItemGroup>
-
 </Project>

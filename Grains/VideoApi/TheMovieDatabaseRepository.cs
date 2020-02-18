@@ -1,4 +1,5 @@
 ﻿using Grains.Helpers;
+using Grains.VideoApi.Interfaces;
 using Grains.VideoApi.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi
 {
-    internal class TheMovieDatabaseRepository
+    internal class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
     {
         private const string ClientFactoryKey = nameof(TheMovieDatabase);
         private readonly IHttpClientFactory _httpClientFactory;

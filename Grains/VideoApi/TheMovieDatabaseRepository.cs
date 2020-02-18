@@ -65,7 +65,6 @@ namespace Grains.VideoApi
         {
             var baseUri = BuildBaseUri();
 
-
             IEnumerable<KeyValuePair<string, string>> parameters =
                 Enumerable.Empty<KeyValuePair<string, string>>()
                     .Append(new KeyValuePair<string, string>("query", title))

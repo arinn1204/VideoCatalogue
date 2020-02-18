@@ -11,9 +11,5 @@ namespace Grains.VideoApi
 {
     public class TheMovieDatabase : IVideoApi
     {
-        public Task<Video> GetVideoByTitle(string title, string year = null)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -8,6 +8,5 @@ namespace GrainsInterfaces.VideoApi
 {
     public interface IVideoApi
     {
-        Task<Video> GetVideoByTitle(string title, string year = null);
     }
 }

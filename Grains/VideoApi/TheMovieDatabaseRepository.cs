@@ -27,9 +27,7 @@ namespace Grains.VideoApi
 
         public async Task<IEnumerable<SearchResults>> Search(string title, int? year = null)
         {
-            var config = _configuration.GetSection(ClientFactoryKey);
-            var client = _httpClientFactory.CreateClient(ClientFactoryKey);
-            client.DefaultRequestHeaders.Authorization = BuildAuthentication(config);
+            var client = GetClient();
 
             var request = new HttpRequestMessage()
             {
@@ -39,6 +37,55 @@ namespace Grains.VideoApi
 
             var responseMessage = await client.SendAsync(request);
             return await ProcessResponse<IEnumerable<SearchResults>>(responseMessage);
+        }
+        public async Task<PersonDetail> GetPersonDetail(int personId)
+        {
+            var client = GetClient();
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{BuildBaseUri()}/person/{personId}")
+            };
+
+            var responseMessage = await client.SendAsync(request);
+            return await ProcessResponse<PersonDetail>(responseMessage);
+        }
+
+        public async Task<MovieDetail> GetMovieDetail(int movieId)
+        {
+            var client = GetClient();
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{BuildBaseUri()}/movie/{movieId}")
+            };
+
+            var responseMessage = await client.SendAsync(request);
+            return await ProcessResponse<MovieDetail>(responseMessage);
+        }
+
+        public async Task<MovieCredit> GetMovieCredit(int movieId)
+        {
+            var client = GetClient();
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{BuildBaseUri()}/movie/{movieId}/credits")
+            };
+
+            var responseMessage = await client.SendAsync(request);
+            return await ProcessResponse<MovieCredit>(responseMessage);
+        }
+
+        private HttpClient GetClient()
+        {
+            var config = _configuration.GetSection(ClientFactoryKey);
+            var client = _httpClientFactory.CreateClient(ClientFactoryKey);
+            client.DefaultRequestHeaders.Authorization = BuildAuthentication(config);
+            return client;
         }
 
         private Task<TResponse> ProcessResponse<TResponse>(
@@ -70,7 +117,6 @@ namespace Grains.VideoApi
                     .Append(new KeyValuePair<string, string>("query", title))
                     .Append(new KeyValuePair<string, string>("language", "en-US"))
                     .Append(new KeyValuePair<string, string>("include_adult", "true"));
-
 
             if (year.HasValue)
             {

@@ -8,12 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -74,6 +70,7 @@ namespace Grains.Tests.Unit.VideoApi
         }
 
         [Fact]
+        [Trait("Category", "Search")]
         public async Task ShouldSuccessfullyReturnSearchResults()
         {
             var results = new SearchResults[]
@@ -102,6 +99,7 @@ namespace Grains.Tests.Unit.VideoApi
         }
 
         [Fact]
+        [Trait("Category", "Search")]
         public async Task ShouldPullAuthorizationTokenFromConfiguration()
         {
             var results = new SearchResults[]
@@ -132,6 +130,7 @@ namespace Grains.Tests.Unit.VideoApi
         }
 
         [Fact]
+        [Trait("Category", "Search")]
         public async Task ShouldBuildRequestUriBasedOnInput()
         {
             var results = new SearchResults[]
@@ -162,5 +161,253 @@ namespace Grains.Tests.Unit.VideoApi
                 .BeEquivalentTo(new Uri("https://api.themoviedb.org/3/search/movie?query=Tron%3A%20Legacy&language=en-US&include_adult=true&year=2010"));
         }
 
+
+        [Fact]
+        [Trait("Category", "MovieDetail")]
+        public async Task ShouldReturnMovieDetailFromCorrespondingId()
+        {
+            var expected =
+                new MovieDetail
+                {
+                    Title = "Title",
+                    Runtime = 143m,
+                    ReleaseDate = DateTime.Now,
+                    ImdbId = "tt1234322",
+                    Overview = "Some overview",
+                    Genres = new GenreDetail[]
+                    {
+                        new GenreDetail
+                        {
+                            Name = "Science Fiction"
+                        }
+                    }
+                };
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.GetMovieDetail(112343);
+
+            response.Should()
+                .BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        [Trait("Category", "MovieDetail")]
+        public async Task ShouldFormatMovieDetailUrlPathCorrectly()
+        {
+            var expected =
+                new MovieDetail
+                {
+                    Title = "Title",
+                    Runtime = 143m,
+                    ReleaseDate = DateTime.Now,
+                    ImdbId = "tt1234322",
+                    Overview = "Some overview",
+                    Genres = new GenreDetail[]
+                    {
+                        new GenreDetail
+                        {
+                            Name = "Science Fiction"
+                        }
+                    }
+                };
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            await repository.GetMovieDetail(112343);
+
+            httpClientFunc().request
+                .RequestUri
+                .Should()
+                .BeEquivalentTo(new Uri("https://api.themoviedb.org/3/movie/112343"));
+        }
+
+        [Fact]
+        [Trait("Category", "MovieCredits")]
+        public async Task ShouldSerializeMovieCreditsFromEnteredMovieId()
+        {
+            var expected = new MovieCredit
+            {
+                Id = 112343,
+                Cast = new CastCredit[]
+                {
+                    new CastCredit
+                    {
+                        Gender = 1,
+                        CastId = 1,
+                        Id = 20343,
+                        Character = "Character",
+                        Name = "Name",
+                        ProfilePath = "/profile1"
+                    }
+                },
+                Crew = new CrewCredit[]
+                {
+                    new CrewCredit
+                    {
+                        Gender = 1,
+                        CastId = 1,
+                        Name = "Name",
+                        ProfilePath = "/profile1",
+                        Department = "Sound",
+                        Job = "The best job"
+                    }
+                }
+            };
+
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.GetMovieCredit(112343);
+
+            response.Should()
+                .BeEquivalentTo(expected);
+
+        }
+
+        [Fact]
+        [Trait("Category", "MovieCredits")]
+        public async Task ShouldFormatMovieCreditsUrlPathCorrectly()
+        {
+            var expected = new MovieCredit
+            {
+                Id = 112343,
+                Cast = new CastCredit[]
+                {
+                    new CastCredit
+                    {
+                        Gender = 1,
+                        CastId = 1,
+                        Id = 20343,
+                        Character = "Character",
+                        Name = "Name",
+                        ProfilePath = "/profile1"
+                    }
+                },
+                Crew = new CrewCredit[]
+                {
+                    new CrewCredit
+                    {
+                        Gender = 1,
+                        CastId = 1,
+                        Name = "Name",
+                        ProfilePath = "/profile1",
+                        Department = "Sound",
+                        Job = "The best job"
+                    }
+                }
+            };
+                
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            await repository.GetMovieCredit(112343);
+
+            httpClientFunc().request
+                .RequestUri
+                .Should()
+                .BeEquivalentTo(new Uri("https://api.themoviedb.org/3/movie/112343/credits"));
+        }
+
+        [Fact]
+        [Trait("Category", "PersonDetails")]
+        public async Task ShouldSerializePersonDetailsFromEnteredPersonId()
+        {
+            var expected = new PersonDetail
+            {
+                Aliases = new[] { "Alias" },
+                Biography = "Biography",
+                Birthday = DateTime.Today,
+                Deathday = null,
+                Department = "Sound",
+                Gender = 1,
+                ImdbId = "tt123432",
+                Name = "Name",
+                Profile = "/profile"
+            };
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.GetPersonDetail(112343);
+
+            response.Should()
+                .BeEquivalentTo(expected);
+
+        }
+
+        [Fact]
+        [Trait("Category", "PersonDetails")]
+        public async Task ShouldFormatPersonDetailsUrlPathCorrectly()
+        {
+            var expected = new PersonDetail
+            {
+                Aliases = new[] { "Alias" },
+                Biography = "Biography",
+                Birthday = DateTime.Today,
+                Deathday = null,
+                Department = "Sound",
+                Gender = 1,
+                ImdbId = "tt123432",
+                Name = "Name",
+                Profile = "/profile"
+            };
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            await repository.GetPersonDetail(112343);
+
+            httpClientFunc().request
+                .RequestUri
+                .Should()
+                .BeEquivalentTo(new Uri("https://api.themoviedb.org/3/person/112343"));
+        }
     }
 }

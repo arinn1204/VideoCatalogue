@@ -22,6 +22,7 @@ namespace Grains.Tests.Unit.TestUtilities
             {
                 _responseContent = responseContent;
                 _statusCode = statusCode;
+                Request = new HttpRequestMessage();
             }
 
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

@@ -59,7 +59,13 @@ namespace Grains.VideoApi
 
         public async Task<IEnumerable<SearchResults>> SearchMovie(string title, int? year = null)
         {
-            var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient());
+            var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
+            return await ProcessResponse<IEnumerable<SearchResults>>(response);
+        }
+
+        public async Task<IEnumerable<SearchResults>> SearchTvSeries(string title, int? year = null)
+        {
+            var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
             return await ProcessResponse<IEnumerable<SearchResults>>(response);
         }
 

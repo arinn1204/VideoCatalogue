@@ -1,4 +1,5 @@
 ﻿using Grains.Helpers;
+using Grains.VideoApi.Models;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,23 +16,32 @@ namespace Grains.VideoApi.tmdb
             string title,
             int? year,
             string baseUrl,
-            HttpClient client)
+            HttpClient client,
+            MovieType type)
         {
             var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
-                RequestUri = BuildSearchUri(title, year, baseUrl)
+                RequestUri = BuildSearchUri(title, year, baseUrl, type)
             };
 
             return client.SendAsync(request);
         }
-        private Uri BuildSearchUri(string title, int? year, string baseUrl)
+
+        private Uri BuildSearchUri(string title, int? year, string baseUrl, MovieType type)
         {
             IEnumerable<KeyValuePair<string, string>> parameters =
                 Enumerable.Empty<KeyValuePair<string, string>>()
                     .Append(new KeyValuePair<string, string>("query", title))
                     .Append(new KeyValuePair<string, string>("language", "en-US"))
                     .Append(new KeyValuePair<string, string>("include_adult", "true"));
+
+            var videoType = type switch
+            {
+                MovieType.Movie => "movie",
+                MovieType.TvSeries => "tv",
+                _ => throw new ArgumentException($"{type} is an unsupported enum type.")
+            };
 
             if (year.HasValue)
             {
@@ -40,7 +50,7 @@ namespace Grains.VideoApi.tmdb
 
             var queryParameters = QueryHelpers.BuildQueryParameters(parameters);
 
-            return new Uri($"{baseUrl}/search/movie{queryParameters}"); ;
+            return new Uri($"{baseUrl}/search/{videoType}{queryParameters}"); ;
         }
     }
 }

@@ -199,7 +199,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            var response = await repository.SearchMovie("title", 2019);
+            var response = await repository.SearchTvSeries("title");
 
             response.Should()
                 .BeEquivalentTo(results);

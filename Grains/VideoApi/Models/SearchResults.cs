@@ -9,12 +9,13 @@ namespace Grains.VideoApi.Models
     internal class SearchResults
     {
         [JsonProperty]
-        public int Id { get; internal set; }
+        public int Id { get; set; }
 
         [JsonProperty]
-        public string Title { get; internal set; }
+        public string Title { get; set; }
 
         [JsonProperty]
-        public DateTime ReleaseDate { get; internal set; }
+        public DateTime ReleaseDate { get; set; }
+        public MovieType Type { get; set; }
     }
 }

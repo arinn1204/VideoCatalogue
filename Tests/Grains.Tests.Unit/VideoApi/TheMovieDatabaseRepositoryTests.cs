@@ -103,7 +103,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            var response = await repository.Search("title", 2019);
+            var response = await repository.SearchMovie("title", 2019);
 
             response.Should()
                 .BeEquivalentTo(results);
@@ -111,6 +111,7 @@ namespace Grains.Tests.Unit.VideoApi
 
         [Fact]
         [Trait("Category", "Search")]
+        [Trait("Category", "MovieSearch")]
         public async Task ShouldPullAuthorizationTokenFromConfiguration()
         {
             var results = new SearchResults[]
@@ -132,7 +133,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            await repository.Search("title", 2019);
+            await repository.SearchMovie("title", 2019);
 
             httpClientFunc().request.Headers
                 .Authorization
@@ -142,6 +143,7 @@ namespace Grains.Tests.Unit.VideoApi
 
         [Fact]
         [Trait("Category", "Search")]
+        [Trait("Category", "MovieSearch")]
         public async Task ShouldBuildRequestUriBasedOnInput()
         {
             var results = new SearchResults[]
@@ -164,12 +166,43 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            await repository.Search("Tron: Legacy", 2010);
+            await repository.SearchMovie("Tron: Legacy", 2010);
 
             httpClientFunc().request
                 .RequestUri
                 .Should()
                 .BeEquivalentTo(new Uri("https://api.themoviedb.org/3/search/movie?query=Tron%3A%20Legacy&language=en-US&include_adult=true&year=2010"));
+        }
+        
+        [Fact]
+        [Trait("Category", "Search")]
+        [Trait("Category", "TvEpisodeSearch")]
+        public async Task ShouldSearchForTvEpisodes()
+        {
+
+            var results = new SearchResults[]
+            {
+                new SearchResults
+                {
+                    Id = 24428,
+                    Title = "The Avengers",
+                    ReleaseDate = new DateTime(2012, 4, 25)
+                }
+            };
+            var stringResponse = JsonConvert.SerializeObject(results);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.SearchMovie("title", 2019);
+
+            response.Should()
+                .BeEquivalentTo(results);
         }
 
 
@@ -420,5 +453,6 @@ namespace Grains.Tests.Unit.VideoApi
                 .Should()
                 .BeEquivalentTo(new Uri("https://api.themoviedb.org/3/person/112343"));
         }
+
     }
 }

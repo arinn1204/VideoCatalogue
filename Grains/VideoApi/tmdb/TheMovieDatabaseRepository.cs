@@ -57,7 +57,7 @@ namespace Grains.VideoApi
             return await ProcessResponse<PersonDetail>(response);
         }
 
-        public async Task<IEnumerable<SearchResults>> Search(string title, int? year = null)
+        public async Task<IEnumerable<SearchResults>> SearchMovie(string title, int? year = null)
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient());
             return await ProcessResponse<IEnumerable<SearchResults>>(response);

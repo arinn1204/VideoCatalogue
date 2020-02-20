@@ -1,6 +1,8 @@
 ﻿using Grains.Helpers;
 using Grains.VideoApi.Interfaces;
+using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
+using Grains.VideoApi.Models.VideoApi.Details;
 using Grains.VideoApi.tmdb;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -13,23 +15,23 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi
 {
-    internal class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
+    internal class TheMovieDatabaseRepository : ITheMovieDatabaseMovieRepository, ITheMovieDatabasePersonRepository, ITheMovieDatabaseTvEpisodeRepository
     {
         private const string ClientFactoryKey = nameof(TheMovieDatabase);
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
-        private readonly ITheMovieDatabasePersonRepository _personRepository;
-        private readonly ITheMovieDatabaseSearchRepository _searchRepository;
-        private readonly ITheMovieDatabaseMovieRepository _movieRepository;
-        private readonly ITheMovieDatabaseTvEpisodeRepository _tvEpisodeRepository;
+        private readonly ITheMovieDatabasePersonDetailRepository _personRepository;
+        private readonly ITheMovieDatabaseSearchDetailRepository _searchRepository;
+        private readonly ITheMovieDatabaseMovieDetailRepository _movieRepository;
+        private readonly ITheMovieDatabaseTvEpisodeDetailRepository _tvEpisodeRepository;
 
         public TheMovieDatabaseRepository(
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
-            ITheMovieDatabasePersonRepository person,
-            ITheMovieDatabaseMovieRepository movie,
-            ITheMovieDatabaseSearchRepository search,
-            ITheMovieDatabaseTvEpisodeRepository tvEpisodes)
+            ITheMovieDatabasePersonDetailRepository person,
+            ITheMovieDatabaseMovieDetailRepository movie,
+            ITheMovieDatabaseSearchDetailRepository search,
+            ITheMovieDatabaseTvEpisodeDetailRepository tvEpisodes)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
@@ -43,6 +45,11 @@ namespace Grains.VideoApi
         {
             var response = await _movieRepository.GetMovieCredit(movieId, BuildBaseUri(), GetClient());
             return await ProcessResponse<MovieCredit>(response);
+        }
+
+        public Task<TvCredit> GetTvEpisodeCredit(int tvId, int seasonNumber, int episodeNumber)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<MovieDetail> GetMovieDetail(int movieId)
@@ -67,6 +74,21 @@ namespace Grains.VideoApi
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
             return await ProcessResponse<IEnumerable<SearchResults>>(response);
+        }
+
+        public Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TvDetail> GetTvSeriesDetail(int tvId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<IEnumerable<TvSearchResults>> ITheMovieDatabaseTvEpisodeRepository.SearchTvSeries(string title, int? year)
+        {
+            throw new NotImplementedException();
         }
 
         private Task<TResponse> ProcessResponse<TResponse>(

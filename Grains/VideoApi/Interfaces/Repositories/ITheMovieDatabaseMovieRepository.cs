@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi.Interfaces
 {
-    internal interface ITheMovieDatabaseRepository
+    internal interface ITheMovieDatabaseMovieRepository
     {
         Task<MovieCredit> GetMovieCredit(int movieId);
         Task<MovieDetail> GetMovieDetail(int movieId);
-        Task<PersonDetail> GetPersonDetail(int personId);
         Task<IEnumerable<SearchResults>> SearchMovie(string title, int? year = null);
     }
 }

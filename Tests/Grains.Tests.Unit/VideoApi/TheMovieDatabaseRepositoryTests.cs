@@ -29,10 +29,10 @@ namespace Grains.Tests.Unit.VideoApi
 
             _fixture = new Fixture();
             _fixture.Customize(new AutoMoqCustomization());
-            _fixture.Inject<ITheMovieDatabasePersonRepository>(personRepository);
-            _fixture.Inject<ITheMovieDatabaseSearchRepository>(searchRepository);
-            _fixture.Inject<ITheMovieDatabaseMovieRepository>(movieRepository);
-            _fixture.Inject<ITheMovieDatabaseTvEpisodeRepository>(tvEpisodeRepository);
+            _fixture.Inject<ITheMovieDatabasePersonDetailRepository>(personRepository);
+            _fixture.Inject<ITheMovieDatabaseSearchDetailRepository>(searchRepository);
+            _fixture.Inject<ITheMovieDatabaseMovieDetailRepository>(movieRepository);
+            _fixture.Inject<ITheMovieDatabaseTvEpisodeDetailRepository>(tvEpisodeRepository);
 
             var config = _fixture.Freeze<Mock<IConfiguration>>();
             config.Setup(s => s.GetSection("TheMovieDatabase"))
@@ -82,6 +82,7 @@ namespace Grains.Tests.Unit.VideoApi
 
         [Fact]
         [Trait("Category", "Search")]
+        [Trait("Category", "MovieSearch")]
         public async Task ShouldSuccessfullyReturnSearchResults()
         {
             var results = new SearchResults[]
@@ -185,7 +186,7 @@ namespace Grains.Tests.Unit.VideoApi
                 new SearchResults
                 {
                     Id = 24428,
-                    Title = "The Avengers",
+                    Title = "Arrow",
                     ReleaseDate = new DateTime(2012, 4, 25)
                 }
             };
@@ -205,10 +206,46 @@ namespace Grains.Tests.Unit.VideoApi
                 .BeEquivalentTo(results);
         }
 
-
         [Fact]
         [Trait("Category", "MovieDetail")]
         public async Task ShouldReturnMovieDetailFromCorrespondingId()
+        {
+            var expected =
+                new MovieDetail
+                {
+                    Title = "Title",
+                    Runtime = 143m,
+                    ReleaseDate = DateTime.Now,
+                    ImdbId = "tt1234322",
+                    Overview = "Some overview",
+                    Genres = new GenreDetail[]
+                    {
+                        new GenreDetail
+                        {
+                            Name = "Science Fiction"
+                        }
+                    }
+                };
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.GetMovieDetail(112343);
+
+            response.Should()
+                .BeEquivalentTo(expected);
+        }
+        
+        [Fact]
+        [Trait("Category", "TvSeriesDetail")]
+        public async Task ShouldReturnTvSeriesDetailFromCorrespondingId()
         {
             var expected =
                 new MovieDetail

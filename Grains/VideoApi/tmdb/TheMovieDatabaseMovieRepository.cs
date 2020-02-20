@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi.tmdb
 {
-    internal class TheMovieDatabaseMovieRepository : ITheMovieDatabaseMovieRepository
+    internal class TheMovieDatabaseMovieRepository : ITheMovieDatabaseMovieDetailRepository
     {
         public Task<HttpResponseMessage> GetMovieDetail(
             int movieId,

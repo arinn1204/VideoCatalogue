@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi.tmdb
 {
-    internal class TheMovieDatabaseSearchRepository : ITheMovieDatabaseSearchRepository
+    internal class TheMovieDatabaseSearchRepository : ITheMovieDatabaseSearchDetailRepository
     {
         public Task<HttpResponseMessage> Search(
             string title,

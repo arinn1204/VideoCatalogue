@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Grains.VideoApi.tmdb
 {
-    internal class TheMovieDatabaseTvEpisodeRepository : ITheMovieDatabaseTvEpisodeRepository
+    internal class TheMovieDatabaseTvEpisodeRepository : ITheMovieDatabaseTvEpisodeDetailRepository
     {
     }
 }

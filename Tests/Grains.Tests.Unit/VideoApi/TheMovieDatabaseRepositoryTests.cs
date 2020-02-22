@@ -445,15 +445,15 @@ namespace Grains.Tests.Unit.VideoApi
 
         [Theory]
         [Trait("Category", "UrlFormatting")]
-        [InlineData("PersonDetail", "https://api.themoviedb.org/3/person/112343")]
-        [InlineData("MovieCredits", "https://api.themoviedb.org/3/movie/112343/credits")]
-        [InlineData("MovieDetail", "https://api.themoviedb.org/3/movie/112343")]
-        [InlineData("MovieSearch", "https://api.themoviedb.org/3/search/movie?query=Tron%3A%20Legacy&language=en-US&include_adult=true&year=2010")]
-        [InlineData("TvSearch", "https://api.themoviedb.org/3/search/tv?query=Sons%20Of%20Anarchy&language=en-US&include_adult=true&year=2008")]
-        [InlineData("TvSeriesDetail", "https://api.themoviedb.org/3/tv/112343")]
-        [InlineData("TvEpisodeDetail", "https://api.themoviedb.org/3/tv/112343/season/1/episode/2")]
-        [InlineData("TvEpisodeCredits", "https://api.themoviedb.org/3/tv/112343/season/1/episode/2/credits")]
-        public async Task ShouldFormatUrlPathCorrectly(string operation, string expectedUrl)
+        [InlineData("PersonDetail", 112343, "https://api.themoviedb.org/3/person/112343")]
+        [InlineData("MovieCredits", 112343, "https://api.themoviedb.org/3/movie/112343/credits")]
+        [InlineData("MovieDetail", 112343, "https://api.themoviedb.org/3/movie/112343")]
+        [InlineData("TvSeriesDetail", 112343, "https://api.themoviedb.org/3/tv/112343")]
+        [InlineData("TvEpisodeDetail", 112343, "https://api.themoviedb.org/3/tv/112343/season/1/episode/2")]
+        [InlineData("TvEpisodeCredits", 112343, "https://api.themoviedb.org/3/tv/112343/season/1/episode/2/credits")]
+        [InlineData("MovieSearch", 0, "https://api.themoviedb.org/3/search/movie?query=Tron%3A%20Legacy&language=en-US&include_adult=true&year=2010")]
+        [InlineData("TvSearch", 0, "https://api.themoviedb.org/3/search/tv?query=Sons%20Of%20Anarchy&language=en-US&include_adult=true&year=2008")]
+        public async Task ShouldFormatUrlPathCorrectly(string operation, int videoId, string expectedUrl)
         {
             var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
             var httpClientFunc = MockHttpClient.GetFakeHttpClient(string.Empty);
@@ -464,14 +464,14 @@ namespace Grains.Tests.Unit.VideoApi
 
             Task result = operation switch
             {
-                "PersonDetail" => repository.GetPersonDetail(112343),
-                "MovieCredits" => repository.GetMovieCredit(112343),
-                "MovieDetail" => repository.GetMovieDetail(112343),
-                "TvSeriesDetail" => repository.GetTvSeriesDetail(112343),
+                "PersonDetail" => repository.GetPersonDetail(videoId),
+                "MovieCredits" => repository.GetMovieCredit(videoId),
+                "MovieDetail" => repository.GetMovieDetail(videoId),
+                "TvSeriesDetail" => repository.GetTvSeriesDetail(videoId),
+                "TvEpisodeDetail" => repository.GetTvEpisodeDetail(videoId, 1, 2),
+                "TvEpisodeCredits" => repository.GetTvEpisodeCredit(videoId, 1, 2),
                 "MovieSearch" => repository.SearchMovie("Tron: Legacy", 2010),
                 "TvSearch" => repository.SearchTvSeries("Sons Of Anarchy", 2008),
-                "TvEpisodeDetail" => repository.GetTvEpisodeDetail(112343, 1, 2),
-                "TvEpisodeCredits" => repository.GetTvEpisodeCredit(112343, 1, 2),
                 _ => Task.FromException(new ArgumentException($"Unknown operation {operation}"))
             };
 

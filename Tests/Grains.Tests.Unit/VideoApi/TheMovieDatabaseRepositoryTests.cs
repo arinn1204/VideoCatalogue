@@ -115,7 +115,6 @@ namespace Grains.Tests.Unit.VideoApi
         [Fact]
         [Trait("Category", "Search")]
         [Trait("Category", "Movie")]
-        [Trait("Category", "MovieSearch")]
         public async Task ShouldSuccessfullyReturnSearchResults()
         {
             var results = new SearchResults[]
@@ -146,10 +145,8 @@ namespace Grains.Tests.Unit.VideoApi
         [Fact]
         [Trait("Category", "Search")]
         [Trait("Category", "TV")]
-        [Trait("Category", "TvEpisodeSearch")]
         public async Task ShouldSearchForTvEpisodes()
         {
-
             var results = new TvSearchResults[]
             {
                 new TvSearchResults
@@ -177,7 +174,6 @@ namespace Grains.Tests.Unit.VideoApi
 
         [Fact]
         [Trait("Category", "Movie")]
-        [Trait("Category", "MovieDetail")]
         public async Task ShouldReturnMovieDetailFromCorrespondingId()
         {
             var expected =
@@ -215,7 +211,6 @@ namespace Grains.Tests.Unit.VideoApi
         
         [Fact]
         [Trait("Category", "TV")]
-        [Trait("Category", "TvSeriesDetail")]
         public async Task ShouldReturnTvSeriesDetailFromCorrespondingId()
         {
             var expected =
@@ -256,9 +251,114 @@ namespace Grains.Tests.Unit.VideoApi
                 .BeEquivalentTo(expected);
         }
 
+
+        [Fact]
+        [Trait("Category", "TV")]
+        public async Task ShouldReturnEpisodeDetailFromCorrespondingId()
+        {
+            var expected =
+                new TvDetail
+                {
+                    Name = "Title",
+                    Id = 1,
+                    NumberOfEpisodes = 1,
+                    NumberOfSeasons = 1,
+                    OriginalLanguage = "en",
+                    OriginalName = "Titles",
+                    Status = "Cancelled",
+                    ReleaseDate = DateTime.Now,
+                    ImdbId = "tt1234322",
+                    Overview = "Some overview",
+                    Genres = new GenreDetail[]
+                    {
+                        new GenreDetail
+                        {
+                            Name = "Science Fiction"
+                        }
+                    }
+                };
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.GetTvEpisodeDetail(112343, 1, 2);
+
+            response.Should()
+                .BeEquivalentTo(expected);
+        }
+
+
+        [Fact]
+        [Trait("Category", "TV")]
+        public async Task ShouldSerializeTvEpisodeCreditsFromEnteredMovieId()
+        {
+            var expected = new TvCredit
+            {
+                Id = 112343,
+                Cast = new CastCredit[]
+                {
+                    new CastCredit
+                    {
+                        Gender = 1,
+                        CastId = 1,
+                        Id = 20343,
+                        Character = "Character",
+                        Name = "Name",
+                        ProfilePath = "/profile1"
+                    }
+                },
+                Crew = new CrewCredit[]
+                {
+                    new CrewCredit
+                    {
+                        Gender = 1,
+                        CastId = 1,
+                        Name = "Name",
+                        ProfilePath = "/profile1",
+                        Department = "Sound",
+                        Job = "The best job"
+                    }
+                },
+                GuestStars = new CastCredit[]
+                {
+                    new CastCredit
+                    {
+                        Gender = 1,
+                        Id = 20343,
+                        Character = "Guesty McGuestFace",
+                        Name = "Guest Guesterson",
+                        ProfilePath = "/profile1"
+                    }
+                }
+            };
+
+
+            var stringResponse = JsonConvert.SerializeObject(expected);
+            var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+            factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+                .Returns(httpClientFunc().client);
+
+            var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+            var response = await repository.GetTvEpisodeCredit(112343, 1, 5);
+
+            response.Should()
+                .BeEquivalentTo(expected);
+
+        }
+
         [Fact]
         [Trait("Category", "Movie")]
-        [Trait("Category", "MovieCredits")]
         public async Task ShouldSerializeMovieCreditsFromEnteredMovieId()
         {
             var expected = new MovieCredit
@@ -351,6 +451,8 @@ namespace Grains.Tests.Unit.VideoApi
         [InlineData("MovieSearch", "https://api.themoviedb.org/3/search/movie?query=Tron%3A%20Legacy&language=en-US&include_adult=true&year=2010")]
         [InlineData("TvSearch", "https://api.themoviedb.org/3/search/tv?query=Sons%20Of%20Anarchy&language=en-US&include_adult=true&year=2008")]
         [InlineData("TvSeriesDetail", "https://api.themoviedb.org/3/tv/112343")]
+        [InlineData("TvEpisodeDetail", "https://api.themoviedb.org/3/tv/112343/season/1/episode/2")]
+        [InlineData("TvEpisodeCredits", "https://api.themoviedb.org/3/tv/112343/season/1/episode/2/credits")]
         public async Task ShouldFormatUrlPathCorrectly(string operation, string expectedUrl)
         {
             var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
@@ -368,6 +470,8 @@ namespace Grains.Tests.Unit.VideoApi
                 "TvSeriesDetail" => repository.GetTvSeriesDetail(112343),
                 "MovieSearch" => repository.SearchMovie("Tron: Legacy", 2010),
                 "TvSearch" => repository.SearchTvSeries("Sons Of Anarchy", 2008),
+                "TvEpisodeDetail" => repository.GetTvEpisodeDetail(112343, 1, 2),
+                "TvEpisodeCredits" => repository.GetTvEpisodeCredit(112343, 1, 2),
                 _ => Task.FromException(new ArgumentException($"Unknown operation {operation}"))
             };
 

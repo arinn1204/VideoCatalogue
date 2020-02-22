@@ -9,6 +9,6 @@ namespace Grains.VideoApi.Models
     {
 
         [JsonProperty("guest_stars")]
-        public IEnumerable<CrewCredit> GuestStars { get; set; }
+        public IEnumerable<CastCredit> GuestStars { get; set; }
     }
 }

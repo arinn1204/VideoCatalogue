@@ -16,7 +16,13 @@ namespace Grains.VideoApi.tmdb
             string baseUrl,
             HttpClient client)
         {
-            throw new NotImplementedException();
+            var tvUrl = GetTvUrl(baseUrl, tvId);
+            var episodeUrl = GetEpisodeUrl(tvUrl, seasonNumber, episodeNumber);
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                new Uri($"{episodeUrl.Trim('/')}/credits"));
+
+            return client.SendAsync(request);
         }
 
         public Task<HttpResponseMessage> GetTvEpisodeDetail(
@@ -26,7 +32,13 @@ namespace Grains.VideoApi.tmdb
             string baseUrl,
             HttpClient client)
         {
-            throw new NotImplementedException();
+            var tvUrl = GetTvUrl(baseUrl, tvId);
+            var episodeUrl = GetEpisodeUrl(tvUrl, seasonNumber, episodeNumber);
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                new Uri(episodeUrl));
+
+            return client.SendAsync(request);
         }
 
         public Task<HttpResponseMessage> GetTvSeriesDetail(
@@ -39,6 +51,11 @@ namespace Grains.VideoApi.tmdb
                 new Uri(GetTvUrl(baseUrl, tvId)));
 
             return client.SendAsync(request);
+        }
+
+        private string GetEpisodeUrl(string tvUrl, int seasonNumber, int episodeNumber)
+        {
+            return $"{tvUrl.Trim('/')}/season/{seasonNumber}/episode/{episodeNumber}";
         }
 
         private string GetTvUrl(string baseUrl, int tvId)

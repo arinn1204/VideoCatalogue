@@ -19,11 +19,23 @@
     <PackageReference Include="SpecFlow" Version="3.1.82" />
     <PackageReference Include="SpecFlow.xUnit" Version="3.1.82" />
     <PackageReference Include="WireMock.Net" Version="1.1.7" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\GrainsInterfaces\GrainsInterfaces.csproj" />
     <ProjectReference Include="..\..\Grains\Grains.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Builders\" />
+    <Folder Include="Features\Assertions\" />
+    <Folder Include="Features\Actions\" />
+    <Folder Include="Features\Hooks\" />
+    <Folder Include="Features\Support\" />
   </ItemGroup>
 
 </Project>

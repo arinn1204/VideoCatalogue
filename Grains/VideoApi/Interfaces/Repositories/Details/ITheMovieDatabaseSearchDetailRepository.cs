@@ -1,4 +1,5 @@
 ﻿using Grains.VideoApi.Models;
+using GrainsInterfaces.Models.VideoApi;
 using System.Net.Http;
 using System.Threading.Tasks;
 

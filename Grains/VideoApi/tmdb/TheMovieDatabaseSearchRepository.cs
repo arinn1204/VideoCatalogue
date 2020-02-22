@@ -1,5 +1,6 @@
 ﻿using Grains.Helpers;
 using Grains.VideoApi.Models;
+using GrainsInterfaces.Models.VideoApi;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;

@@ -4,7 +4,10 @@ using System.Text;
 
 namespace GrainsInterfaces.Models.VideoApi
 {
-    public class Video
+    public enum MovieType
     {
+        Unknown,
+        Movie,
+        TvSeries
     }
 }

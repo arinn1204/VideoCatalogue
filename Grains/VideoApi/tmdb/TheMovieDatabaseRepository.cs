@@ -4,6 +4,7 @@ using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Details;
 using Grains.VideoApi.tmdb;
+using GrainsInterfaces.Models.VideoApi;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;

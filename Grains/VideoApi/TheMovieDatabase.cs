@@ -26,10 +26,10 @@ namespace Grains.VideoApi
 
         public async Task GetVideoDetails(VideoRequest request)
         {
-            var results = GetSearchResults(request.Type, request.Title, request.Year);
+            var results = await GetSearchResults(request.Type, request.Title, request.Year);
         }
 
-        private async Task<IEnumerable<SearchResults>> GetSearchResults(MovieType type, string title, int? year)
+        private async Task<IEnumerable<SearchResult>> GetSearchResults(MovieType type, string title, int? year)
         {
             switch (type)
             {

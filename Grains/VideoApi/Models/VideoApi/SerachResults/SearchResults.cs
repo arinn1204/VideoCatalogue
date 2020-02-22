@@ -7,7 +7,7 @@ using System.Text;
 namespace Grains.VideoApi.Models
 {
     [JsonObject]
-    public class SearchResults
+    public class SearchResult
     {
         [JsonProperty]
         public int Id { get; set; }
@@ -16,7 +16,7 @@ namespace Grains.VideoApi.Models
         public string Title { get; set; }
 
         [JsonProperty]
-        public DateTime ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public MovieType Type { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace Grains.VideoApi.Interfaces
     {
         Task<MovieCredit> GetMovieCredit(int movieId);
         Task<MovieDetail> GetMovieDetail(int movieId);
-        Task<IEnumerable<SearchResults>> SearchMovie(string title, int? year = null);
+        Task<IEnumerable<SearchResult>> SearchMovie(string title, int? year = null);
     }
 }

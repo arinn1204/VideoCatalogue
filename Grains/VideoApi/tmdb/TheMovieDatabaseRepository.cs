@@ -3,6 +3,7 @@ using Grains.VideoApi.Interfaces;
 using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Details;
+using Grains.VideoApi.Models.VideoApi.SerachResults;
 using Grains.VideoApi.tmdb;
 using GrainsInterfaces.Models.VideoApi;
 using Microsoft.Extensions.Configuration;
@@ -71,16 +72,20 @@ namespace Grains.VideoApi
             return await ProcessResponse<PersonDetail>(response);
         }
 
-        public async Task<IEnumerable<SearchResults>> SearchMovie(string title, int? year = null)
+        public async Task<IEnumerable<SearchResult>> SearchMovie(string title, int? year = null)
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
-            return await ProcessResponse<IEnumerable<SearchResults>>(response);
+            var result = await ProcessResponse<SearchResultWrapper<SearchResult>>(response);
+
+            return result.SearchResults;
         }
 
-        public async Task<IEnumerable<TvSearchResults>> SearchTvSeries(string title, int? year = null)
+        public async Task<IEnumerable<TvSearchResult>> SearchTvSeries(string title, int? year = null)
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.TvSeries);
-            return await ProcessResponse<IEnumerable<TvSearchResults>>(response);
+            var result = await ProcessResponse<SearchResultWrapper<TvSearchResult>>(response);
+
+            return result.SearchResults;
         }
 
         public async Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber)

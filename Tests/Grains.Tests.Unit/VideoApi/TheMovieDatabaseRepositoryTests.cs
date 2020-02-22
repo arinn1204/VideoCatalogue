@@ -5,6 +5,7 @@ using Grains.Tests.Unit.TestUtilities;
 using Grains.VideoApi;
 using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Details;
+using Grains.VideoApi.Models.VideoApi.SerachResults;
 using Grains.VideoApi.tmdb;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -85,16 +86,19 @@ namespace Grains.Tests.Unit.VideoApi
         [Trait("Category", "Authorization")]
         public async Task ShouldPullAuthorizationTokenFromConfiguration()
         {
-            var results = new SearchResults[]
+            var result = new SearchResultWrapper<SearchResult>()
             {
-                new SearchResults
+                SearchResults = new SearchResult[]
                 {
-                    Id = 24428,
-                    Title = "The Avengers",
-                    ReleaseDate = new DateTime(2012, 4, 25)
+                    new SearchResult
+                    {
+                        Id = 24428,
+                        Title = "The Avengers",
+                        ReleaseDate = new DateTime(2012, 4, 25)
+                    }
                 }
             };
-            var stringResponse = JsonConvert.SerializeObject(results);
+            var stringResponse = JsonConvert.SerializeObject(result);
             var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
             var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -117,13 +121,16 @@ namespace Grains.Tests.Unit.VideoApi
         [Trait("Category", "Movie")]
         public async Task ShouldSuccessfullyReturnSearchResults()
         {
-            var results = new SearchResults[]
+            var results = new SearchResultWrapper<SearchResult>()
             {
-                new SearchResults
+                SearchResults = new SearchResult[]
                 {
-                    Id = 24428,
-                    Title = "The Avengers",
-                    ReleaseDate = new DateTime(2012, 4, 25)
+                    new SearchResult
+                    {
+                        Id = 24428,
+                        Title = "The Avengers",
+                        ReleaseDate = new DateTime(2012, 4, 25)
+                    }
                 }
             };
             var stringResponse = JsonConvert.SerializeObject(results);
@@ -139,7 +146,7 @@ namespace Grains.Tests.Unit.VideoApi
             var response = await repository.SearchMovie("title", 2019);
 
             response.Should()
-                .BeEquivalentTo(results);
+                .BeEquivalentTo(results.SearchResults);
         }
 
         [Fact]
@@ -147,13 +154,16 @@ namespace Grains.Tests.Unit.VideoApi
         [Trait("Category", "TV")]
         public async Task ShouldSearchForTvEpisodes()
         {
-            var results = new TvSearchResults[]
+            var results = new SearchResultWrapper<TvSearchResult>()
             {
-                new TvSearchResults
+                SearchResults = new TvSearchResult[]
                 {
-                    Id = 24428,
-                    Title = "Arrow",
-                    ReleaseDate = new DateTime(2012, 4, 25)
+                    new TvSearchResult
+                    {
+                        Id = 24428,
+                        Title = "The Avengers",
+                        ReleaseDate = new DateTime(2012, 4, 25)
+                    }
                 }
             };
             var stringResponse = JsonConvert.SerializeObject(results);
@@ -169,7 +179,7 @@ namespace Grains.Tests.Unit.VideoApi
             var response = await repository.SearchTvSeries("title");
 
             response.Should()
-                .BeEquivalentTo(results);
+                .BeEquivalentTo(results.SearchResults);
         }
 
         [Fact]
@@ -455,8 +465,11 @@ namespace Grains.Tests.Unit.VideoApi
         [InlineData("TvSearch", 0, "https://api.themoviedb.org/3/search/tv?query=Sons%20Of%20Anarchy&language=en-US&include_adult=true&year=2008")]
         public async Task ShouldFormatUrlPathCorrectly(string operation, int videoId, string expectedUrl)
         {
+            var results = new SearchResultWrapper<object>();
+            var resultString = JsonConvert.SerializeObject(results);
+
             var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
-            var httpClientFunc = MockHttpClient.GetFakeHttpClient(string.Empty);
+            var httpClientFunc = MockHttpClient.GetFakeHttpClient(resultString);
             factory.Setup(s => s.CreateClient("TheMovieDatabase"))
                 .Returns(httpClientFunc().client);
             var repository = _fixture.Create<TheMovieDatabaseRepository>();

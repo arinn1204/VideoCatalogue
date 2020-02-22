@@ -5,9 +5,12 @@ using System.Text;
 
 namespace Grains.VideoApi.Models
 {
-    public class TvSearchResults : SearchResults
+    public class TvSearchResult : SearchResult
     {
         [JsonProperty("first_air_date")]
-        public new DateTime ReleaseDate { get; set; }
+        public new DateTime? ReleaseDate { get; set; }
+
+        [JsonProperty("name")]
+        public new string Title { get; set; }
     }
 }

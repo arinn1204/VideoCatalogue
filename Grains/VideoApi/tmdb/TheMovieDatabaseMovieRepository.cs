@@ -15,7 +15,7 @@ namespace Grains.VideoApi.tmdb
             string baseUrl,
             HttpClient client)
         {
-            var request = new HttpRequestMessage()
+            using var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri($"{baseUrl}/movie/{movieId}")
@@ -29,7 +29,7 @@ namespace Grains.VideoApi.tmdb
             string baseUrl,
             HttpClient client)
         {
-            var request = new HttpRequestMessage()
+            using var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri($"{baseUrl}/movie/{movieId}/credits")

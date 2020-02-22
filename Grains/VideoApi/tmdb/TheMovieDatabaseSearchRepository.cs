@@ -19,7 +19,7 @@ namespace Grains.VideoApi.tmdb
             HttpClient client,
             MovieType type)
         {
-            var request = new HttpRequestMessage()
+            using var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
                 RequestUri = BuildSearchUri(title, year, baseUrl, type)

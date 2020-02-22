@@ -4,6 +4,7 @@ using FluentAssertions;
 using Grains.Tests.Unit.TestUtilities;
 using Grains.VideoApi;
 using Grains.VideoApi.Models;
+using Grains.VideoApi.Models.VideoApi.Details;
 using Grains.VideoApi.tmdb;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -181,9 +182,9 @@ namespace Grains.Tests.Unit.VideoApi
         public async Task ShouldSearchForTvEpisodes()
         {
 
-            var results = new SearchResults[]
+            var results = new TvSearchResults[]
             {
-                new SearchResults
+                new TvSearchResults
                 {
                     Id = 24428,
                     Title = "Arrow",
@@ -248,10 +249,15 @@ namespace Grains.Tests.Unit.VideoApi
         public async Task ShouldReturnTvSeriesDetailFromCorrespondingId()
         {
             var expected =
-                new MovieDetail
+                new TvDetail
                 {
-                    Title = "Title",
-                    Runtime = 143m,
+                    Name = "Title",
+                    Id = 1,
+                    NumberOfEpisodes = 1,
+                    NumberOfSeasons = 1,
+                    OriginalLanguage = "en",
+                    OriginalName = "Titles",
+                    Status = "Cancelled",
                     ReleaseDate = DateTime.Now,
                     ImdbId = "tt1234322",
                     Overview = "Some overview",
@@ -274,7 +280,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            var response = await repository.GetMovieDetail(112343);
+            var response = await repository.GetTvSeriesDetail(112343);
 
             response.Should()
                 .BeEquivalentTo(expected);

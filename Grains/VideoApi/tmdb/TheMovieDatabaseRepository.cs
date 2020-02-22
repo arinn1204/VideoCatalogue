@@ -47,7 +47,7 @@ namespace Grains.VideoApi
             return await ProcessResponse<MovieCredit>(response);
         }
 
-        public Task<TvCredit> GetTvEpisodeCredit(int tvId, int seasonNumber, int episodeNumber)
+        public async Task<TvCredit> GetTvEpisodeCredit(int tvId, int seasonNumber, int episodeNumber)
         {
             throw new NotImplementedException();
         }
@@ -70,25 +70,21 @@ namespace Grains.VideoApi
             return await ProcessResponse<IEnumerable<SearchResults>>(response);
         }
 
-        public async Task<IEnumerable<SearchResults>> SearchTvSeries(string title, int? year = null)
+        public async Task<IEnumerable<TvSearchResults>> SearchTvSeries(string title, int? year = null)
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
-            return await ProcessResponse<IEnumerable<SearchResults>>(response);
+            return await ProcessResponse<IEnumerable<TvSearchResults>>(response);
         }
 
-        public Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber)
+        public async Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber)
         {
             throw new NotImplementedException();
         }
 
-        public Task<TvDetail> GetTvSeriesDetail(int tvId)
+        public async Task<TvDetail> GetTvSeriesDetail(int tvId)
         {
-            throw new NotImplementedException();
-        }
-
-        Task<IEnumerable<TvSearchResults>> ITheMovieDatabaseTvEpisodeRepository.SearchTvSeries(string title, int? year)
-        {
-            throw new NotImplementedException();
+            var response = await _tvEpisodeRepository.GetTvSeriesDetail(tvId, BuildBaseUri(), GetClient());
+            return await ProcessResponse<TvDetail>(response);
         }
 
         private Task<TResponse> ProcessResponse<TResponse>(

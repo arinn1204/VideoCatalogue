@@ -6,7 +6,7 @@ using System.Text;
 namespace Grains.VideoApi.Models
 {
     [JsonObject]
-    internal class PersonDetail
+    public class PersonDetail
     {
         [JsonProperty]
         public DateTime Birthday { get; set; }

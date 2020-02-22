@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi
 {
-    internal class TheMovieDatabaseRepository : ITheMovieDatabaseMovieRepository, ITheMovieDatabasePersonRepository, ITheMovieDatabaseTvEpisodeRepository
+    internal class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
     {
         private const string ClientFactoryKey = nameof(TheMovieDatabase);
         private readonly IHttpClientFactory _httpClientFactory;

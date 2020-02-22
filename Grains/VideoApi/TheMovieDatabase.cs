@@ -1,4 +1,5 @@
-﻿using GrainsInterfaces.VideoApi;
+﻿using Grains.VideoApi.Interfaces.Repositories;
+using GrainsInterfaces.VideoApi;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -10,5 +11,11 @@ namespace Grains.VideoApi
 {
     public class TheMovieDatabase : IVideoApi
     {
+        private readonly ITheMovieDatabaseRepository _theMovieDatabaseRepository;
+
+        public TheMovieDatabase(ITheMovieDatabaseRepository theMovieDatabaseRepository)
+        {
+            _theMovieDatabaseRepository = theMovieDatabaseRepository;
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Grains.VideoApi.Models
 {
-    internal class TvCredit : MovieCredit
+    public class TvCredit : MovieCredit
     {
 
         [JsonProperty("guest_stars")]

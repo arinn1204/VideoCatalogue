@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Grains.VideoApi.Models
 {
-    internal class MovieCredit
+    public class MovieCredit
     {
         [JsonProperty]
         public int Id { get; set; }

@@ -6,7 +6,7 @@ using System.Text;
 namespace Grains.VideoApi.Models.VideoApi.Details
 {
     [JsonObject]
-    internal class TvDetail
+    public class TvDetail
     {
         [JsonProperty]
         public IEnumerable<GenreDetail> Genres { get; set; }

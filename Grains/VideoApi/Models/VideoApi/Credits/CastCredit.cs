@@ -6,7 +6,7 @@ using System.Text;
 namespace Grains.VideoApi.Models
 {
     [JsonObject]
-    class CastCredit : PersonCredit
+    public class CastCredit : PersonCredit
     {
         [JsonProperty]
         public string Character { get; set; }

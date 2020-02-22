@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi.Interfaces
 {
-    internal interface ITheMovieDatabasePersonRepository
+    public interface ITheMovieDatabasePersonRepository
     {
         Task<PersonDetail> GetPersonDetail(int personId);
     }

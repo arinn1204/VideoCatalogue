@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi.Interfaces.Repositories
 {
-    internal interface ITheMovieDatabaseTvEpisodeRepository
+    public interface ITheMovieDatabaseTvEpisodeRepository
     {
         Task<TvCredit> GetTvEpisodeCredit(int tvId, int seasonNumber, int episodeNumber);
         Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber);

@@ -43,7 +43,7 @@ namespace Grains.VideoApi.tmdb
 
         private string GetTvUrl(string baseUrl, int tvId)
         {
-            return $"{baseUrl.Trim('/')}/tv/${tvId}";
+            return $"{baseUrl.Trim('/')}/tv/{tvId}";
         }
     }
 }

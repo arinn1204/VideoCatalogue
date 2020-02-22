@@ -9,6 +9,26 @@ namespace Grains.VideoApi.tmdb
 {
     internal class TheMovieDatabaseTvEpisodeRepository : ITheMovieDatabaseTvEpisodeDetailRepository
     {
+        public Task<HttpResponseMessage> GetTvEpisodeCredits(
+            int tvId,
+            int seasonNumber,
+            int episodeNumber,
+            string baseUrl,
+            HttpClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<HttpResponseMessage> GetTvEpisodeDetail(
+            int tvId,
+            int seasonNumber,
+            int episodeNumber,
+            string baseUrl,
+            HttpClient client)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<HttpResponseMessage> GetTvSeriesDetail(
             int tvId,
             string baseUrl,

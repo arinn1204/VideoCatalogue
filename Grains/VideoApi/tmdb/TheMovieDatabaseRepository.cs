@@ -49,7 +49,13 @@ namespace Grains.VideoApi
 
         public async Task<TvCredit> GetTvEpisodeCredit(int tvId, int seasonNumber, int episodeNumber)
         {
-            throw new NotImplementedException();
+            var response = await _tvEpisodeRepository.GetTvEpisodeCredits(
+                tvId,
+                seasonNumber,
+                episodeNumber,
+                BuildBaseUri(),
+                GetClient());
+            return await ProcessResponse<TvCredit>(response);
         }
 
         public async Task<MovieDetail> GetMovieDetail(int movieId)
@@ -78,7 +84,13 @@ namespace Grains.VideoApi
 
         public async Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber)
         {
-            throw new NotImplementedException();
+            var response = await _tvEpisodeRepository.GetTvEpisodeDetail(
+                tvId,
+                seasonNumber,
+                episodeNumber,
+                BuildBaseUri(),
+                GetClient());
+            return await ProcessResponse<TvDetail>(response);
         }
 
         public async Task<TvDetail> GetTvSeriesDetail(int tvId)

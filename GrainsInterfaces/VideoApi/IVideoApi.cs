@@ -8,6 +8,6 @@ namespace GrainsInterfaces.VideoApi
 {
     public interface IVideoApi
     {
-        Task GetVideoDetails(VideoRequest request);
+        Task<VideoDetails> GetVideoDetails(VideoRequest request);
     }
 }

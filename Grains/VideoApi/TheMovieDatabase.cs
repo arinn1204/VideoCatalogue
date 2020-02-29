@@ -24,9 +24,11 @@ namespace Grains.VideoApi
             _theMovieDatabaseRepository = theMovieDatabaseRepository;
         }
 
-        public async Task GetVideoDetails(VideoRequest request)
+        public async Task<VideoDetails> GetVideoDetails(VideoRequest request)
         {
             var results = await GetSearchResults(request.Type, request.Title, request.Year);
+
+            return new VideoDetails();
         }
 
         private async Task<IEnumerable<SearchResult>> GetSearchResults(MovieType type, string title, int? year)
@@ -36,10 +38,10 @@ namespace Grains.VideoApi
                 case MovieType.Movie: return await _theMovieDatabaseRepository.SearchMovie(title, year);
                 case MovieType.TvSeries: return await _theMovieDatabaseRepository.SearchTvSeries(title, year);
                 default: 
-                    var tvResults = await _theMovieDatabaseRepository.SearchTvSeries(title, year);
+                    var tvResultsTask = _theMovieDatabaseRepository.SearchTvSeries(title, year);
                     var movieResults = await _theMovieDatabaseRepository.SearchMovie(title, year);
-                    return tvResults.Concat(movieResults);
-                    
+
+                    return movieResults.Concat(await tvResultsTask);                    
             };
         }
 

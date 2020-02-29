@@ -16,8 +16,9 @@
     <PackageReference Include="FluentAssertions" Version="5.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
-    <PackageReference Include="SpecFlow" Version="3.1.82" />
-    <PackageReference Include="SpecFlow.xUnit" Version="3.1.82" />
+    <PackageReference Include="SpecFlow" Version="3.1.86" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.86" />
+    <PackageReference Include="SpecFlow.xUnit" Version="3.1.86" />
     <PackageReference Include="WireMock.Net" Version="1.1.7" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -31,17 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Builders\" />
-    <Folder Include="Features\Assertions\" />
-    <Folder Include="Features\Actions\" />
-    <Folder Include="Features\Hooks\" />
-    <Folder Include="Features\Support\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Models\" />
   </ItemGroup>
 
 </Project>

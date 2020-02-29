@@ -2,6 +2,7 @@
 Feature: AClientRequestingMovieDetails
 
 	@TheMovieDatabase
+	@Ignore
 	Scenario: A client that is inquiring about movies
 		Given a client that is inquiring about The Avengers
 		And the video was release in 2012

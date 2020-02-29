@@ -26,23 +26,36 @@ namespace Grains.VideoApi
 
         public async Task<VideoDetails> GetVideoDetails(VideoRequest request)
         {
-            var results = await GetSearchResults(request.Type, request.Title, request.Year);
+            var results = GetSearchResults(request.Type, request.Title, request.Year);
+
+            var matchedResults = results.Where(w => w.Title == request.Title);
 
             return new VideoDetails();
         }
 
-        private async Task<IEnumerable<SearchResult>> GetSearchResults(MovieType type, string title, int? year)
+        private async IAsyncEnumerable<SearchResult> GetSearchResults(MovieType type, string title, int? year)
         {
+            IAsyncEnumerable<SearchResult> results;
             switch (type)
             {
-                case MovieType.Movie: return await _theMovieDatabaseRepository.SearchMovie(title, year);
-                case MovieType.TvSeries: return await _theMovieDatabaseRepository.SearchTvSeries(title, year);
+                case MovieType.Movie: 
+                    results = _theMovieDatabaseRepository.SearchMovie(title, year);
+                    break;
+                case MovieType.TvSeries: 
+                    results = _theMovieDatabaseRepository.SearchTvSeries(title, year);
+                    break;
                 default: 
-                    var tvResultsTask = _theMovieDatabaseRepository.SearchTvSeries(title, year);
-                    var movieResults = await _theMovieDatabaseRepository.SearchMovie(title, year);
+                    var tvResults = _theMovieDatabaseRepository.SearchTvSeries(title, year);
+                    var movieResults = _theMovieDatabaseRepository.SearchMovie(title, year);
+                    results = tvResults.Concat(movieResults);
+                    break;
 
-                    return movieResults.Concat(await tvResultsTask);                    
             };
+
+            await foreach(var result in results)
+            {
+                yield return result;
+            }
         }
 
     }

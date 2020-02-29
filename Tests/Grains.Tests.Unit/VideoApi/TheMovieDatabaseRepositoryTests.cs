@@ -7,10 +7,12 @@ using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Details;
 using Grains.VideoApi.Models.VideoApi.SerachResults;
 using Grains.VideoApi.tmdb;
+using GrainsInterfaces.Models.VideoApi;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -108,7 +110,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            await repository.SearchMovie("title", 2019);
+            var results = await repository.SearchMovie("title", 2019).FirstAsync();
 
             httpClientFunc().request.Headers
                 .Authorization
@@ -129,7 +131,8 @@ namespace Grains.Tests.Unit.VideoApi
                     {
                         Id = 24428,
                         Title = "The Avengers",
-                        ReleaseDate = new DateTime(2012, 4, 25)
+                        ReleaseDate = new DateTime(2012, 4, 25),
+                        Type = MovieType.Movie
                     }
                 }
             };
@@ -143,7 +146,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            var response = await repository.SearchMovie("title", 2019);
+            var response = await repository.SearchMovie("title", 2019).ToListAsync();
 
             response.Should()
                 .BeEquivalentTo(results.SearchResults);
@@ -162,7 +165,8 @@ namespace Grains.Tests.Unit.VideoApi
                     {
                         Id = 24428,
                         Title = "The Avengers",
-                        ReleaseDate = new DateTime(2012, 4, 25)
+                        ReleaseDate = new DateTime(2012, 4, 25),
+                        Type = MovieType.TvSeries
                     }
                 }
             };
@@ -176,7 +180,7 @@ namespace Grains.Tests.Unit.VideoApi
 
             var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-            var response = await repository.SearchTvSeries("title");
+            var response = await repository.SearchTvSeries("title").ToListAsync();
 
             response.Should()
                 .BeEquivalentTo(results.SearchResults);
@@ -483,8 +487,8 @@ namespace Grains.Tests.Unit.VideoApi
                 "TvSeriesDetail" => repository.GetTvSeriesDetail(videoId),
                 "TvEpisodeDetail" => repository.GetTvEpisodeDetail(videoId, 1, 2),
                 "TvEpisodeCredits" => repository.GetTvEpisodeCredit(videoId, 1, 2),
-                "MovieSearch" => repository.SearchMovie("Tron: Legacy", 2010),
-                "TvSearch" => repository.SearchTvSeries("Sons Of Anarchy", 2008),
+                "MovieSearch" => repository.SearchMovie("Tron: Legacy", 2010).FirstOrDefaultAsync().AsTask(),
+                "TvSearch" => repository.SearchTvSeries("Sons Of Anarchy", 2008).FirstOrDefaultAsync().AsTask(),
                 _ => Task.FromException(new ArgumentException($"Unknown operation {operation}"))
             };
 

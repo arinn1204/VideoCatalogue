@@ -77,7 +77,7 @@ namespace Grains.VideoApi
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
             var result = await ProcessResponse<SearchResultWrapper<SearchResult>>(response);
 
-            foreach (var searchResult in result.SearchResults)
+            foreach (var searchResult in (result.SearchResults ?? Enumerable.Empty<SearchResult>()))
             {
                 searchResult.Type = MovieType.Movie;
                 yield return searchResult;
@@ -89,7 +89,7 @@ namespace Grains.VideoApi
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.TvSeries);
             var result = await ProcessResponse<SearchResultWrapper<TvSearchResult>>(response);
 
-            foreach (var searchResult in result.SearchResults)
+            foreach (var searchResult in (result.SearchResults ?? Enumerable.Empty<TvSearchResult>()))
             {
                 searchResult.Type = MovieType.TvSeries;
                 yield return searchResult;

@@ -22,5 +22,11 @@ namespace Grains.Tests.Integration.Features.Builders
             _request.Title = title;
         }
 
+        [Given(@"the video was release in (\d{3,4})")]
+        public void GivenTheVideoWasReleasedInAYear(int year)
+        {
+            _request.Year = year;
+        }
+
     }
 }

@@ -1,4 +1,6 @@
-﻿using BoDi;
+﻿using AutoMapper;
+using BoDi;
+using Grains.VideoApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,6 +25,19 @@ namespace Grains.Tests.Integration.Features.Support
             services.AddSingleton<IConfiguration>(configuration);
 
             container.RegisterInstanceAs<IServiceCollection>(services);
+        }
+
+
+        [BeforeFeature(Order = 10001)]
+        public static void SetupAutoMapper(IObjectContainer container)
+        {
+            var service = container.Resolve<IServiceCollection>();
+            var mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.AddMaps(typeof(TheMovieDatabase).Assembly);
+            }));
+
+            service.AddSingleton<IMapper>(mapper);
         }
     }
 }

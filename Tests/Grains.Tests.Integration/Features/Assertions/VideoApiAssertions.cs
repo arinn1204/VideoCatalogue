@@ -10,9 +10,9 @@ namespace Grains.Tests.Integration.Features.Assertions
     [Binding]
     public class VideoApiAssertions
     {
-        private readonly VideoDetails _details;
+        private readonly VideoDetail _details;
 
-        public VideoApiAssertions(VideoDetails details)
+        public VideoApiAssertions(VideoDetail details)
         {
             _details = details;
         }
@@ -28,7 +28,7 @@ namespace Grains.Tests.Integration.Features.Assertions
             };
 
             _details.Should()
-                .BeEquivalentTo(new VideoDetails
+                .BeEquivalentTo(new VideoDetail
                 {
                     Title = title,
                     ImdbId = imdbId,

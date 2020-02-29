@@ -15,7 +15,7 @@ namespace Grains.Tests.Integration.Features.Support
     public class TheMovieDatabaseHooks
     {
         [BeforeScenario("@TheMovieDatabase", Order = 1)]
-        public static void SetupMovieDb(
+        public void SetupMovieDb(
             IServiceCollection serviceContainer)
         {
             serviceContainer.AddHttpClient("TheMovieDatabase");
@@ -27,10 +27,10 @@ namespace Grains.Tests.Integration.Features.Support
         }
 
         [BeforeScenario("@VideoApi")]
-        public static void SetupVideoApi(
-            IObjectContainer container,
-            IServiceCollection serviceContainer)
+        public void SetupVideoApi(
+            IObjectContainer container)
         {
+            var serviceContainer = container.Resolve<IServiceCollection>();
             serviceContainer.AddTransient<IVideoApi, TheMovieDatabase>();
 
             var services = serviceContainer.BuildServiceProvider();

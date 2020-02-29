@@ -17,7 +17,7 @@ namespace Grains.VideoApi.Models
         [JsonProperty]
         public DateTime ReleaseDate { get; set; }
 
-        [JsonProperty]
+        [JsonProperty("imdb_id")]
         public string ImdbId { get; set; }
 
         [JsonProperty]
@@ -25,5 +25,8 @@ namespace Grains.VideoApi.Models
 
         [JsonProperty]
         public IEnumerable<GenreDetail> Genres { get; set; }
+        
+        [JsonProperty]
+        public int Id { get; set; }
     }
 }

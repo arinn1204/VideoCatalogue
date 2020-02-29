@@ -1,4 +1,5 @@
-﻿using Grains.VideoApi.Interfaces.Repositories;
+﻿using AutoMapper;
+using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
 using GrainsInterfaces.Models.VideoApi;
 using GrainsInterfaces.VideoApi;
@@ -17,20 +18,49 @@ namespace Grains.VideoApi
     public class TheMovieDatabase : IVideoApi
     {
         private readonly ITheMovieDatabaseRepository _theMovieDatabaseRepository;
+        private readonly IMapper _mapper;
 
         public TheMovieDatabase(
-            ITheMovieDatabaseRepository theMovieDatabaseRepository)
+            ITheMovieDatabaseRepository theMovieDatabaseRepository,
+            IMapper mapper)
         {
             _theMovieDatabaseRepository = theMovieDatabaseRepository;
+            _mapper = mapper;
         }
 
-        public async Task<VideoDetails> GetVideoDetails(VideoRequest request)
+        public async Task<VideoDetail> GetVideoDetails(VideoRequest request)
         {
             var results = GetSearchResults(request.Type, request.Title, request.Year);
 
-            var matchedResults = results.Where(w => w.Title == request.Title);
+            var matchedResults = await results.Where(
+                w => w.Title == request.Title
+                && w.ReleaseDate.GetValueOrDefault().Year == request.Year.GetValueOrDefault())
+                .ToListAsync();
 
-            return new VideoDetails();
+            var match = matchedResults.Count > 1 
+                ? throw new Exception("Too many matches")
+                : matchedResults[0];
+
+            var details = default(VideoDetail);
+
+            if (match.Type == MovieType.Movie)
+            {
+                details = await GetDetailFromMovie(match);
+            }
+
+            return details;
+        }
+
+        private async Task<VideoDetail> GetDetailFromMovie(SearchResult match)
+        {
+            var movieDetails = _theMovieDatabaseRepository.GetMovieDetail(match.Id);
+            var movieCredits = _theMovieDatabaseRepository.GetMovieCredit(match.Id);
+            return _mapper.Map<VideoDetail>(await movieDetails, opts => opts.AfterMap(
+                async (_, dest) =>
+                {
+                    var videoDetail = dest as VideoDetail;
+                    videoDetail.Credits = _mapper.Map<Credit>(await movieCredits);
+                }));
         }
 
         private async IAsyncEnumerable<SearchResult> GetSearchResults(MovieType type, string title, int? year)

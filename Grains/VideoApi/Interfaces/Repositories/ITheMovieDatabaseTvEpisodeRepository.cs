@@ -12,6 +12,6 @@ namespace Grains.VideoApi.Interfaces.Repositories
         Task<TvCredit> GetTvEpisodeCredit(int tvId, int seasonNumber, int episodeNumber);
         Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber);
         Task<TvDetail> GetTvSeriesDetail(int tvId);
-        Task<IEnumerable<TvSearchResult>> SearchTvSeries(string title, int? year = null);
+        IAsyncEnumerable<TvSearchResult> SearchTvSeries(string title, int? year = null);
     }
 }

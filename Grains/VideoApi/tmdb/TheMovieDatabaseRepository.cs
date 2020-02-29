@@ -72,20 +72,28 @@ namespace Grains.VideoApi
             return await ProcessResponse<PersonDetail>(response);
         }
 
-        public async Task<IEnumerable<SearchResult>> SearchMovie(string title, int? year = null)
+        public async IAsyncEnumerable<SearchResult> SearchMovie(string title, int? year = null)
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.Movie);
             var result = await ProcessResponse<SearchResultWrapper<SearchResult>>(response);
 
-            return result.SearchResults;
+            foreach (var searchResult in result.SearchResults)
+            {
+                searchResult.Type = MovieType.Movie;
+                yield return searchResult;
+            }
         }
 
-        public async Task<IEnumerable<TvSearchResult>> SearchTvSeries(string title, int? year = null)
+        public async IAsyncEnumerable<TvSearchResult> SearchTvSeries(string title, int? year = null)
         {
             var response = await _searchRepository.Search(title, year, BuildBaseUri(), GetClient(), MovieType.TvSeries);
             var result = await ProcessResponse<SearchResultWrapper<TvSearchResult>>(response);
 
-            return result.SearchResults;
+            foreach (var searchResult in result.SearchResults)
+            {
+                searchResult.Type = MovieType.TvSeries;
+                yield return searchResult;
+            }
         }
 
         public async Task<TvDetail> GetTvEpisodeDetail(int tvId, int seasonNumber, int episodeNumber)

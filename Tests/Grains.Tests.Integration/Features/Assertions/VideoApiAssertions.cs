@@ -2,8 +2,6 @@
 using GrainsInterfaces.Models.VideoApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,14 +40,23 @@ namespace Grains.Tests.Integration.Features.Assertions
         private Credit GetCredits(string baseFileName)
         {
             var filename = $"{BuildFilePath(baseFileName)}.credits.json";
-            var fileCredits = 
+            var fileCredits =
                 JsonConvert.DeserializeObject<JObject>(File.ReadAllText(filename));
 
             return new Credit
             {
-                Cast = fileCredits["cast"]?.ToObject<Cast[]>(),
-                Crew = fileCredits["crew"]?.ToObject<Crew[]>(),
-                GuestStars = fileCredits["guest_stars"]?.ToObject<GuestStar[]>()
+                Cast = fileCredits["cast"]?.ToObject<Cast[]>(new JsonSerializer
+                {
+                    ContractResolver = new CreditResolver()
+                }),
+                Crew = fileCredits["crew"]?.ToObject<Crew[]>(new JsonSerializer
+                {
+                    ContractResolver = new CreditResolver()
+                }),
+                GuestStars = fileCredits["guest_stars"]?.ToObject<GuestStar[]>(new JsonSerializer
+                {
+                    ContractResolver = new CreditResolver()
+                })
             };
 
         }

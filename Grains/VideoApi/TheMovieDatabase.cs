@@ -54,12 +54,12 @@ namespace Grains.VideoApi
         private async Task<VideoDetail> GetDetailFromMovie(SearchResult match)
         {
             var movieDetails = _theMovieDatabaseRepository.GetMovieDetail(match.Id);
-            var movieCredits = _theMovieDatabaseRepository.GetMovieCredit(match.Id);
+            var movieCredits = await _theMovieDatabaseRepository.GetMovieCredit(match.Id);
             return _mapper.Map<VideoDetail>(await movieDetails, opts => opts.AfterMap(
-                async (_, dest) =>
+                (_, dest) =>
                 {
                     var videoDetail = dest as VideoDetail;
-                    var credits = _mapper.Map<Credit>(await movieCredits);
+                    var credits = _mapper.Map<Credit>(movieCredits);
                     videoDetail.Credits = credits;
                 }));
         }

@@ -59,7 +59,8 @@ namespace Grains.VideoApi
                 async (_, dest) =>
                 {
                     var videoDetail = dest as VideoDetail;
-                    videoDetail.Credits = _mapper.Map<Credit>(await movieCredits);
+                    var credits = _mapper.Map<Credit>(await movieCredits);
+                    videoDetail.Credits = credits;
                 }));
         }
 

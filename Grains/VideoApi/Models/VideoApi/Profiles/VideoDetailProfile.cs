@@ -15,8 +15,6 @@ namespace Grains.VideoApi.Models.VideoApi.Profiles
                 .ForMember(dest => dest.ImdbId, src => src.MapFrom(m => m.ImdbId))
                 .ForMember(dest => dest.Title, src => src.MapFrom(m => m.Title))
                 .ForMember(dest => dest.TmdbId, src => src.MapFrom(m => m.Id));
-
-            CreateMap<MovieCredit, Credit>();
         }
     }
 }

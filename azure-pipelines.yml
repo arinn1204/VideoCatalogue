@@ -50,4 +50,5 @@ stages:
         scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
         scriptArguments:
           -projectLocation $(Build.SourcesDirectory) `
-          -type Integration
+          -type Integration `
+          -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization)

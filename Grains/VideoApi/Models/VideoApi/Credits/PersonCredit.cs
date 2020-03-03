@@ -14,7 +14,7 @@ namespace Grains.VideoApi.Models
         [JsonProperty]
         public string Name { get; set; }
 
-        [JsonProperty("person_path")]
+        [JsonProperty("profile_path")]
         public string ProfilePath { get; set; }
         
         [JsonProperty("cast_id")]

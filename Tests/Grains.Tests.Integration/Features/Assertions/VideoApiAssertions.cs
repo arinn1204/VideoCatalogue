@@ -25,7 +25,7 @@ namespace Grains.Tests.Integration.Features.Assertions
             var baseFileName = GetFilename(title);
             var fileEncoding = Encoding.UTF8;
 
-            var (imdbId, tmdbId) = getIds(baseFileName, fileEncoding);
+            var (imdbId, tmdbId) = GetIds(baseFileName, fileEncoding);
             var credits = GetCredits(baseFileName, fileEncoding);
 
             _details.Should()
@@ -52,7 +52,7 @@ namespace Grains.Tests.Integration.Features.Assertions
                 });
         }
 
-        private (string imdbId, int tmdbId) getIds(string baseFileName, Encoding encoding)
+        private (string imdbId, int tmdbId) GetIds(string baseFileName, Encoding encoding)
         {
             var filename = $"{BuildFilePath(baseFileName)}.json";
             var fileData = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(filename, encoding));

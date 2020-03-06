@@ -40,7 +40,7 @@ namespace Grains.VideoApi
             var matchedResults = await results.Where(w =>
                 {
                     var titlesMatch = w.Title == request.Title;
-                    var yearsMatch = request.Year.HasValue ? w.ReleaseDate.Value.Year == request.Year.Value : true;
+                    var yearsMatch = request.Year.HasValue ? w.ReleaseDate.Year == request.Year.Value : true;
 
                     return titlesMatch && yearsMatch;
                 })

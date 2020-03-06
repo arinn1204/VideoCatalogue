@@ -16,7 +16,7 @@ namespace Grains.VideoApi.Models
         public virtual string Title { get; set; }
 
         [JsonProperty("release_date")]
-        public virtual DateTime? ReleaseDate { get; set; }
+        public virtual DateTime ReleaseDate { get; set; }
         public MovieType Type { get; set; }
     }
 }

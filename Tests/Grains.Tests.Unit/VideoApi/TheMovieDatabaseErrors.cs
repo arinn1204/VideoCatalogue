@@ -111,7 +111,6 @@ namespace Grains.Tests.Unit.VideoApi
                 .BeEquivalentTo(searchResults.ToEnumerable().Where(w => w.Title == request.Title));
         }
 
-
         [Fact]
         public void ShouldThrowExceptionWhenMatchedButVideoTypeIsUnsupported()
         {

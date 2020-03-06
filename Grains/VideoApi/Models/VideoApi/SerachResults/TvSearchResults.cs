@@ -8,7 +8,7 @@ namespace Grains.VideoApi.Models
     public class TvSearchResult : SearchResult
     {
         [JsonProperty("first_air_date")]
-        public override DateTime? ReleaseDate 
+        public override DateTime ReleaseDate 
         {
             get => base.ReleaseDate;
             set => base.ReleaseDate = value;

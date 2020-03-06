@@ -151,5 +151,17 @@ namespace Grains.Tests.Unit.VideoApi
                 .Should()
                 .BeEquivalentTo(searchResults.FirstAsync().Result);
         }
+
+        [Fact]
+        public void ShouldThrowExceptionWhenNoTitleIsEntered()
+        {
+            var movieDb = _fixture.Create<TheMovieDatabase>();
+
+            Func<Task> exception = async () => await movieDb.GetVideoDetails(new VideoRequest());
+
+            exception.Should()
+                .Throw<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'Title')");
+        }
     }
 }

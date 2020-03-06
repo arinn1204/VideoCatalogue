@@ -31,6 +31,10 @@ namespace Grains.VideoApi
 
         public async Task<VideoDetail> GetVideoDetails(VideoRequest request)
         {
+            _ = string.IsNullOrWhiteSpace(request.Title) 
+                ? throw new ArgumentNullException(nameof(request.Title)) 
+                : false;
+
             var results = _theMovieDatabaseRepository.SearchMovie(request.Title, request.Year);
 
             var matchedResults = await results.Where(w =>

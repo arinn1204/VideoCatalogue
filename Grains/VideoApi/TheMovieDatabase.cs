@@ -32,21 +32,23 @@ namespace Grains.VideoApi
         {
             var results = GetSearchResults(request.Type, request.Title, request.Year);
 
-            var matchedResults = await results.Where(
-                w => w.Title == request.Title
-                && w.ReleaseDate.GetValueOrDefault().Year == request.Year.GetValueOrDefault())
+            var matchedResults = await results.Where(w =>
+                {
+                    var titlesMatch = w.Title == request.Title;
+                    var yearsMatch = request.Year.HasValue ? w.ReleaseDate.Value.Year == request.Year.Value : true;
+
+                    return titlesMatch && yearsMatch;
+                })
                 .ToListAsync();
 
             var match = matchedResults.Count > 1 
                 ? throw new Exception("Too many matches")
                 : matchedResults[0];
 
-            var details = default(VideoDetail);
-
-            if (match.Type == MovieType.Movie)
-            {
-                details = await GetDetailFromMovie(match);
-            }
+            var details = match.Type switch {
+                MovieType.Movie => await GetDetailFromMovie(match),
+                _ => throw new Exception("Unknown video type.")
+            };
 
             return details;
         }
@@ -80,7 +82,6 @@ namespace Grains.VideoApi
                     var movieResults = _theMovieDatabaseRepository.SearchMovie(title, year);
                     results = tvResults.Concat(movieResults);
                     break;
-
             };
 
             await foreach(var result in results)

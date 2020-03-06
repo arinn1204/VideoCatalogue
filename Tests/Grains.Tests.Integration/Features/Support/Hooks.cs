@@ -13,7 +13,7 @@ namespace Grains.Tests.Integration.Features.Support
     [Binding]
     public static class Hooks
     {
-        [BeforeFeature]
+        [BeforeScenario(Order = 0)]
         public static void SetupMicrosoftDI(IObjectContainer container)
         {
             var services = new ServiceCollection();
@@ -28,7 +28,7 @@ namespace Grains.Tests.Integration.Features.Support
         }
 
 
-        [BeforeFeature(Order = 10001)]
+        [BeforeScenario(Order = 1)]
         public static void SetupAutoMapper(IObjectContainer container)
         {
             var service = container.Resolve<IServiceCollection>();
@@ -38,6 +38,12 @@ namespace Grains.Tests.Integration.Features.Support
             }));
 
             service.AddSingleton<IMapper>(mapper);
+        }
+
+        [AfterScenario(Order = 0)]
+        public static void ClearServiceCollection(IServiceCollection collection)
+        {
+            collection.Clear();
         }
     }
 }

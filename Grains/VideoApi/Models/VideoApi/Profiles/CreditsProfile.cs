@@ -11,13 +11,10 @@ namespace Grains.VideoApi.Models.VideoApi.Profiles
         public CreditsProfile()
         {
 
-            CreateMap<MovieCredit, Credit>()
-                .ForMember(dest => dest.Cast, src => src.MapFrom(m => m.Cast))
-                .ForMember(dest => dest.Crew, src => src.MapFrom(m => m.Crew));
-
+            CreateMap<MovieCredit, Credit>();
+            CreateMap<TvCredit, Credit>();
             CreateMap<CrewCredit, Crew>();
             CreateMap<CastCredit, Cast>();
-
             CreateMap<CastCredit, GuestStar>();
         }
     }

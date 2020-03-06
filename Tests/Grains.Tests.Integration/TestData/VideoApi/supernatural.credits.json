@@ -1,0 +1,142 @@
+﻿{
+  "air_date": "2005-10-04",
+  "crew": [
+    {
+      "id": 27548,
+      "credit_id": "52570eda19c295731c00c954",
+      "name": "Richard Hatem",
+      "department": "Writing",
+      "job": "Writer",
+      "gender": 2,
+      "profile_path": null
+    },
+    {
+      "id": 65408,
+      "credit_id": "52572c0019c295731c043cf4",
+      "name": "Robert Singer",
+      "department": "Directing",
+      "job": "Director",
+      "gender": 2,
+      "profile_path": null
+    }
+  ],
+  "episode_number": 4,
+  "guest_stars": [
+    {
+      "id": 109151,
+      "name": "Jaime Ray Newman",
+      "credit_id": "5741c024c3a3687b330008ad",
+      "character": "Amanda Walker",
+      "order": 502,
+      "gender": 1,
+      "profile_path": "/yyzX7ePrSRhm8TGamcNtv5DRgFW.jpg"
+    },
+    {
+      "id": 28004,
+      "name": "Brian Markinson",
+      "credit_id": "5741c03dc3a36840a5000342",
+      "character": "Jerry Panowski",
+      "order": 503,
+      "gender": 2,
+      "profile_path": "/26fa857UrEU4aCMHVQbpvNOGuKv.jpg"
+    },
+    {
+      "id": 20380,
+      "name": "Paul Jarrett",
+      "credit_id": "58b3ba2a92514177d101347c",
+      "character": "George Phelps",
+      "order": 534,
+      "gender": 2,
+      "profile_path": "/o3N4gV1baZ6fzh8aaCPB6wmFVyO.jpg"
+    },
+    {
+      "id": 119810,
+      "name": "Geoff Gustafson",
+      "credit_id": "58b3ba7392514177a4012661",
+      "character": "Lou",
+      "order": 535,
+      "gender": 2,
+      "profile_path": "/qBXeCtDRg8tM5Kj0v9zH0CMWmtx.jpg"
+    },
+    {
+      "id": 110525,
+      "name": "Kett Turton",
+      "credit_id": "59bbd3aec3a3680f2e00fff8",
+      "character": "Max Jaffe",
+      "order": 2168,
+      "gender": 2,
+      "profile_path": "/9yLyJ7ikd4RbHgljMrVJ8Pg53P1.jpg"
+    },
+    {
+      "id": 1237422,
+      "name": "Daryl Shuttleworth",
+      "credit_id": "59bbd3bec3a3680ec700fb35",
+      "character": "Chuck Lambert",
+      "order": 2169,
+      "gender": 2,
+      "profile_path": "/fIgWfFqpj9cJmEIHEils6l2yD0p.jpg"
+    },
+    {
+      "id": 158374,
+      "name": "Fred Henderson",
+      "credit_id": "59bbd3d8c3a3680efe011c81",
+      "character": "Homeland Security Man #2",
+      "order": 2170,
+      "gender": 2,
+      "profile_path": "/9UX7FuiU3n6V7MRsvuLIqxM0Den.jpg"
+    },
+    {
+      "id": 1888351,
+      "name": "Amanda Wood",
+      "credit_id": "59bbd45ac3a3680ef0010f72",
+      "character": "Flight Attendant",
+      "order": 2171,
+      "gender": 1,
+      "profile_path": null
+    },
+    {
+      "id": 65807,
+      "name": "Ingrid Tesch",
+      "credit_id": "59bbd48a92514132920103ea",
+      "character": "Bonnie Phelps",
+      "order": 2172,
+      "gender": 1,
+      "profile_path": "/qO8I8Xf0z9Vq21R0kvw7mDdRHSL.jpg"
+    },
+    {
+      "id": 1225906,
+      "name": "Kelly-Ruth Mercier",
+      "credit_id": "59bbd499c3a3680efe011d92",
+      "character": "Woman Passenger",
+      "order": 2173,
+      "gender": 1,
+      "profile_path": "/zQT43WeuFYinVkLyQXR0r8KEFb.jpg"
+    },
+    {
+      "id": 1888352,
+      "name": "Dana Pemberton",
+      "credit_id": "59bbd4a5c3a3680f2e010181",
+      "character": "Security Guard",
+      "order": 2174,
+      "gender": 0,
+      "profile_path": null
+    },
+    {
+      "id": 62172,
+      "name": "Benjamin Ayres",
+      "credit_id": "59bbd4b1925141327d0100ae",
+      "character": "Homeland Security Man #1",
+      "order": 2175,
+      "gender": 2,
+      "profile_path": "/tKLcJwDymBNHs7TP8QZDcuMidEF.jpg"
+    }
+  ],
+  "name": "Phantom Traveler",
+  "overview": "On TransNational flight 2485, a man possessed by the spirit of the  Phantom Traveler causes the plane to crash, leaving only five survivors  left alive. Sam and Dean must exorcise  the angry spirit before it attacks the survivors. The brothers realize  the only way to do that is to take the battle to the skies.",
+  "id": 162355,
+  "production_code": "2T6904",
+  "season_number": 1,
+  "still_path": "/wBYBulN95fJLOP5lixXoIMIE4F.jpg",
+  "vote_average": 7.846,
+  "vote_count": 13
+}

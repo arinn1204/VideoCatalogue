@@ -10,13 +10,13 @@ namespace Grains.VideoApi.Models
     public class SearchResult
     {
         [JsonProperty]
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
         [JsonProperty]
-        public string Title { get; set; }
+        public virtual string Title { get; set; }
 
         [JsonProperty("release_date")]
-        public DateTime? ReleaseDate { get; set; }
+        public virtual DateTime? ReleaseDate { get; set; }
         public MovieType Type { get; set; }
     }
 }

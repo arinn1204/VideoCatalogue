@@ -28,5 +28,13 @@ namespace Grains.Tests.Integration.Features.Builders
             _request.Year = year;
         }
 
+        [Given(@"the video was season (.*) episode (.*)")]
+        public void GivenTheVideoWasSeasonEpisode(int season, int episode)
+        {
+            _request.SeasonNumber = season;
+            _request.EpisodeNumber = episode;
+        }
+
+
     }
 }

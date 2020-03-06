@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
+using Grains.VideoApi.Models.VideoApi.Exceptions;
 using GrainsInterfaces.Models.VideoApi;
 using GrainsInterfaces.VideoApi;
 using Microsoft.Extensions.Configuration;
@@ -30,7 +31,7 @@ namespace Grains.VideoApi
 
         public async Task<VideoDetail> GetVideoDetails(VideoRequest request)
         {
-            var results = GetSearchResults(request.Type, request.Title, request.Year);
+            var results = _theMovieDatabaseRepository.SearchMovie(request.Title, request.Year);
 
             var matchedResults = await results.Where(w =>
                 {
@@ -41,13 +42,16 @@ namespace Grains.VideoApi
                 })
                 .ToListAsync();
 
-            var match = matchedResults.Count > 1 
-                ? throw new Exception("Too many matches")
-                : matchedResults[0];
+            var match = matchedResults.Count switch
+            {
+                0 => throw new VideoApiException($"No movies matched the requested video: `{request.Title}`", request),
+                1 => matchedResults.First(),
+                _ => throw new VideoApiException($"Too many movies were found that matched `{request.Title}` try to narrow down the search parameters.", matchedResults)
+            };
 
             var details = match.Type switch {
                 MovieType.Movie => await GetDetailFromMovie(match),
-                _ => throw new Exception("Unknown video type.")
+                _ => throw new VideoApiException($"Unsupported video type: `{match.Type}`", match)
             };
 
             return details;
@@ -65,30 +69,5 @@ namespace Grains.VideoApi
                     videoDetail.Credits = credits;
                 }));
         }
-
-        private async IAsyncEnumerable<SearchResult> GetSearchResults(MovieType type, string title, int? year)
-        {
-            IAsyncEnumerable<SearchResult> results;
-            switch (type)
-            {
-                case MovieType.Movie: 
-                    results = _theMovieDatabaseRepository.SearchMovie(title, year);
-                    break;
-                case MovieType.TvSeries: 
-                    results = _theMovieDatabaseRepository.SearchTvSeries(title, year);
-                    break;
-                default: 
-                    var tvResults = _theMovieDatabaseRepository.SearchTvSeries(title, year);
-                    var movieResults = _theMovieDatabaseRepository.SearchMovie(title, year);
-                    results = tvResults.Concat(movieResults);
-                    break;
-            };
-
-            await foreach(var result in results)
-            {
-                yield return result;
-            }
-        }
-
     }
 }

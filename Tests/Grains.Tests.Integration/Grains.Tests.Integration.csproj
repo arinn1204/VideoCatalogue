@@ -47,6 +47,12 @@
     <None Update="TestData\VideoApi\theAvengers.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\VideoSearcher\filesWithFeaturettes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\VideoSearcher\filesWithoutFeaturettes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

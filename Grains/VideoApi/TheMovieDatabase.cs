@@ -63,9 +63,9 @@ namespace Grains.VideoApi
 
         private async Task<VideoDetail> GetDetailFromMovie(SearchResult match)
         {
-            var movieDetails = _theMovieDatabaseRepository.GetMovieDetail(match.Id);
+            var movieDetailsTask = _theMovieDatabaseRepository.GetMovieDetail(match.Id);
             var movieCredits = await _theMovieDatabaseRepository.GetMovieCredit(match.Id);
-            return _mapper.Map<VideoDetail>(await movieDetails, opts => opts.AfterMap(
+            return _mapper.Map<VideoDetail>(await movieDetailsTask, opts => opts.AfterMap(
                 (_, dest) =>
                 {
                     var videoDetail = dest as VideoDetail;

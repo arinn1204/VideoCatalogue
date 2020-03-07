@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Grains.Tests.Integration.Features.Models.Resolvers;
 using GrainsInterfaces.Models.VideoApi;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,41 +26,49 @@ namespace Grains.Tests.Integration.Features.Assertions
             var baseFileName = GetFilename(title);
             var fileEncoding = Encoding.UTF8;
 
-            var (imdbId, tmdbId) = GetIds(baseFileName, fileEncoding);
+            var videoDetails = GetDetails(baseFileName, fileEncoding);
             var credits = GetCredits(baseFileName, fileEncoding);
 
             _details.Should()
                 .BeEquivalentTo(new VideoDetail
                 {
                     Title = title,
-                    ImdbId = imdbId,
-                    TmdbId = tmdbId,
-                    Credits = credits
+                    ImdbId = videoDetails.ImdbId,
+                    TmdbId = videoDetails.TmdbId,
+                    Credits = credits,
+                    Genres = videoDetails.Genres,
+                    Overview = videoDetails.Overview,
+                    ProductionCompanies = videoDetails.ProductionCompanies,
+                    ReleaseDate = videoDetails.ReleaseDate,
+                    Runtime = videoDetails.Runtime
                 });
         }
 
         private Credit GetCredits(string baseFileName, Encoding encoding)
         {
             var filename = $"{BuildFilePath(baseFileName)}.credits.json";
-            var fileBytes = File.ReadAllBytes(filename);
-            var fileContents = encoding.GetString(fileBytes);
+            var fileContents = File.ReadAllText(filename, encoding);
             return
                 JsonConvert.DeserializeObject<Credit>(
                     fileContents,
                     new JsonSerializerSettings
-                {
-                    ContractResolver = new CreditResolver()
-                });
+                    {
+                        ContractResolver = new CreditResolver()
+                    });
         }
 
-        private (string imdbId, int tmdbId) GetIds(string baseFileName, Encoding encoding)
+        private VideoDetail GetDetails(string baseFileName, Encoding encoding)
         {
             var filename = $"{BuildFilePath(baseFileName)}.json";
-            var fileData = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(filename, encoding));
+            var fileContents = File.ReadAllText(filename, encoding);
+            var fileData = JsonConvert.DeserializeObject<VideoDetail>(
+                fileContents,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new VideoDetailResolver()
+                });
 
-            return int.TryParse(fileData["id"].ToObject<string>(), out var tmdbId)
-                ? (fileData["imdb_id"].ToObject<string>(), tmdbId)
-                : (fileData["imdb_id"].ToObject<string>(), -1);
+            return fileData;
         }
 
         private string BuildFilePath(string baseFileName)

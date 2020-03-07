@@ -5,6 +5,7 @@ using FluentAssertions;
 using Grains.VideoApi;
 using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
+using Grains.VideoApi.Models.VideoApi.Details;
 using GrainsInterfaces.Models.VideoApi;
 using Moq;
 using System;
@@ -102,7 +103,17 @@ namespace Grains.Tests.Unit.VideoApi
                         Overview = "There once was a story about this overperson",
                         ReleaseDate = new DateTime(2020, 08, 18),
                         Runtime = 142.34m,
-                        Title = "title"
+                        Title = "title",
+                        ProductionCompanies = new[]
+                        {
+                            new ProductionCompanyDetail
+                            {
+                                Id = 1,
+                                LogoPath = "/logo",
+                                Name = "name",
+                                OriginCountry = "united_states"
+                            }
+                        }
                     };
 
                     return Task.Run(() => movieDetail);
@@ -118,6 +129,20 @@ namespace Grains.Tests.Unit.VideoApi
                     Title = "title",
                     ImdbId = "tt12343",
                     TmdbId = 1234,
+                    Genres = new[] { "The one and only" },
+                    ReleaseDate = new DateTime(2020, 08, 18),
+                    Runtime = 142.34M,
+                    Overview = "There once was a story about this overperson",
+                    ProductionCompanies = new[]
+                    {
+                        new ProductionCompany
+                        {
+                                Id = 1,
+                                LogoPath = "/logo",
+                                Name = "name",
+                                OriginCountry = "united_states"
+                        }
+                    },
                     Credits = new Credit
                     {
                         Cast = Enumerable.Empty<Cast>()

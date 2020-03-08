@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoSearcher
 {
-    public class FileFormatRepository
+    public class FileFormatRepository : IFileFormatRepository
     {
         private readonly IConfiguration _configuration;
 

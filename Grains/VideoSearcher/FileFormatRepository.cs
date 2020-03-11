@@ -34,14 +34,12 @@ namespace Grains.VideoSearcher
 
         private async IAsyncEnumerable<string> ExecuteCommand(string column)
         {
-            var reader = default(SqlDataReader);
-            var sqlConnection = default(SqlConnection);
-            var command = default(SqlCommand);
             var connectionString = _configuration.GetConnectionString("VideoSearcher");
-
-
             var commandText = $"SELECT {column} FROM video.acceptable_file_formats;";
 
+            SqlDataReader reader;
+            SqlConnection sqlConnection;
+            SqlCommand command;
             try
             {
                 sqlConnection = new SqlConnection(connectionString);

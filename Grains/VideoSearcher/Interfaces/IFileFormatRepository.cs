@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Grains.VideoSearcher
 {
     public interface IFileFormatRepository
     {
-        IAsyncEnumerable<string> GetAcceptableFileFormats();
+        IAsyncEnumerable<Regex> GetAcceptableFileFormats();
         IAsyncEnumerable<string> GetAllowedFileTypes();
     }
 }

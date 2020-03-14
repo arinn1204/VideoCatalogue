@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Grains.VideoSearcher
@@ -17,11 +18,11 @@ namespace Grains.VideoSearcher
             _configuration = configuration;
         }
 
-        public async IAsyncEnumerable<string> GetAcceptableFileFormats()
+        public async IAsyncEnumerable<Regex> GetAcceptableFileFormats()
         {
             await foreach (var format in ExecuteCommand("file_name_pattern"))
             {
-                yield return format;
+                yield return new Regex(format);
             };
         }
         public async IAsyncEnumerable<string> GetAllowedFileTypes()

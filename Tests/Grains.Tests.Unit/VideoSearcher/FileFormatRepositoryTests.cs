@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
+using System.Text.RegularExpressions;
 
 namespace Grains.Tests.Unit.VideoSearcher
 {
@@ -40,9 +41,12 @@ namespace Grains.Tests.Unit.VideoSearcher
             command.ExecuteNonQuery();
 
             var repository = _fixture.Create<FileFormatRepository>();
-            var pattern = await repository.GetAcceptableFileFormats().Take(1).FirstAsync();
+            var pattern = await repository.GetAcceptableFileFormats()
+                .Take(1)
+                .Select(s => s.ToString())
+                .FirstAsync();
 
-            pattern.Should().Be("(.*)");
+            pattern.Should().BeEquivalentTo("(.*)");
             command.Dispose();
         }
 
@@ -55,7 +59,9 @@ namespace Grains.Tests.Unit.VideoSearcher
             command.ExecuteNonQuery();
 
             var repository = _fixture.Create<FileFormatRepository>();
-            var pattern = await repository.GetAcceptableFileFormats().ToListAsync();
+            var pattern = await repository.GetAcceptableFileFormats()
+                .Select(s => s.ToString())
+                .ToListAsync();
 
             pattern.Should().BeEquivalentTo(
                 Enumerable.Empty<string>()

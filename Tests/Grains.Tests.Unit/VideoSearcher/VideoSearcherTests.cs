@@ -40,10 +40,13 @@ namespace Grains.Tests.Unit.VideoSearcher
             _fixture.Freeze<Mock<IFileFormatRepository>>()
                 .Setup(s => s.GetAcceptableFileFormats())
                 .Returns(AsyncEnumerable.Empty<Regex>().Append(new Regex(".*")));
+            _fixture.Freeze<Mock<IFileFormatRepository>>()
+                .Setup(s => s.GetFilteredKeywords())
+                .Returns(AsyncEnumerable.Empty<string>());
         }
 
         [Fact]
-        public void ShouldSearchFileSystemEntriesOnGivenPath()
+        public async Task ShouldSearchFileSystemEntriesOnGivenPath()
         {
             var calledPath = string.Empty;
             var fileSystem = _fixture.Freeze<Mock<IFileSystem>>();
@@ -60,7 +63,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 
             var searcher = _fixture.Create<VS.VideoSearcher>();
             
-            _ = searcher.Search("Y:").ToListAsync().Result;
+            await searcher.Search("Y:").ToListAsync();
 
             calledPath.Should()
                 .Be("Y:");
@@ -99,7 +102,9 @@ namespace Grains.Tests.Unit.VideoSearcher
             var searcher = _fixture.Create<VS.VideoSearcher>();
             var files = await searcher.Search("Y:").ToListAsync();
 
-            files.Should()
+            files
+                .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+                .Should()
                 .BeEquivalentTo(
                 new[]
                 {
@@ -140,7 +145,9 @@ namespace Grains.Tests.Unit.VideoSearcher
             var searcher = _fixture.Create<VS.VideoSearcher>();
             var files = await searcher.Search("Y:").ToListAsync();
 
-            files.Should()
+            files
+                .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+                .Should()
                 .BeEquivalentTo(
                 new[]
                 {
@@ -184,7 +191,9 @@ namespace Grains.Tests.Unit.VideoSearcher
             var searcher = _fixture.Create<VS.VideoSearcher>();
             var files = await searcher.Search("Y:").ToListAsync();
 
-            files.Should()
+            files
+                .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+                .Should()
                 .BeEquivalentTo(
                 new[]
                 {
@@ -228,11 +237,107 @@ namespace Grains.Tests.Unit.VideoSearcher
             var searcher = _fixture.Create<VS.VideoSearcher>();
             var files = await searcher.Search("Y:").ToListAsync();
 
-            files.Should()
+            files
+                .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+                .Should()
                 .BeEquivalentTo(
                 new[]
                 {
                     godFather
+                });
+        }
+
+        [Fact]
+        public async Task ShouldRemovedFilteredKeywords()
+        {
+            _fixture.Freeze<Mock<IFileFormatRepository>>()
+                .Setup(s => s.GetFilteredKeywords())
+                .Returns(AsyncEnumerable.Empty<string>().Append("bluray"));
+            var fileSystem = _fixture.Freeze<Mock<IFileSystem>>();
+            var godFather = Path.Combine(".", @"The Godfather Part II (1974) (1080p BluRay x265 afm72).mkv");
+            var civilWar = Path.Combine(".", @"Captain America - Civil War (2016) (2160p BluRay x265 HEVC 10bit HDR AAC 7.1 Tigole)");
+            var expectedCivilWar = Path.Combine(civilWar, "Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
+
+            var directory = new Mock<IDirectory>();
+            directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>())).Returns<string>(path =>
+            {
+                return path == "Y:"
+                    ? new[] { godFather, civilWar }
+                    : new[] { expectedCivilWar };
+            });
+
+            directory.Setup(s => s.GetFiles(civilWar))
+                .Returns(new[] { expectedCivilWar });
+            fileSystem.Setup(s => s.Directory).Returns(directory.Object);
+
+            var file = new Mock<IFile>();
+            file.Setup(s => s.Exists(
+                It.Is<string>(
+                    item =>
+                        item == godFather || item == expectedCivilWar)))
+                .Returns(true);
+
+            fileSystem.Setup(s => s.File)
+                .Returns(file.Object);
+
+            var searcher = _fixture.Create<VS.VideoSearcher>();
+            var files = await searcher.Search("Y:").ToListAsync();
+
+            files
+                .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+                .Should()
+                .BeEquivalentTo(
+                new[]
+                {
+                    godFather.Replace("bluray", "", StringComparison.OrdinalIgnoreCase).Replace("  ", " ", StringComparison.OrdinalIgnoreCase),
+                    expectedCivilWar.Replace("bluray", "", StringComparison.OrdinalIgnoreCase).Replace("  ", " ", StringComparison.OrdinalIgnoreCase)
+                });
+        }
+
+        [Fact]
+        public async Task ShouldPreserveOriginalFileName()
+        {
+            _fixture.Freeze<Mock<IFileFormatRepository>>()
+                .Setup(s => s.GetFilteredKeywords())
+                .Returns(AsyncEnumerable.Empty<string>().Append("bluray"));
+            var fileSystem = _fixture.Freeze<Mock<IFileSystem>>();
+            var godFather = Path.Combine(".", @"The Godfather Part II (1974) (1080p BluRay x265 afm72).mkv");
+            var civilWar = Path.Combine(".", @"Captain America - Civil War (2016) (2160p BluRay x265 HEVC 10bit HDR AAC 7.1 Tigole)");
+            var expectedCivilWar = Path.Combine(civilWar, "Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
+
+            var directory = new Mock<IDirectory>();
+            directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>())).Returns<string>(path =>
+            {
+                return path == "Y:"
+                    ? new[] { godFather, civilWar }
+                    : new[] { expectedCivilWar };
+            });
+
+            directory.Setup(s => s.GetFiles(civilWar))
+                .Returns(new[] { expectedCivilWar });
+            fileSystem.Setup(s => s.Directory).Returns(directory.Object);
+
+            var file = new Mock<IFile>();
+            file.Setup(s => s.Exists(
+                It.Is<string>(
+                    item =>
+                        item == godFather || item == expectedCivilWar)))
+                .Returns(true);
+
+            fileSystem.Setup(s => s.File)
+                .Returns(file.Object);
+
+            var searcher = _fixture.Create<VS.VideoSearcher>();
+            var files = await searcher.Search("Y:").ToListAsync();
+
+            files
+                .Select(s => Path.Combine(s.OriginalDirectory, s.OriginalFile))
+                .Should()
+                .BeEquivalentTo(
+                new[]
+                {
+                    godFather,
+                    expectedCivilWar
                 });
         }
     }

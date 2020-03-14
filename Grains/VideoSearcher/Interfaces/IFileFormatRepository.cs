@@ -7,5 +7,6 @@ namespace Grains.VideoSearcher
     {
         IAsyncEnumerable<Regex> GetAcceptableFileFormats();
         IAsyncEnumerable<string> GetAllowedFileTypes();
+        IAsyncEnumerable<string> GetFilteredKeywords();
     }
 }

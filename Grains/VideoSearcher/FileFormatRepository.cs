@@ -33,6 +33,11 @@ namespace Grains.VideoSearcher
             };
         }
 
+        public IAsyncEnumerable<string> GetFilteredKeywords()
+        {
+            throw new NotImplementedException();
+        }
+
         private async IAsyncEnumerable<string> ExecuteCommand(string column)
         {
             var connectionString = _configuration.GetConnectionString("VideoSearcher");

@@ -20,13 +20,24 @@ namespace Grains.VideoSearcher
 
         public async IAsyncEnumerable<FileFormat> GetAcceptableFileFormats()
         {
-            await foreach (var format in ExecuteCommand("file_name_pattern"))
+            await foreach (var format in ExecuteCommand("file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group"))
             {
-                var pattern = new Regex(format.First() as string);
+                var results = format.ToArray();
+                var pattern = new Regex(results[0] as string);
+                var titleGroup = (int)results[1];
+                var yearGroup = results[2] as int?;
+                var seasonGroup = results[3] as int?;
+                var episodeGroup = results[4] as int?;
+                var containerGroup = (int)results[5];
 
                 yield return new FileFormat
                 {
-                    Pattern = pattern
+                    Pattern = pattern,
+                    ContainerGroup = containerGroup,
+                    EpisodeGroup = episodeGroup,
+                    SeasonGroup = seasonGroup,
+                    TitleGroup = titleGroup,
+                    YearGroup   = yearGroup
                 };
             };
         }
@@ -46,7 +57,7 @@ namespace Grains.VideoSearcher
         private async IAsyncEnumerable<IEnumerable<object>> ExecuteCommand(params string[] columns)
         {
             var connectionString = _configuration.GetConnectionString("VideoSearcher");
-            var commandText = $"SELECT {columns.Aggregate((acc, cur) => acc + "," + cur).Trim(',')} FROM video.acceptable_file_formats;";
+            var commandText = $"SELECT {string.Join(',', columns)} FROM video.acceptable_file_formats;";
 
             SqlDataReader reader;
             SqlConnection sqlConnection;

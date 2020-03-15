@@ -28,9 +28,9 @@ namespace Grains.Tests.Unit.VideoSearcher
         [Fact]
         public async Task ShouldRetrieveFirstAcceptableFilePattern()
         {
-            var command = _databaseFixture.AddAcceptableFileFormat("file_name_pattern", "(.*)");
+            var command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { "(.*)", 0, 0, 0, 0, 0 });
             command.ExecuteNonQuery();
-            command = _databaseFixture.AddAcceptableFileFormat("file_name_pattern", @"(.*) [sS]\d{1,2}[eE]\d{1,2}");
+            command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { @"(.*) [sS]\d{1,2}[eE]\d{1,2}", 0, 0, 0, 0, 0 });
             command.ExecuteNonQuery();
 
             var repository = _fixture.Create<FileFormatRepository>();
@@ -46,29 +46,48 @@ namespace Grains.Tests.Unit.VideoSearcher
         [Fact]
         public async Task ShouldRetrieveAllAcceptableFilePatterns()
         {
-            var command = _databaseFixture.AddAcceptableFileFormat("file_name_pattern", "(.*)");
+            var command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { "(.*)", 0, null, null, null, 0 });
             command.ExecuteNonQuery();
-            command = _databaseFixture.AddAcceptableFileFormat("file_name_pattern", @"(.*) [sS]\d{1,2}[eE]\d{1,2}");
+            command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { @"(.*) [sS]\d{1,2}[eE]\d{1,2}", 0, 0, 0, 0, 0 });
             command.ExecuteNonQuery();
 
             var repository = _fixture.Create<FileFormatRepository>();
             var pattern = await repository.GetAcceptableFileFormats()
-                .Select(s => s.Pattern.ToString())
                 .ToListAsync();
 
-            pattern.Should().BeEquivalentTo(
-                Enumerable.Empty<string>()
-                               .Append(@"(.*)")
-                               .Append(@"(.*) [sS]\d{1,2}[eE]\d{1,2}"));
+            pattern.Should().BeEquivalentTo(new[]
+            {
+                new FileFormat
+                {
+                    TitleGroup = 0,
+                    YearGroup = null,
+                    SeasonGroup = null,
+                    EpisodeGroup = null,
+                    ContainerGroup = 0
+                },
+                new FileFormat
+                {
+                    TitleGroup = 0,
+                    YearGroup = 0,
+                    SeasonGroup = 0,
+                    EpisodeGroup = 0,
+                    ContainerGroup = 0
+                }
+            }, opts => opts.Excluding(e => e.Pattern));
+
+            pattern
+                .Select(s => s.Pattern.ToString())
+                .Should()
+                .BeEquivalentTo(new[] { "(.*)", @"(.*) [sS]\d{1,2}[eE]\d{1,2}" });
             command.Dispose();
         }
 
         [Fact]
         public async Task ShouldRetrieveAllAcceptableFileTypes()
         {
-            var command = _databaseFixture.AddAcceptableFileFormat("file_type", "mkv");
+            var command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_type" }, new[] { "mkv" });
             command.ExecuteNonQuery();
-            command = _databaseFixture.AddAcceptableFileFormat("file_type", "avi");
+            command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_type" }, new[] { "avi" });
             command.ExecuteNonQuery();
 
             var repository = _fixture.Create<FileFormatRepository>();

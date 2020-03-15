@@ -5,7 +5,7 @@ namespace Grains.VideoSearcher
 {
     public interface IFileFormatRepository
     {
-        IAsyncEnumerable<Regex> GetAcceptableFileFormats();
+        IAsyncEnumerable<FileFormat> GetAcceptableFileFormats();
         IAsyncEnumerable<string> GetAllowedFileTypes();
         IAsyncEnumerable<string> GetFilteredKeywords();
     }

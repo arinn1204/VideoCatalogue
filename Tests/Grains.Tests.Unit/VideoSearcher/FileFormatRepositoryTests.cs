@@ -3,16 +3,9 @@ using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Tests.Unit.Fixtures;
 using Grains.VideoSearcher;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
-using System.Text.RegularExpressions;
 
 namespace Grains.Tests.Unit.VideoSearcher
 {
@@ -43,7 +36,7 @@ namespace Grains.Tests.Unit.VideoSearcher
             var repository = _fixture.Create<FileFormatRepository>();
             var pattern = await repository.GetAcceptableFileFormats()
                 .Take(1)
-                .Select(s => s.ToString())
+                .Select(s => s.Pattern.ToString())
                 .FirstAsync();
 
             pattern.Should().BeEquivalentTo("(.*)");
@@ -60,7 +53,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 
             var repository = _fixture.Create<FileFormatRepository>();
             var pattern = await repository.GetAcceptableFileFormats()
-                .Select(s => s.ToString())
+                .Select(s => s.Pattern.ToString())
                 .ToListAsync();
 
             pattern.Should().BeEquivalentTo(

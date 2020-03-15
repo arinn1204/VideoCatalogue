@@ -18,18 +18,23 @@ namespace Grains.VideoSearcher
             _configuration = configuration;
         }
 
-        public async IAsyncEnumerable<Regex> GetAcceptableFileFormats()
+        public async IAsyncEnumerable<FileFormat> GetAcceptableFileFormats()
         {
             await foreach (var format in ExecuteCommand("file_name_pattern"))
             {
-                yield return new Regex(format);
+                var pattern = new Regex(format.First() as string);
+
+                yield return new FileFormat
+                {
+                    Pattern = pattern
+                };
             };
         }
         public async IAsyncEnumerable<string> GetAllowedFileTypes()
         {
             await foreach (var format in ExecuteCommand("file_type"))
             {
-                yield return format;
+                yield return format.First() as string;
             };
         }
 
@@ -38,10 +43,10 @@ namespace Grains.VideoSearcher
             throw new NotImplementedException();
         }
 
-        private async IAsyncEnumerable<string> ExecuteCommand(string column)
+        private async IAsyncEnumerable<IEnumerable<object>> ExecuteCommand(params string[] columns)
         {
             var connectionString = _configuration.GetConnectionString("VideoSearcher");
-            var commandText = $"SELECT {column} FROM video.acceptable_file_formats;";
+            var commandText = $"SELECT {columns.Aggregate((acc, cur) => acc + "," + cur).Trim(',')} FROM video.acceptable_file_formats;";
 
             SqlDataReader reader;
             SqlConnection sqlConnection;
@@ -61,7 +66,12 @@ namespace Grains.VideoSearcher
 
             while (reader != null && reader.Read())
             {
-                yield return reader.GetString(0);
+                var items = Enumerable.Empty<object>();
+                for(var i = 0; i < columns.Length; i++)
+                {
+                    items = items.Append(reader.GetValue(i));
+                }
+                yield return items;
             }
 
             var disposeTasks = AsyncEnumerable.Empty<ValueTask>();

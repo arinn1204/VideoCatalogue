@@ -15,16 +15,13 @@ namespace Grains.VideoSearcher
     public class VideoSearcher
     {
         private readonly IFileFormatRepository _fileFormatRepository;
-        private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
 
         public VideoSearcher(
             IFileFormatRepository fileFormatRepository,
-            IConfiguration configuration,
             IFileSystem fileSystem)
         {
             _fileFormatRepository = fileFormatRepository;
-            _configuration = configuration;
             _fileSystem = fileSystem;
         }
 
@@ -33,20 +30,44 @@ namespace Grains.VideoSearcher
             var fileFormats = _fileFormatRepository.GetAcceptableFileFormats();
             var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
             var files = GetFiles(path, _fileFormatRepository.GetFilteredKeywords())
-                .WhereAwait(async w => await IsAcceptableFile(w.newFileName, fileTypes, fileFormats));
+                .WhereAwait(async w 
+                    => await IsAcceptableFile(w.newFileName, fileTypes, fileFormats.Select(s => s.Patterns)));
             
-            await foreach(var (originalFileName, newFileName) in files)
+            await foreach(var (originalFilePath, newFilePath) in files)
             {
-                var match = await fileFormats.Where(s => s.IsMatch(newFileName))
-                    .Select(s => s.Match(newFileName))
-                    .SingleAsync();
+                var newFile = Path.GetFileName(newFilePath);
+                var format = await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(newFile)));
+                var match = format.Patterns.First().Match(newFile);
+
+                var groups = match.Groups;
+
+                var year = format.YearGroup.HasValue && int.TryParse(groups[format.YearGroup.Value].Value, out var parsedYear)
+                    ? parsedYear
+                    : null as int?;
+
+                var seasonNumber = 
+                    format.SeasonGroup.HasValue
+                        && int.TryParse(groups[format.SeasonGroup.Value].Value, out var parsedseasonNumber)
+                    ? parsedseasonNumber
+                    : null as int?;
+
+                var episodeNumber =
+                    format.EpisodeGroup.HasValue
+                        && int.TryParse(groups[format.EpisodeGroup.Value].Value, out var parsedepisodeNumber)
+                    ? parsedepisodeNumber
+                    : null as int?;
 
                 yield return new VideoSearchResults
                 {
-                    OriginalFile = Path.GetFileName(originalFileName),
-                    OriginalDirectory = Path.GetDirectoryName(originalFileName),
-                    NewFile = Path.GetFileName(newFileName),
-                    NewDirectory = Path.GetDirectoryName(newFileName)
+                    OriginalFile = Path.GetFileName(originalFilePath),
+                    OriginalDirectory = Path.GetDirectoryName(originalFilePath),
+                    NewFile = Path.GetFileName(newFilePath),
+                    NewDirectory = Path.GetDirectoryName(newFilePath),
+                    Title = groups[format.TitleGroup].Value.Trim(),
+                    Year = year,
+                    ContainerType = groups[format.ContainerGroup].Value.Trim(),
+                    SeasonNumber = seasonNumber,
+                    EpisodeNumber = episodeNumber
                 };
             }
         }
@@ -86,10 +107,11 @@ namespace Grains.VideoSearcher
         private async ValueTask<bool> IsAcceptableFile(
             string file,
             IAsyncEnumerable<string> acceptableFileTypes,
-            IAsyncEnumerable<Regex> acceptableFileFormats)
+            IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
         {
             var hasFileType = await acceptableFileTypes.AnyAsync(fileType => file.EndsWith(fileType, StringComparison.OrdinalIgnoreCase));
-            var matchesOnlyOneAcceptableFilePattern = await acceptableFileFormats.CountAsync(c => c.IsMatch(file)) == 1;
+            var matchesOnlyOneAcceptableFilePattern = await acceptableFileFormats.CountAsync(
+                acceptableFormat => acceptableFormat.All(a => a.IsMatch(file))) == 1;
             
             return hasFileType
                         && matchesOnlyOneAcceptableFilePattern;

@@ -1,10 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Grains.VideoSearcher
 {
     public class FileFormat
     {
-        public Regex Pattern { get; set; }
+        public IEnumerable<Regex> Patterns { get; set; }
         public int TitleGroup { get; set; }
         public int? YearGroup { get; set; }
         public int? SeasonGroup { get; set; }

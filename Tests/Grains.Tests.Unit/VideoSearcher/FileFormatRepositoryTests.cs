@@ -26,20 +26,18 @@ namespace Grains.Tests.Unit.VideoSearcher
         }
 
         [Fact]
-        public async Task ShouldRetrieveFirstAcceptableFilePattern()
+        public async Task ShouldProperlySplitTheIncomingRegex()
         {
-            var command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { "(.*)", 0, 0, 0, 0, 0 });
-            command.ExecuteNonQuery();
-            command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { @"(.*) [sS]\d{1,2}[eE]\d{1,2}", 0, 0, 0, 0, 0 });
+            var command = _databaseFixture.AddAcceptableFileFormat(new[] { "file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group" }, new object[] { @"(.*)&FILTER&[sS](\d{1,2})", 0, 0, 0, 0, 0 });
             command.ExecuteNonQuery();
 
             var repository = _fixture.Create<FileFormatRepository>();
             var pattern = await repository.GetAcceptableFileFormats()
-                .Take(1)
-                .Select(s => s.Pattern.ToString())
+                .Select(s => s.Patterns
+                              .Aggregate(string.Empty, (acc, cur) => $"{ (string.IsNullOrWhiteSpace(acc) ? string.Empty : acc + ' ') }{cur.ToString()}"))
                 .FirstAsync();
 
-            pattern.Should().BeEquivalentTo("(.*)");
+            pattern.Should().BeEquivalentTo(@"(.*) [sS](\d{1,2})");
             command.Dispose();
         }
 
@@ -73,10 +71,10 @@ namespace Grains.Tests.Unit.VideoSearcher
                     EpisodeGroup = 0,
                     ContainerGroup = 0
                 }
-            }, opts => opts.Excluding(e => e.Pattern));
+            }, opts => opts.Excluding(e => e.Patterns));
 
             pattern
-                .Select(s => s.Pattern.ToString())
+                .Select(s => s.Patterns.First().ToString())
                 .Should()
                 .BeEquivalentTo(new[] { "(.*)", @"(.*) [sS]\d{1,2}[eE]\d{1,2}" });
             command.Dispose();

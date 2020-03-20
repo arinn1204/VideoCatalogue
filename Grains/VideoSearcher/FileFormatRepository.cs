@@ -11,6 +11,9 @@ namespace Grains.VideoSearcher
 {
     public class FileFormatRepository : IFileFormatRepository
     {
+        //All additional regexes after this will be treated as individual filters.
+        //All regexes must be successful in order for the first one, the match, to match a title.
+        private const string FilterKey = "&FILTER&";
         private readonly IConfiguration _configuration;
 
         public FileFormatRepository(IConfiguration configuration)
@@ -23,7 +26,7 @@ namespace Grains.VideoSearcher
             await foreach (var format in ExecuteCommand("file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group"))
             {
                 var results = format.ToArray();
-                var pattern = new Regex(results[0] as string);
+                var patterns = results[0] as string;
                 var titleGroup = (int)results[1];
                 var yearGroup = results[2] as int?;
                 var seasonGroup = results[3] as int?;
@@ -32,7 +35,7 @@ namespace Grains.VideoSearcher
 
                 yield return new FileFormat
                 {
-                    Pattern = pattern,
+                    Patterns = patterns.Split(FilterKey).Select(s => new Regex(s)),
                     ContainerGroup = containerGroup,
                     EpisodeGroup = episodeGroup,
                     SeasonGroup = seasonGroup,

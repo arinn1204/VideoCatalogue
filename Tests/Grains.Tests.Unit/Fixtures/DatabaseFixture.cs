@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -33,11 +34,46 @@ namespace Grains.Tests.Unit.Fixtures
             _connection.Dispose();
         }
 
-        public SqlCommand AddAcceptableFileFormat(string column, string value)
+        public SqlCommand AddAcceptableFileFormat(IEnumerable<string> columns, IEnumerable<object> values)
         {
-            var commandText = $"INSERT INTO video.acceptable_file_formats({column}, created, created_by) VALUES('{value}', '{DateTime.Now}', '{nameof(DatabaseFixture)}')";
+            var indexedColumns = columns.Select((columnName, columnIndex) => (columnName, columnIndex));
+            var indexedValues = values.Select((columnValue, valueIndex) => (columnValue, valueIndex));
 
-            return new SqlCommand(commandText, _connection);
+            var pairedValues = indexedColumns.Join<(string, int),(object, int), int, (string, object)>(
+                indexedValues,
+                left => left.Item2,
+                right => right.Item2,
+                (left, right) =>
+                {
+                    return ($"@{left.Item1.ToUpperInvariant()}", right.Item1 ?? DBNull.Value);
+                }
+            );
+
+            var adjustedColumns = string.Join(',', columns);
+            var adjustedValues = $"@{string.Join(", @", columns.Select(s => s.ToUpperInvariant()))}";
+
+            var commandText = $"INSERT INTO video.acceptable_file_formats({adjustedColumns}, created, created_by) VALUES({adjustedValues}, '{DateTime.Now}', '{nameof(DatabaseFixture)}')";
+
+            var command = new SqlCommand(commandText, _connection);
+
+            foreach (var (parameterName, value) in pairedValues)
+            {
+                var type = value switch
+                {
+                    int _ => SqlDbType.Int,
+                    DateTime _ => SqlDbType.DateTime,
+                    _ => SqlDbType.VarChar
+                };
+                
+
+                var parameter = new SqlParameter(parameterName, type)
+                {
+                    Value = value
+                };
+                command.Parameters.Add(parameter);
+            }
+
+            return command;
         }
 
         public void ResetTables()

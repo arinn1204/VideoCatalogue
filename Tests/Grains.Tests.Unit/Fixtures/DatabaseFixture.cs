@@ -30,6 +30,7 @@ namespace Grains.Tests.Unit.Fixtures
 
         public void Dispose()
         {
+            ResetTables();
             _connection.Close();
             _connection.Dispose();
         }

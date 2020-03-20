@@ -41,10 +41,10 @@ stages:
         scriptArguments:
           -projectLocation $(Build.SourcesDirectory) `
           -type Unit `
-          -dbCatalog $(db_catalog) `
+          -dbCatalog $(testCatalog) `
           -dbUsername $(db_username) `
           -dbPassword $(db_password) `
-          -dbSource $(testCatalog) `
+          -dbSource $(db_source) `
           -useEnvironmentConnectionString true
   - job: IntegrationTests
     steps:

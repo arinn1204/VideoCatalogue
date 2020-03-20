@@ -34,7 +34,10 @@ namespace Grains.Tests.Unit.Fixtures
             _connection.Dispose();
         }
 
-        public SqlCommand AddAcceptableFileFormat(IEnumerable<string> columns, IEnumerable<object> values)
+        public SqlCommand AddAcceptableFileFormat(
+            string table,
+            IEnumerable<string> columns,
+            IEnumerable<object> values)
         {
             var indexedColumns = columns.Select((columnName, columnIndex) => (columnName, columnIndex));
             var indexedValues = values.Select((columnValue, valueIndex) => (columnValue, valueIndex));
@@ -52,7 +55,7 @@ namespace Grains.Tests.Unit.Fixtures
             var adjustedColumns = string.Join(',', columns);
             var adjustedValues = $"@{string.Join(", @", columns.Select(s => s.ToUpperInvariant()))}";
 
-            var commandText = $"INSERT INTO video.acceptable_file_formats({adjustedColumns}, created, created_by) VALUES({adjustedValues}, '{DateTime.Now}', '{nameof(DatabaseFixture)}')";
+            var commandText = $"INSERT INTO {table}({adjustedColumns}, created_time, created_by) VALUES({adjustedValues}, '{DateTime.Now}', '{nameof(DatabaseFixture)}')";
 
             var command = new SqlCommand(commandText, _connection);
 
@@ -78,8 +81,13 @@ namespace Grains.Tests.Unit.Fixtures
 
         public void ResetTables()
         {
-            using var command = new SqlCommand($"DELETE FROM video.acceptable_file_formats WHERE created_by = '{nameof(DatabaseFixture)}'", _connection);
-            command.ExecuteNonQuery();
+            var tables = new[] { "video_file.file_patterns", "video_file.file_types", "video_file.filtered_keywords" };
+
+            foreach(var table in tables)
+            {
+                using var command = new SqlCommand($"DELETE FROM {table} WHERE created_by = '{nameof(DatabaseFixture)}'", _connection);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

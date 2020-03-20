@@ -23,7 +23,14 @@ namespace Grains.VideoSearcher
 
         public async IAsyncEnumerable<FileFormat> GetAcceptableFileFormats()
         {
-            await foreach (var format in ExecuteCommand("file_name_pattern", "title_group", "year_group", "season_group", "episode_group", "container_group"))
+            await foreach (var format in ExecuteCommand(
+                "video_file.file_patterns",
+                "file_name_pattern",
+                "title_group",
+                "year_group",
+                "season_group",
+                "episode_group",
+                "container_group"))
             {
                 var results = format.ToArray();
                 var patterns = results[0] as string;
@@ -46,21 +53,28 @@ namespace Grains.VideoSearcher
         }
         public async IAsyncEnumerable<string> GetAllowedFileTypes()
         {
-            await foreach (var format in ExecuteCommand("file_type"))
+            await foreach (var format in ExecuteCommand(
+                "video_file.file_types",
+                "file_type"))
             {
                 yield return format.First() as string;
             };
         }
 
-        public IAsyncEnumerable<string> GetFilteredKeywords()
+        public async IAsyncEnumerable<string> GetFilteredKeywords()
         {
-            throw new NotImplementedException();
+            await foreach (var format in ExecuteCommand(
+                "video_file.filtered_keywords",
+                "file_type"))
+            {
+                yield return format.First() as string;
+            };
         }
 
-        private async IAsyncEnumerable<IEnumerable<object>> ExecuteCommand(params string[] columns)
+        private async IAsyncEnumerable<IEnumerable<object>> ExecuteCommand(string table, params string[] columns)
         {
             var connectionString = _configuration.GetConnectionString("VideoSearcher");
-            var commandText = $"SELECT {string.Join(',', columns)} FROM video.acceptable_file_formats;";
+            var commandText = $"SELECT {string.Join(',', columns)} FROM {table};";
 
             SqlDataReader reader;
             SqlConnection sqlConnection;

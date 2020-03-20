@@ -31,8 +31,9 @@ namespace Grains.VideoSearcher
             var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
             var files = GetFiles(path, _fileFormatRepository.GetFilteredKeywords())
                 .WhereAwait(async w 
-                    => await IsAcceptableFile(w.newFileName, fileTypes, fileFormats.Select(s => s.Patterns)));
-            
+                    => await IsAcceptableFile(Path.GetFileName(w.newFileName), fileTypes, fileFormats.Select(s => s.Patterns)));
+
+
             await foreach(var (originalFilePath, newFilePath) in files)
             {
                 var newFile = Path.GetFileName(newFilePath);
@@ -89,10 +90,7 @@ namespace Grains.VideoSearcher
                             (accumulate, current) => accumulate
                                 .Replace(current, string.Empty, StringComparison.OrdinalIgnoreCase)
                                 .Replace("  ", " "));
-
-                    yield return (originalFile, newFile);
-
-
+                        yield return (originalFile, newFile);
                 }
                 else
                 {
@@ -110,11 +108,11 @@ namespace Grains.VideoSearcher
             IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
         {
             var hasFileType = await acceptableFileTypes.AnyAsync(fileType => file.EndsWith(fileType, StringComparison.OrdinalIgnoreCase));
-            var matchesOnlyOneAcceptableFilePattern = await acceptableFileFormats.CountAsync(
+            var matchesOnlyOneAcceptableFilePatternSet = await acceptableFileFormats.CountAsync(
                 acceptableFormat => acceptableFormat.All(a => a.IsMatch(file))) == 1;
             
             return hasFileType
-                        && matchesOnlyOneAcceptableFilePattern;
+                        && matchesOnlyOneAcceptableFilePatternSet;
         }
     }
 }

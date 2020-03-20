@@ -22,6 +22,7 @@ namespace Grains.Tests.Unit.Fixtures
 
             var connectionString = Configuration
                 .CreateConnectionString("VideoSearcher");
+
             _connection = new SqlConnection(connectionString);
             _connection.Open();
         }
@@ -33,6 +34,14 @@ namespace Grains.Tests.Unit.Fixtures
             ResetTables();
             _connection.Close();
             _connection.Dispose();
+        }
+
+        public bool CanConnect()
+        {
+            using var command = new SqlCommand("SELECT 1", _connection);
+            var result = (int)command.ExecuteScalar();
+
+            return result == 1;
         }
 
         public SqlCommand AddAcceptableFileFormat(

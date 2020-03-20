@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Grains.Helpers.Extensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -73,7 +74,8 @@ namespace Grains.VideoSearcher
 
         private async IAsyncEnumerable<IEnumerable<object>> ExecuteCommand(string table, params string[] columns)
         {
-            var connectionString = _configuration.GetConnectionString("VideoSearcher");
+            var connectionString = _configuration
+                .CreateConnectionString("VideoSearcher");
             var commandText = $"SELECT {string.Join(',', columns)} FROM {table};";
 
             SqlDataReader reader;

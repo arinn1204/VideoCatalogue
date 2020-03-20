@@ -26,6 +26,15 @@ namespace Grains.Tests.Unit.VideoSearcher
         }
 
         [Fact]
+        [Trait("Category", "DbConnection")]
+        public void CanConnectToDatabase()
+        {
+            _databaseFixture.CanConnect()
+                .Should()
+                .BeTrue();
+        }
+
+        [Fact]
         [Trait("Category", "video_file.file_patterns")]
         public async Task ShouldProperlySplitTheIncomingRegex()
         {

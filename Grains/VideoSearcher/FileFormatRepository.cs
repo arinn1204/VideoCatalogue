@@ -65,7 +65,7 @@ namespace Grains.VideoSearcher
         {
             await foreach (var format in ExecuteCommand(
                 "video_file.filtered_keywords",
-                "file_type"))
+                "keyword"))
             {
                 yield return format.First() as string;
             };

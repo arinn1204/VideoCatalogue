@@ -26,6 +26,7 @@ namespace Grains.Tests.Unit.VideoSearcher
         }
 
         [Fact]
+        [Trait("Category", "video_file.file_patterns")]
         public async Task ShouldProperlySplitTheIncomingRegex()
         {
             var command = _databaseFixture.AddAcceptableFileFormat(
@@ -45,6 +46,7 @@ namespace Grains.Tests.Unit.VideoSearcher
         }
 
         [Fact]
+        [Trait("Category", "video_file.file_patterns")]
         public async Task ShouldRetrieveAllAcceptableFilePatterns()
         {
             var command = _databaseFixture.AddAcceptableFileFormat(
@@ -90,6 +92,7 @@ namespace Grains.Tests.Unit.VideoSearcher
         }
 
         [Fact]
+        [Trait("Category", "video_file.file_types")]
         public async Task ShouldRetrieveAllAcceptableFileTypes()
         {
             var command = _databaseFixture.AddAcceptableFileFormat(
@@ -112,6 +115,33 @@ namespace Grains.Tests.Unit.VideoSearcher
                 Enumerable.Empty<string>()
                                .Append("mkv")
                                .Append("avi"));
+            command.Dispose();
+        }
+
+        [Fact]
+        [Trait("Category", "video_file.filtered_keywords")]
+        public async Task ShouldRetrieveAllFilteredKeywords()
+        {
+            var command = _databaseFixture.AddAcceptableFileFormat(
+                "video_file.filtered_keywords",
+                new[] { "keyword" },
+                new[] { "BLURAY" });
+            command.ExecuteNonQuery();
+            command = _databaseFixture.AddAcceptableFileFormat(
+                "video_file.filtered_keywords",
+                new[] { "keyword" },
+                new[] { "XVID" });
+            command.ExecuteNonQuery();
+
+            var repository = _fixture.Create<FileFormatRepository>();
+            var pattern = await repository
+                .GetFilteredKeywords()
+                .ToListAsync();
+
+            pattern.Should().BeEquivalentTo(
+                Enumerable.Empty<string>()
+                               .Append("BLURAY")
+                               .Append("XVID"));
             command.Dispose();
         }
     }

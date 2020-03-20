@@ -39,7 +39,12 @@ stages:
         scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
         scriptArguments:
           -projectLocation $(Build.SourcesDirectory) `
-          -type Unit
+          -type Unit `
+          -dbCatalog $(db_catalog) `
+          -dbUsername $(db_username) `
+          -dbPassword $(db_password) `
+          -dbSource $(db_source) `
+          -useEnvironmentConnectionString true
   - job: IntegrationTests
     steps:
     - task: AzurePowerShell@4
@@ -51,4 +56,9 @@ stages:
         scriptArguments:
           -projectLocation $(Build.SourcesDirectory) `
           -type Integration `
-          -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization)
+          -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization) `
+          -dbCatalog $(db_catalog) `
+          -dbUsername $(db_username) `
+          -dbPassword $(db_password) `
+          -dbSource $(db_source) `
+          -useEnvironmentConnectionString true

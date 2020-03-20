@@ -12,6 +12,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   testConfiguration: 'Release'
+  testCatalog: $(db_catalog)_test
 
 stages:
 - stage: Build
@@ -43,7 +44,7 @@ stages:
           -dbCatalog $(db_catalog) `
           -dbUsername $(db_username) `
           -dbPassword $(db_password) `
-          -dbSource $(db_source) `
+          -dbSource $(testCatalog) `
           -useEnvironmentConnectionString true
   - job: IntegrationTests
     steps:
@@ -57,7 +58,7 @@ stages:
           -projectLocation $(Build.SourcesDirectory) `
           -type Integration `
           -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization) `
-          -dbCatalog $(db_catalog) `
+          -dbCatalog $(testCatalog) `
           -dbUsername $(db_username) `
           -dbPassword $(db_password) `
           -dbSource $(db_source) `

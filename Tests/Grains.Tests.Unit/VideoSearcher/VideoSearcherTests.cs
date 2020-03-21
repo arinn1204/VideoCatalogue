@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
-using Grains.Tests.Unit.Attributes;
 using Grains.VideoSearcher;
 using GrainsInterfaces.Models.VideoSearcher;
 using Microsoft.Extensions.Configuration;

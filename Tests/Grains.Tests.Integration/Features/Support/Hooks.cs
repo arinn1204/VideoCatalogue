@@ -25,6 +25,7 @@ namespace Grains.Tests.Integration.Features.Support
             services.AddSingleton<IConfiguration>(configuration);
 
             container.RegisterInstanceAs<IServiceCollection>(services);
+            container.RegisterInstanceAs<IConfiguration>(configuration);
         }
 
 

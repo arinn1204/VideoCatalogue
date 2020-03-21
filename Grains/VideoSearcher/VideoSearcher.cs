@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GrainsInterfaces.Models.VideoSearcher;
+using GrainsInterfaces.VideoSearcher;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoSearcher
 {
-    public class VideoSearcher
+    public class VideoSearcher : IVideoSearcher
     {
         private readonly IFileFormatRepository _fileFormatRepository;
         private readonly IFileSystem _fileSystem;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -9,54 +7,61 @@ using System.Threading.Tasks;
 
 namespace Grains.Tests.Unit.TestUtilities
 {
-    public static class MockHttpClient
-    {
-        private class MockHandler : HttpMessageHandler
-        {
-            private readonly HttpContent _responseContent;
-            private readonly HttpStatusCode _statusCode;
-            
-            public HttpRequestMessage Request;
+	public static class MockHttpClient
+	{
+		public static Func<(HttpClient client, HttpRequestMessage request)> GetFakeHttpClient(
+			string response,
+			string contentType = "application/json",
+			string baseAddress = "",
+			HttpStatusCode statusCode = HttpStatusCode.OK)
+		{
+			var content = new StringContent(response, Encoding.UTF8, contentType);
 
-            public MockHandler(HttpContent responseContent, HttpStatusCode statusCode)
-            {
-                _responseContent = responseContent;
-                _statusCode = statusCode;
-                Request = new HttpRequestMessage();
-            }
+			var handler = new MockHandler(content, statusCode);
 
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            {
-                Request = request;
-                return Task.FromResult(new HttpResponseMessage()
-                {
-                    Content = _responseContent,
-                    StatusCode = _statusCode
-                });
-            }
-        }
+			return () =>
+			       {
+				       var client = new HttpClient(handler);
 
-        public static Func<(HttpClient client, HttpRequestMessage request)> GetFakeHttpClient(
-            string response,
-            string contentType = "application/json",
-            string baseAddress = "",
-            HttpStatusCode statusCode = HttpStatusCode.OK)
-        {
-            var content = new StringContent(response, Encoding.UTF8, contentType);
+				       if (!string.IsNullOrWhiteSpace(baseAddress))
+				       {
+					       client.BaseAddress = new Uri(baseAddress);
+				       }
 
-            var handler = new MockHandler(content, statusCode);
+				       return (client, handler.Request);
+			       };
+		}
 
-            return () =>
-            {
-                var client = new HttpClient(handler);
+#region Nested type: MockHandler
 
-                if (!string.IsNullOrWhiteSpace(baseAddress))
-                {
-                    client.BaseAddress = new Uri(baseAddress);
-                }
+		private class MockHandler : HttpMessageHandler
+		{
+			private readonly HttpContent _responseContent;
+			private readonly HttpStatusCode _statusCode;
 
-                return (client, handler.Request);
-            };
-        }
-    }
+			public HttpRequestMessage Request;
+
+			public MockHandler(HttpContent responseContent, HttpStatusCode statusCode)
+			{
+				_responseContent = responseContent;
+				_statusCode = statusCode;
+				Request = new HttpRequestMessage();
+			}
+
+			protected override Task<HttpResponseMessage> SendAsync(
+				HttpRequestMessage request,
+				CancellationToken cancellationToken)
+			{
+				Request = request;
+				return Task.FromResult(
+					new HttpResponseMessage
+					{
+						Content = _responseContent,
+						StatusCode = _statusCode
+					});
+			}
+		}
+
+#endregion
+	}
 }

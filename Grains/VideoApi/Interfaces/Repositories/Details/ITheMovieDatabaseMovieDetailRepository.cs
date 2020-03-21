@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoApi.tmdb
 {
-    internal interface ITheMovieDatabaseMovieDetailRepository
-    {
-        Task<HttpResponseMessage> GetMovieCredit(int movieId, string baseUrl, HttpClient client);
-        Task<HttpResponseMessage> GetMovieDetail(int movieId, string baseUrl, HttpClient client);
-    }
+	internal interface ITheMovieDatabaseMovieDetailRepository
+	{
+		Task<HttpResponseMessage> GetMovieCredit(int movieId, string baseUrl, HttpClient client);
+		Task<HttpResponseMessage> GetMovieDetail(int movieId, string baseUrl, HttpClient client);
+	}
 }

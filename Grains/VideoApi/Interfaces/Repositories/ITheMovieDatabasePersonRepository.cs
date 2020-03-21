@@ -1,13 +1,10 @@
-﻿using Grains.VideoApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Grains.VideoApi.Models;
 
 namespace Grains.VideoApi.Interfaces
 {
-    public interface ITheMovieDatabasePersonRepository
-    {
-        Task<PersonDetail> GetPersonDetail(int personId);
-    }
+	public interface ITheMovieDatabasePersonRepository
+	{
+		Task<PersonDetail> GetPersonDetail(int personId);
+	}
 }

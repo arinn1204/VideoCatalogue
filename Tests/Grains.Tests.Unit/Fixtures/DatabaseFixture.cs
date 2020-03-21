@@ -1,103 +1,116 @@
-﻿using Grains.Helpers.Extensions;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
-using System.Text;
+using Grains.Helpers.Extensions;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace Grains.Tests.Unit.Fixtures
 {
-    public class DatabaseFixture : IDisposable
-    {
-        private readonly SqlConnection _connection;
-        public DatabaseFixture()
-        {
-            Configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables()
-                .Build();
+	public class DatabaseFixture : IDisposable
+	{
+		private readonly SqlConnection _connection;
 
-            var connectionString = Configuration
-                .CreateConnectionString("VideoSearcher");
+		public DatabaseFixture()
+		{
+			Configuration = new ConfigurationBuilder()
+			               .AddJsonFile("appsettings.json")
+			               .AddEnvironmentVariables()
+			               .Build();
 
-            _connection = new SqlConnection(connectionString);
-            _connection.Open();
-        }
+			var connectionString = Configuration
+			   .CreateConnectionString("VideoSearcher");
 
-        public IConfiguration Configuration { get; }
+			_connection = new SqlConnection(connectionString);
+			_connection.Open();
+		}
 
-        public void Dispose()
-        {
-            ResetTables();
-            _connection.Close();
-            _connection.Dispose();
-        }
+		public IConfiguration Configuration { get; }
 
-        public bool CanConnect()
-        {
-            using var command = new SqlCommand("SELECT 1", _connection);
-            var result = (int)command.ExecuteScalar();
+#region IDisposable Members
 
-            return result == 1;
-        }
+		public void Dispose()
+		{
+			ResetTables();
+			_connection.Close();
+			_connection.Dispose();
+		}
 
-        public SqlCommand AddAcceptableFileFormat(
-            string table,
-            IEnumerable<string> columns,
-            IEnumerable<object> values)
-        {
-            var indexedColumns = columns.Select((columnName, columnIndex) => (columnName, columnIndex));
-            var indexedValues = values.Select((columnValue, valueIndex) => (columnValue, valueIndex));
+#endregion
 
-            var pairedValues = indexedColumns.Join<(string, int),(object, int), int, (string, object)>(
-                indexedValues,
-                left => left.Item2,
-                right => right.Item2,
-                (left, right) =>
-                {
-                    return ($"@{left.Item1.ToUpperInvariant()}", right.Item1 ?? DBNull.Value);
-                }
-            );
+		public bool CanConnect()
+		{
+			using var command = new SqlCommand("SELECT 1", _connection);
+			var result = (int) command.ExecuteScalar();
 
-            var adjustedColumns = string.Join(',', columns);
-            var adjustedValues = $"@{string.Join(", @", columns.Select(s => s.ToUpperInvariant()))}";
+			return result == 1;
+		}
 
-            var commandText = $"INSERT INTO {table}({adjustedColumns}, created_time, created_by) VALUES({adjustedValues}, '{DateTime.Now}', '{nameof(DatabaseFixture)}')";
+		public SqlCommand AddAcceptableFileFormat(
+			string table,
+			IEnumerable<string> columns,
+			IEnumerable<object> values)
+		{
+			var indexedColumns =
+				columns.Select((columnName, columnIndex) => (columnName, columnIndex));
+			var indexedValues =
+				values.Select((columnValue, valueIndex) => (columnValue, valueIndex));
 
-            var command = new SqlCommand(commandText, _connection);
+			var pairedValues =
+				indexedColumns.Join<(string, int), (object, int), int, (string, object)>(
+					indexedValues,
+					left => left.Item2,
+					right => right.Item2,
+					(left, right) =>
+					{
+						return ($"@{left.Item1.ToUpperInvariant()}", right.Item1 ?? DBNull.Value);
+					});
 
-            foreach (var (parameterName, value) in pairedValues)
-            {
-                var type = value switch
-                {
-                    int _ => SqlDbType.Int,
-                    DateTime _ => SqlDbType.DateTime,
-                    _ => SqlDbType.VarChar
-                };
-                
+			var adjustedColumns = string.Join(',', columns);
+			var adjustedValues =
+				$"@{string.Join(", @", columns.Select(s => s.ToUpperInvariant()))}";
 
-                var parameter = new SqlParameter(parameterName, type)
-                {
-                    Value = value
-                };
-                command.Parameters.Add(parameter);
-            }
+			var commandText =
+				$"INSERT INTO {table}({adjustedColumns}, created_time, created_by) VALUES({adjustedValues}, '{DateTime.Now}', '{nameof(DatabaseFixture)}')";
 
-            return command;
-        }
+			var command = new SqlCommand(commandText, _connection);
 
-        public void ResetTables()
-        {
-            var tables = new[] { "video_file.file_patterns", "video_file.file_types", "video_file.filtered_keywords" };
+			foreach (var (parameterName, value) in pairedValues)
+			{
+				var type = value switch
+				           {
+					           int _      => SqlDbType.Int,
+					           DateTime _ => SqlDbType.DateTime,
+					           _          => SqlDbType.VarChar
+				           };
 
-            foreach(var table in tables)
-            {
-                using var command = new SqlCommand($"DELETE FROM {table} WHERE created_by = '{nameof(DatabaseFixture)}'", _connection);
-                command.ExecuteNonQuery();
-            }
-        }
-    }
+
+				var parameter = new SqlParameter(parameterName, type)
+				                {
+					                Value = value
+				                };
+				command.Parameters.Add(parameter);
+			}
+
+			return command;
+		}
+
+		public void ResetTables()
+		{
+			var tables = new[]
+			             {
+				             "video_file.file_patterns", "video_file.file_types",
+				             "video_file.filtered_keywords"
+			             };
+
+			foreach (var table in tables)
+			{
+				using var command = new SqlCommand(
+					$"DELETE FROM {table} WHERE created_by = '{nameof(DatabaseFixture)}'",
+					_connection);
+				command.ExecuteNonQuery();
+			}
+		}
+	}
 }

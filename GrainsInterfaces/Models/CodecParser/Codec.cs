@@ -1,7 +1,7 @@
 ﻿namespace GrainsInterfaces.Models.CodecParser
 {
-    public enum Codec
-    {
-        H264 = 0
-    }
+	public enum Codec
+	{
+		H264 = 0
+	}
 }

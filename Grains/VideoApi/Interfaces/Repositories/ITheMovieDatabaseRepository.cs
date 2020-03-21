@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Grains.VideoApi.Interfaces.Repositories
+﻿namespace Grains.VideoApi.Interfaces.Repositories
 {
-    public interface ITheMovieDatabaseRepository : ITheMovieDatabaseMovieRepository, ITheMovieDatabasePersonRepository, ITheMovieDatabaseTvEpisodeRepository
-    {
-    }
+	public interface ITheMovieDatabaseRepository
+		: ITheMovieDatabaseMovieRepository,
+		  ITheMovieDatabasePersonRepository,
+		  ITheMovieDatabaseTvEpisodeRepository
+	{
+	}
 }

@@ -1,6 +1,6 @@
 ﻿namespace GrainsInterfaces.Models.VideoApi
 {
-    public class GuestStar
-    {
-    }
+	public class GuestStar
+	{
+	}
 }

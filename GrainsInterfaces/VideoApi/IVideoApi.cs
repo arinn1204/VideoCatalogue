@@ -1,13 +1,10 @@
-﻿using GrainsInterfaces.Models.VideoApi;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using GrainsInterfaces.Models.VideoApi;
 
 namespace GrainsInterfaces.VideoApi
 {
-    public interface IVideoApi
-    {
-        Task<VideoDetail> GetVideoDetails(VideoRequest request);
-    }
+	public interface IVideoApi
+	{
+		Task<VideoDetail> GetVideoDetails(VideoRequest request);
+	}
 }

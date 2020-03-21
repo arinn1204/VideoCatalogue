@@ -2,10 +2,11 @@
 
 namespace Grains.CodecParser.Matroska
 {
-    public class MatroskaException : Exception
-    {
-        public MatroskaException(string message) : base(message)
-        {
-        }
-    }
+	public class MatroskaException : Exception
+	{
+		public MatroskaException(string message)
+			: base(message)
+		{
+		}
+	}
 }

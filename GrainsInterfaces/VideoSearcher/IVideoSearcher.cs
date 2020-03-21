@@ -1,12 +1,10 @@
-﻿using GrainsInterfaces.Models.VideoSearcher;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using GrainsInterfaces.Models.VideoSearcher;
 
 namespace GrainsInterfaces.VideoSearcher
 {
-    public interface IVideoSearcher
-    {
-        IAsyncEnumerable<VideoSearchResults> Search(string path);
-    }
+	public interface IVideoSearcher
+	{
+		IAsyncEnumerable<VideoSearchResults> Search(string path);
+	}
 }

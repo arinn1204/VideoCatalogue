@@ -7,7 +7,6 @@ using AutoMapper;
 using FluentAssertions;
 using Grains.VideoApi;
 using Grains.VideoApi.Interfaces.Repositories;
-using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Exceptions;
 using Grains.VideoApi.Models.VideoApi.SerachResults;
 using GrainsInterfaces.Models.VideoApi;

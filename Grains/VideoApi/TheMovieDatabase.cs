@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Grains.VideoApi.Interfaces.Repositories;
-using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Exceptions;
 using Grains.VideoApi.Models.VideoApi.SerachResults;
 using GrainsInterfaces.Models.VideoApi;

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using Grains.CodecParser;
-using Grains.Tests.Integration.Features.Builders;
 using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;
 

@@ -2,7 +2,6 @@
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Grains.Tests.Integration.Features.Builders;
 using Grains.Tests.Integration.Features.Models;
 using Grains.Tests.Integration.Features.Support;
 using Grains.VideoSearcher;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Grains.VideoSearcher
+namespace Grains.VideoSearcher.Interfaces
 {
 	public interface IFileFormatRepository
 	{

@@ -6,7 +6,9 @@ using AutoMapper;
 using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Models;
 using Grains.VideoApi.Models.VideoApi.Exceptions;
+using Grains.VideoApi.Models.VideoApi.SerachResults;
 using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.Models.VideoApi.Enums;
 using GrainsInterfaces.VideoApi;
 
 [assembly: InternalsVisibleTo("Grains.Tests.Unit")]

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Grains.CodecParser.Matroska
+namespace Grains.CodecParser.Matroska.Models
 {
 	[XmlRoot("element")]
 	public class MatroskaElement

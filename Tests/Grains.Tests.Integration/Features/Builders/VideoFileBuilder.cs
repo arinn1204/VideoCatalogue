@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Builders

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Grains.VideoApi.Models.VideoApi.Credits;
 using GrainsInterfaces.Models.VideoApi;
 
 namespace Grains.VideoApi.Models.VideoApi.Profiles

@@ -1,4 +1,6 @@
-﻿namespace GrainsInterfaces.Models.VideoApi
+﻿using GrainsInterfaces.Models.VideoApi.Enums;
+
+namespace GrainsInterfaces.Models.VideoApi
 {
 	public class VideoRequest
 	{

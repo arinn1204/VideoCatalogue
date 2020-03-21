@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi.Models
+namespace Grains.VideoApi.Models.VideoApi.Credits
 {
 	public class TvCredit : MovieCredit
 	{

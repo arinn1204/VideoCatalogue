@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi.Models
+namespace Grains.VideoApi.Models.VideoApi.Details
 {
 	[JsonObject]
 	public class PersonDetail

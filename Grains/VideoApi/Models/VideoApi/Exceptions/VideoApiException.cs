@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Grains.VideoApi.Models.VideoApi.SerachResults;
 using GrainsInterfaces.Models.VideoApi;
 
 namespace Grains.VideoApi.Models.VideoApi.Exceptions

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Grains.Helpers;
+using Grains.VideoApi.Interfaces.Repositories.Details;
 using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.Models.VideoApi.Enums;
 
 namespace Grains.VideoApi.tmdb
 {

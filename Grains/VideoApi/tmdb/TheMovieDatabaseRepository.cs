@@ -5,15 +5,15 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Grains.VideoApi.Interfaces.Repositories;
-using Grains.VideoApi.Models;
+using Grains.VideoApi.Interfaces.Repositories.Details;
+using Grains.VideoApi.Models.VideoApi.Credits;
 using Grains.VideoApi.Models.VideoApi.Details;
 using Grains.VideoApi.Models.VideoApi.SerachResults;
-using Grains.VideoApi.tmdb;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.Models.VideoApi.Enums;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi
+namespace Grains.VideoApi.tmdb
 {
 	internal class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
 	{

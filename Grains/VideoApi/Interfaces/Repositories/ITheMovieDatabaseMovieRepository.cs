@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Grains.VideoApi.Models;
+using Grains.VideoApi.Models.VideoApi.Credits;
+using Grains.VideoApi.Models.VideoApi.Details;
+using Grains.VideoApi.Models.VideoApi.SerachResults;
 
-namespace Grains.VideoApi.Interfaces
+namespace Grains.VideoApi.Interfaces.Repositories
 {
 	public interface ITheMovieDatabaseMovieRepository
 	{

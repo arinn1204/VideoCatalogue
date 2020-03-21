@@ -1,4 +1,4 @@
-﻿namespace GrainsInterfaces.Models.VideoApi
+﻿namespace GrainsInterfaces.Models.VideoApi.Enums
 {
 	public enum MovieType
 	{

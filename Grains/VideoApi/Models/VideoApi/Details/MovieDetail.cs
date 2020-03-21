@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grains.VideoApi.Models.VideoApi.Details;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi.Models
+namespace Grains.VideoApi.Models.VideoApi.Details
 {
 	[JsonObject]
 	public class MovieDetail

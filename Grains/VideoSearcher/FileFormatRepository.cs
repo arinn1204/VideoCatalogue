@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Grains.Helpers.Extensions;
+using Grains.VideoSearcher.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

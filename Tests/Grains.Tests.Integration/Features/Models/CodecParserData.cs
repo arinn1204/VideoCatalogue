@@ -1,6 +1,6 @@
 ﻿using GrainsInterfaces.Models.CodecParser;
 
-namespace Grains.Tests.Integration.Features.Builders
+namespace Grains.Tests.Integration.Features.Models
 {
 	public class CodecParserData
 	{

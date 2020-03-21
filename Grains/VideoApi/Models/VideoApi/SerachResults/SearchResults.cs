@@ -1,8 +1,8 @@
 ﻿using System;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.Models.VideoApi.Enums;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi.Models
+namespace Grains.VideoApi.Models.VideoApi.SerachResults
 {
 	[JsonObject]
 	public class SearchResult

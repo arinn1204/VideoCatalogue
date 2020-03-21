@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
+using Grains.VideoSearcher.Interfaces;
 using GrainsInterfaces.Models.VideoSearcher;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -35,17 +36,17 @@ namespace Grains.Tests.Unit.VideoSearcher
 			                   .Build();
 
 			_fixture.Inject<IConfiguration>(configuration);
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAllowedFileTypes())
 			        .Returns(
 				         AsyncEnumerable.Empty<string>()
 				                        .Append("mkv"));
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
 			        .Returns(AsyncEnumerable.Empty<string>());
 		}
@@ -87,7 +88,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var expectedCivilWar = Path.Combine(
 				civilWar,
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
@@ -144,7 +145,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var expectedCivilWar = Path.Combine(
 				civilWar,
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
@@ -201,7 +202,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var expectedCivilWar = Path.Combine(
 				civilWar,
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
@@ -312,7 +313,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var expectedCivilWar = Path.Combine(
 				civilWar,
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
@@ -374,7 +375,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			_patterns = _patterns.Append(@"^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$");
 
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
@@ -450,7 +451,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var expectedCivilWar = Path.Combine(
 				civilWar,
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
@@ -545,7 +546,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		[Fact]
 		public async Task ShouldPreserveOriginalFileName()
 		{
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
 			        .Returns(
 				         AsyncEnumerable.Empty<string>()
@@ -602,7 +603,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		[Fact]
 		public async Task ShouldRemovedFilteredKeywords()
 		{
-			_fixture.Freeze<Mock<VS.IFileFormatRepository>>()
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
 			        .Returns(
 				         AsyncEnumerable.Empty<string>()

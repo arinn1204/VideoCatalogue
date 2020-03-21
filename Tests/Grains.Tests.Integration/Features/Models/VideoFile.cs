@@ -2,7 +2,7 @@
 using System.Linq;
 using GrainsInterfaces.Models.VideoSearcher;
 
-namespace Grains.Tests.Integration.Features.Builders
+namespace Grains.Tests.Integration.Features.Models
 {
 	public class VideoFile
 	{

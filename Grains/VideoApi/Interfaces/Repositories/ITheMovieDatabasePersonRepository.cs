@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Grains.VideoApi.Models;
+using Grains.VideoApi.Models.VideoApi.Details;
 
-namespace Grains.VideoApi.Interfaces
+namespace Grains.VideoApi.Interfaces.Repositories
 {
 	public interface ITheMovieDatabasePersonRepository
 	{

@@ -5,6 +5,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Grains.VideoSearcher.Interfaces;
 using GrainsInterfaces.Models.VideoSearcher;
 using GrainsInterfaces.VideoSearcher;
 

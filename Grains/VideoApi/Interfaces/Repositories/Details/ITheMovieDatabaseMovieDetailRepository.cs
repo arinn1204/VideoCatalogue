@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Grains.VideoApi.tmdb
+namespace Grains.VideoApi.Interfaces.Repositories.Details
 {
 	internal interface ITheMovieDatabaseMovieDetailRepository
 	{

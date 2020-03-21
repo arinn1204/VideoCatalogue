@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi.Models
+namespace Grains.VideoApi.Models.VideoApi.SerachResults
 {
 	public class TvSearchResult : SearchResult
 	{

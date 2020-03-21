@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Grains.Tests.Integration.Features.Assertions
+namespace Grains.Tests.Integration.Features.Models.Resolvers
 {
 	public class CreditResolver : DefaultContractResolver
 	{

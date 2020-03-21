@@ -6,6 +6,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.CodecParser.Matroska;
+using Grains.CodecParser.Matroska.Models;
 using Grains.Tests.Unit.TestUtilities;
 using Moq;
 using Xunit;

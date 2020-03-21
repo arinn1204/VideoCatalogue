@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Grains.VideoApi.Models
+namespace Grains.VideoApi.Models.VideoApi.Credits
 {
 	[JsonObject]
 	public class CastCredit : PersonCredit

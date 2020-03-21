@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Grains.Tests.Integration.Features.Builders;
+using Grains.Tests.Integration.Features.Models;
 using GrainsInterfaces.Models.CodecParser;
 using TechTalk.SpecFlow;
 

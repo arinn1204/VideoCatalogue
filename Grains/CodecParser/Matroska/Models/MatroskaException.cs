@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Grains.CodecParser.Matroska
+namespace Grains.CodecParser.Matroska.Models
 {
 	public class MatroskaException : Exception
 	{

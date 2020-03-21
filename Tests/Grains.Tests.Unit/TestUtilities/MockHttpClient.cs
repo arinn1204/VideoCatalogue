@@ -18,7 +18,7 @@ namespace Grains.Tests.Unit.TestUtilities
             
             public HttpRequestMessage Request;
 
-            public MockHandler(HttpContent responseContent, HttpStatusCode statusCode = HttpStatusCode.OK)
+            public MockHandler(HttpContent responseContent, HttpStatusCode statusCode)
             {
                 _responseContent = responseContent;
                 _statusCode = statusCode;
@@ -36,13 +36,27 @@ namespace Grains.Tests.Unit.TestUtilities
             }
         }
 
-        public static Func<(HttpClient client, HttpRequestMessage request)> GetFakeHttpClient(string response)
+        public static Func<(HttpClient client, HttpRequestMessage request)> GetFakeHttpClient(
+            string response,
+            string contentType = "application/json",
+            string baseAddress = "",
+            HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            var content = new StringContent(response, Encoding.UTF8, "application/json");
+            var content = new StringContent(response, Encoding.UTF8, contentType);
 
-            var handler = new MockHandler(content);
+            var handler = new MockHandler(content, statusCode);
 
-            return () => (new HttpClient(handler), handler.Request);
+            return () =>
+            {
+                var client = new HttpClient(handler);
+
+                if (!string.IsNullOrWhiteSpace(baseAddress))
+                {
+                    client.BaseAddress = new Uri(baseAddress);
+                }
+
+                return (client, handler.Request);
+            };
         }
     }
 }

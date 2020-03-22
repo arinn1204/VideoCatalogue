@@ -18,12 +18,12 @@ namespace Grains.Codecs
 			_matroska = matroska;
 		}
 		
-		public async Task<FileInformation> GetInformation(string path)
+		public FileInformation GetInformation(string path)
 		{
-			await using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 			var fileInformation = default(FileInformation);
 			
-			if (await _matroska.IsMatroska(stream))
+			if (_matroska.IsMatroska(stream))
 			{
 				stream.Position = 0;
 				fileInformation = _matroska.GetFileInformation(stream);

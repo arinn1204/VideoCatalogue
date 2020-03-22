@@ -68,7 +68,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			stream.Position = 0;
 
 			var matroska = _fixture.Create<SUT.Matroska>();
-			var isMatroska = await matroska.IsMatroska(stream);
+			var isMatroska = matroska.IsMatroska(stream);
 
 			isMatroska.Should()
 			          .BeTrue();
@@ -99,7 +99,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			stream.Position = 0;
 
 			var matroska = _fixture.Create<SUT.Matroska>();
-			var isMatroska = await matroska.IsMatroska(stream);
+			var isMatroska = matroska.IsMatroska(stream);
 
 			isMatroska.Should()
 			          .BeFalse();

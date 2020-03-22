@@ -21,7 +21,7 @@ namespace Grains.Tests.Integration.Features.Actions
 		}
 
 		[When(@"the information about the file is requested")]
-		public async Task WhenTheInformationAboutTheFileIsRequested()
+		public void WhenTheInformationAboutTheFileIsRequested()
 		{
 			var sample = _codecParserData.Container.ToUpperInvariant() switch
 			             {
@@ -29,7 +29,7 @@ namespace Grains.Tests.Integration.Features.Actions
 			             };
 
 			var file = Path.Combine("TestData", "CodecParser", sample);
-			_codecParserData.VideoInformation = await _parser.GetInformation(file);
+			_codecParserData.VideoInformation = _parser.GetInformation(file);
 		}
 	}
 }

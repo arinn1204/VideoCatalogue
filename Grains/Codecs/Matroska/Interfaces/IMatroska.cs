@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using GrainsInterfaces.Models.CodecParser;
 
-namespace Grains.Codecs.Matroska
+namespace Grains.Codecs.Matroska.Interfaces
 {
 	public interface IMatroska
 	{
-		Task<bool> IsMatroska(Stream stream);
+		bool IsMatroska(Stream stream);
 		FileInformation GetFileInformation(Stream stream);
 	}
 }

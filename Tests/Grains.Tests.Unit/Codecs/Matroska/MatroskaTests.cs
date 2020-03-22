@@ -21,7 +21,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 {
 	public class MatroskaTests
 	{
-		private Fixture _fixture;
+		private readonly Fixture _fixture;
 
 		public MatroskaTests()
 		{

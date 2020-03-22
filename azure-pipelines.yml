@@ -27,7 +27,7 @@ stages:
         scriptPath: '$(Build.SourcesDirectory)\azure\createArtifact.ps1'
         scriptArguments:
           -projectLocation $(Build.SourcesDirectory)
-- stage: Test
+- stage: Unit
   dependsOn: Build
   jobs:
   - job: UnitTests

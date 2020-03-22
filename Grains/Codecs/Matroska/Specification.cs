@@ -2,11 +2,13 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Grains.CodecParser.Matroska.Models;
+using Grains.Codecs.Matroska.Interfaces;
+using Grains.Codecs.Matroska.Models;
 
-namespace Grains.CodecParser.Matroska
+namespace Grains.Codecs.Matroska
 {
 	public class Specification
+		: ISpecification
 	{
 		private const string ClientRegistrationName = "MatroskaClient";
 		private readonly IHttpClientFactory _httpClientFactory;
@@ -42,9 +44,7 @@ namespace Grains.CodecParser.Matroska
 
 			var response = await client.SendAsync(requestMessage);
 
-			_ = response.IsSuccessStatusCode
-				? true
-				: HandleResponse(response);
+			_ = response.IsSuccessStatusCode || HandleResponse(response);
 
 			return response;
 		}

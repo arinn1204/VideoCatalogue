@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Grains.CodecParser.Matroska.Models
+namespace Grains.Codecs.Matroska.Models
 {
 	[XmlRoot("table")]
 	public class MatroskaSpecification

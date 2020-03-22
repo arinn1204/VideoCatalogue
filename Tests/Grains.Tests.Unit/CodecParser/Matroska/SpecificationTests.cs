@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
-using Grains.CodecParser.Matroska;
-using Grains.CodecParser.Matroska.Models;
+using Grains.Codecs.Matroska;
+using Grains.Codecs.Matroska.Models;
 using Grains.Tests.Unit.TestUtilities;
 using Moq;
 using Xunit;
@@ -55,7 +55,7 @@ namespace Grains.Tests.Unit.CodecParser.Matroska
 					{
 						Name = "EBML",
 						Level = 0,
-						Default = 0,
+						Default = "0",
 						IdString = "0x1A45DFA3",
 						Type = "master",
 						IsMultiple = true,

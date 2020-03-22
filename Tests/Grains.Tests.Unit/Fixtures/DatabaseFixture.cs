@@ -24,6 +24,7 @@ namespace Grains.Tests.Unit.Fixtures
 
 			_connection = new SqlConnection(connectionString);
 			_connection.Open();
+			ResetTables();
 		}
 
 		public IConfiguration Configuration { get; }

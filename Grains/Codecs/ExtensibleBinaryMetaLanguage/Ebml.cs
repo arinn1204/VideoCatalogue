@@ -54,11 +54,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			return header;
 		}
 
-		private string GetDocType(Stream stream)
-		{
-			return string.Empty;
-		}
-
 		private long GetId(Stream stream)
 		{
 			return ((long) stream.ReadByte() << 8) + (long) stream.ReadByte();

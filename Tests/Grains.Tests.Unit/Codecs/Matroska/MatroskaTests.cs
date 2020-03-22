@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
 using Moq;
@@ -44,25 +48,26 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						                    element
 					                    }
 				         });
-
-			var ebmlBytes = element.IdString
-			                      .Skip(2)
-			                      .Select(
-				                       (character, index) => new
-				                                             {
-					                                             character,
-					                                             index
-				                                             })
-			                      .GroupBy(pair => pair.index / 2)
-			                      .Select(
-				                       grp => string.Join(
-					                       string.Empty,
-					                       grp.Select(s => s.character)))
-			                      .Select(x => Convert.ToByte(x, 16));
-
 			await using var stream = new MemoryStream();
 			await using var writer = new BinaryWriter(stream);
-			ebmlBytes.ForEach(ebmlByte => writer.Write(ebmlByte));
+
+			_fixture.Freeze<Mock<IEbml>>()
+			        .Setup(s => s.GetHeaderInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()))
+			        .Returns(
+				         new EbmlHeader
+				         {
+					         DocType = "matroska"
+				         });
+			         
+			var matroskaData = new[]
+			                   {
+				                   Convert.ToByte("1A", 16),
+				                   Convert.ToByte("45", 16),
+				                   Convert.ToByte("DF", 16),
+				                   Convert.ToByte("A3", 16)
+			                   };
+			
+			writer.Write(matroskaData);
 			writer.Flush();
 
 			stream.Position = 0;

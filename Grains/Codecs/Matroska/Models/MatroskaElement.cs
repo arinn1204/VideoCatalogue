@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Grains.CodecParser.Matroska.Models
+namespace Grains.Codecs.Matroska.Models
 {
 	[XmlRoot("element")]
 	public class MatroskaElement
@@ -15,7 +15,7 @@ namespace Grains.CodecParser.Matroska.Models
 		[XmlAttribute("id")]
 		public string IdString { get; set; }
 
-		public int Id => Convert.ToInt32(IdString, 16);
+		public uint Id => Convert.ToUInt32(IdString, 16);
 
 		[XmlAttribute("type")]
 		public string Type { get; set; }
@@ -27,7 +27,7 @@ namespace Grains.CodecParser.Matroska.Models
 		public bool IsMultiple { get; set; }
 
 		[XmlAttribute("default")]
-		public int Default { get; set; }
+		public string Default { get; set; }
 
 		[XmlAttribute("minver")]
 		public int MinimumVersion { get; set; }

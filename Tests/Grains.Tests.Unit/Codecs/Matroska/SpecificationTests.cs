@@ -11,7 +11,7 @@ using Grains.Tests.Unit.TestUtilities;
 using Moq;
 using Xunit;
 
-namespace Grains.Tests.Unit.CodecParser.Matroska
+namespace Grains.Tests.Unit.Codecs.Matroska
 {
 	public class SpecificationTests
 	{

@@ -1,13 +1,25 @@
 ﻿using System.IO;
+using System.Linq;
+using Grains.Codecs.Matroska.Models;
 using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
 	public static class Ebml
 	{
-		public static uint GetId(Stream stream)
+		public static uint GetMasterIds(Stream stream, MatroskaSpecification specification)
 		{
 			var firstByte = (byte) stream.ReadByte();
+
+			if (specification.Elements
+			                 .Select(s => (Name: s.Name.ToUpperInvariant(), Id: s.Id))
+			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
+			                 .Select(s => s.Id)
+			                 .Contains(firstByte))
+			{
+				return firstByte;
+			}
+			
 			var word = new Float32
 			           {
 				           B4 = firstByte,

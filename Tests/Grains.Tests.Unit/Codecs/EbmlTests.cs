@@ -1,35 +1,82 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.Matroska.Models;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
 {
 	public class EbmlTests
 	{
-		[Fact]
-		public void ShouldReturnId()
-		{
-			var firstByte = Convert.ToByte("1A", 16);
-			var secondByte = Convert.ToByte("45", 16);
-			var thirdByte = Convert.ToByte("DF", 16);
-			var fourthByte = Convert.ToByte("A3", 16);
+		private readonly MatroskaSpecification _specification;
 
+		public EbmlTests()
+		{
+			_specification = new MatroskaSpecification
+			                 {
+				                 Elements = new List<MatroskaElement>
+				                            {
+					                            new MatroskaElement
+					                            {
+						                            Name = "EBML",
+						                            IdString = "0x1A45DFA3"
+					                            },
+					                            new MatroskaElement
+					                            {
+						                            Name = "EBMLVersion",
+						                            IdString = "0x4286"
+					                            },
+					                            new MatroskaElement
+					                            {
+						                            Name = "Void",
+						                            IdString = "0xEC"
+					                            },
+					                            new MatroskaElement
+					                            {
+						                            Name = "CRC-32",
+						                            IdString = "0xBF"
+					                            }
+				                            }
+			                 };
+		}
+
+		[Theory]
+		[InlineData("EBML", "0x1A45DFA3")]
+		[InlineData("VOID", "0xEC")]
+		[InlineData("CRC-32", "0xBF")]
+		public void ShouldReturnMatroskaId(string type, string expectedValue)
+		{
+			var data = type switch
+			           {
+				           "EBML" => new[]
+				                     {
+					                     Convert.ToByte("1A", 16),
+					                     Convert.ToByte("45", 16),
+					                     Convert.ToByte("DF", 16),
+					                     Convert.ToByte("A3", 16)
+				                     },
+				           "VOID" => new[]
+				                     {
+					                     Convert.ToByte("EC", 16)
+				                     },
+				           "CRC-32" => new[]
+				                     {
+					                     Convert.ToByte("BF", 16)
+				                     }
+			           };
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);
-			writer.Write(firstByte);
-			writer.Write(secondByte);
-			writer.Write(thirdByte);
-			writer.Write(fourthByte);
+			writer.Write(data);
 			writer.Flush();
 
 			stream.Position = 0;
 
-			Ebml.GetId(stream)
+			Ebml.GetMasterIds(stream, _specification)
 			    .Should()
-			    .Be(Convert.ToUInt32("0x1A45DFA3", 16));
+			    .Be(Convert.ToUInt32(expectedValue, 16));
 		}
 
 		[Theory]
@@ -69,7 +116,7 @@ namespace Grains.Tests.Unit.Codecs
 				               (byte) 13,
 				               (byte) 12
 			               };
-			
+
 			writer.Write(junkData);
 			writer.Flush();
 

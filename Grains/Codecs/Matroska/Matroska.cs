@@ -13,19 +13,18 @@ namespace Grains.Codecs.Matroska
 {
 	public class Matroska : IMatroska
 	{
-		private readonly ISpecification _specification;
 		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
 
 		public Matroska(ISpecification specification)
 		{
-			_specification =
+			_ =
 				specification ?? throw new ArgumentNullException(nameof(specification));
 			_matroskaSpecification =
 				new Lazy<MatroskaSpecification>(
-					() => _specification?.GetSpecification()
-					                     .ConfigureAwait(false)
-					                     .GetAwaiter()
-					                     .GetResult());
+					() => specification?.GetSpecification()
+					                    .ConfigureAwait(false)
+					                    .GetAwaiter()
+					                    .GetResult());
 		}
 
 		public bool IsMatroska(Stream stream)
@@ -34,17 +33,26 @@ namespace Grains.Codecs.Matroska
 			                                            .Elements
 			                                            .First(w => w.Name == "EBML")
 			                                            .Id;
-			var firstWord = Ebml.GetId(stream);
+			var firstWord = Ebml.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			return firstWord == ebmlHeaderValue;
 		}
 
 		public FileInformation GetFileInformation(Stream stream)
 		{
-			var id = Ebml.GetId(stream);;
+			var id = Ebml.GetMasterIds(stream, _matroskaSpecification.Value);
+
+			var (width, size) = Ebml.GetWidthAndSize(stream);
+			
+			//stream.Seek(size, SeekOrigin.Current);
+			
 			uint word = 0;
-			while ((word = Ebml.GetId(stream)) != 0)
+			while ((word = Ebml.GetMasterIds(stream, _matroskaSpecification.Value)) != 0)
 			{
+				if (word == 0)
+				{
+					break;
+				}
 			}
 
 			return new FileInformation();

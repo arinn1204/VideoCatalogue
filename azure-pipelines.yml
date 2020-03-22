@@ -46,6 +46,9 @@ stages:
           -dbPassword '$(db_password)' `
           -dbSource '$(db_source)' `
           -useEnvironmentConnectionString true
+- stage: Integration
+  dependsOn: Unit
+  jobs:
   - job: IntegrationTests
     steps:
     - task: AzurePowerShell@4

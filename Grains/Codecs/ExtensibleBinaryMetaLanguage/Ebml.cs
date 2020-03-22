@@ -1,84 +1,67 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Models;
-using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
-	public static class Ebml
+	public class Ebml : IEbml
 	{
-		public static uint GetMasterIds(Stream stream, MatroskaSpecification specification)
+		public EbmlHeader GetHeaderInformation(
+			Stream stream,
+			MatroskaSpecification matroskaSpecification)
 		{
-			var firstByte = (byte) stream.ReadByte();
+			var headerSpecs =
+				matroskaSpecification.Elements.Where(
+					w => (w.Name.StartsWith("EBML") && w.Name != "EBML") ||
+					     w.Name.StartsWith("Doc"));
+			var header = new EbmlHeader();
 
-			if (specification.Elements
-			                 .Select(s => (Name: s.Name.ToUpperInvariant(), Id: s.Id))
-			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
-			                 .Select(s => s.Id)
-			                 .Contains(firstByte))
+			var (_, size) = EbmlReader.GetWidthAndSize(stream);
+			var endPosition = stream.Position + size;
+
+			var idsBeingTracked = Enumerable.Empty<(uint,string)>();
+			idsBeingTracked = headerSpecs
+			                 .Where(spec => spec.Name == "EBMLVersion" || spec.Name == "DocType")
+			                 .Aggregate(
+				                  idsBeingTracked,
+				                  (current, spec) => current.Append((spec.Id, spec.Name)));
+
+			while (stream.Position <= endPosition)
 			{
-				return firstByte;
+				var id = GetId(stream);
+				(_, size) = EbmlReader.GetWidthAndSize(stream);
+				var specification = idsBeingTracked.FirstOrDefault(w => w.Item1 == id);
+				
+				switch (specification.Item2)
+				{
+					case "EBMLVersion":
+						header.Version = EbmlReader.GetUint(stream, size);
+						break;
+					case "DocType":
+						header.DocType = EbmlReader.GetString(stream, size);
+						break;
+					default:
+						stream.Seek(size, SeekOrigin.Current);
+						break;
+				}
+				
 			}
 			
-			var word = new Float32
-			           {
-				           B4 = firstByte,
-				           B3 = (byte) stream.ReadByte(),
-				           B2 = (byte) stream.ReadByte(),
-				           B1 = (byte) stream.ReadByte()
-			           };
-
-			return word.UnsignedData;
+			return header;
 		}
 
-		public static (int width, long size) GetWidthAndSize(Stream stream)
+		private string GetDocType(Stream stream)
 		{
-			var firstByte = (byte) stream.ReadByte();
-			var width = GetWidth(firstByte);
-
-			var result = width switch
-			             {
-				             8 => ReadBytes(stream, (long) stream.ReadByte() << 48, 6),
-				             7 => ReadBytes(stream, (long) firstByte << 48, 6),
-				             6 => ReadBytes(stream, ((long) firstByte & 3) << 40, 5),
-				             5 => ReadBytes(stream, ((long) firstByte & 7) << 32, 4),
-				             4 => ReadBytes(stream, ((long) firstByte & 15) << 24, 3),
-				             3 => ReadBytes(stream, ((long) firstByte & 31) << 16, 2),
-				             2 => ReadBytes(stream, ((long) firstByte & 63) << 8, 1),
-				             1 => ReadBytes(stream, firstByte & 127, 0),
-				             _ => 0L
-			             };
-
-			return (width, result);
+			return string.Empty;
 		}
 
-
-		private static long ReadBytes(Stream stream, long seed, int bytesToRead)
+		private long GetId(Stream stream)
 		{
-			var result = seed;
-			for (var i = bytesToRead; i > 0; i--)
-			{
-				var multiplier = (i - 1) * 8;
-				result += (long) stream.ReadByte() << multiplier;
-			}
-
-			return result;
-		}
-
-
-		private static int GetWidth(byte firstByte)
-		{
-			byte result = 0;
-			var first = 255;
-
-			while (first != 0)
-			{
-				if ((firstByte | first) == first)
-					result++;
-				first >>= 1;
-			}
-
-			return result;
+			return ((long) stream.ReadByte() << 8) + (long) stream.ReadByte();
 		}
 	}
 }

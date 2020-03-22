@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using FluentAssertions;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Models;
 using Xunit;
 
@@ -74,7 +75,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			Ebml.GetMasterIds(stream, _specification)
+			EbmlReader.GetMasterIds(stream, _specification)
 			    .Should()
 			    .Be(Convert.ToUInt32(expectedValue, 16));
 		}
@@ -122,10 +123,40 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var result = Ebml.GetWidthAndSize(stream);
+			var result = EbmlReader.GetWidthAndSize(stream);
 
 			result.Should()
 			      .Be((expectedWidth, expectedSize));
 		}
+
+		[Fact]
+		public void ShouldReturnProperUint()
+		{
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
+			writer.Write(Convert.ToByte("0xFF", 16));
+			writer.Flush();
+
+			stream.Position = 0;
+
+			EbmlReader.GetUint(stream, 1)
+			          .Should()
+			          .Be(255);
+		} 
+		
+		[Fact]
+		public void ShouldDeserializeString()
+		{
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
+			writer.Write(Encoding.UTF8.GetBytes("matroska"));
+			writer.Flush();
+
+			stream.Position = 0;
+
+			EbmlReader.GetString(stream, 8)
+			          .Should()
+			          .Be("matroska");
+		} 
 	}
 }

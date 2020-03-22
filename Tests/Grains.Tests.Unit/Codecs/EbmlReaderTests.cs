@@ -10,11 +10,11 @@ using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
 {
-	public class EbmlTests
+	public class EbmlReaderTests
 	{
 		private readonly MatroskaSpecification _specification;
 
-		public EbmlTests()
+		public EbmlReaderTests()
 		{
 			_specification = new MatroskaSpecification
 			                 {

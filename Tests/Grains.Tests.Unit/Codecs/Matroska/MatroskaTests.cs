@@ -11,7 +11,6 @@ using Grains.Codecs.Matroska.Models;
 using Moq;
 using MoreLinq;
 using Xunit;
-
 using SUT = Grains.Codecs.Matroska;
 
 namespace Grains.Tests.Unit.Codecs.Matroska
@@ -46,12 +45,24 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                    }
 				         });
 
+			var ebmlBytes = element.IdString
+			                      .Skip(2)
+			                      .Select(
+				                       (character, index) => new
+				                                             {
+					                                             character,
+					                                             index
+				                                             })
+			                      .GroupBy(pair => pair.index / 2)
+			                      .Select(
+				                       grp => string.Join(
+					                       string.Empty,
+					                       grp.Select(s => s.character)))
+			                      .Select(x => Convert.ToByte(x, 16));
+
 			await using var stream = new MemoryStream();
 			await using var writer = new BinaryWriter(stream);
-			writer.Write(Convert.ToByte("1A", 16));
-			writer.Write(Convert.ToByte("45", 16));
-			writer.Write(Convert.ToByte("DF", 16));
-			writer.Write(Convert.ToByte("A3", 16));
+			ebmlBytes.ForEach(ebmlByte => writer.Write(ebmlByte));
 			writer.Flush();
 
 			stream.Position = 0;
@@ -62,7 +73,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			isMatroska.Should()
 			          .BeTrue();
 		}
-		
+
 		[Fact]
 		public async Task ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
 		{

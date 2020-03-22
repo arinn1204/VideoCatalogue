@@ -1,5 +1,6 @@
 ﻿using System.IO;
-using Grains.CodecParser;
+using System.Threading.Tasks;
+using Grains.Codecs;
 using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;
 
@@ -9,14 +10,18 @@ namespace Grains.Tests.Integration.Features.Actions
 	public class CodecParserAction
 	{
 		private readonly CodecParserData _codecParserData;
+		private readonly Parser _parser;
 
-		public CodecParserAction(CodecParserData codecParserData)
+		public CodecParserAction(
+			CodecParserData codecParserData,
+			Parser parser)
 		{
 			_codecParserData = codecParserData;
+			_parser = parser;
 		}
 
 		[When(@"the information about the file is requested")]
-		public void WhenTheInformationAboutTheFileIsRequested()
+		public async Task WhenTheInformationAboutTheFileIsRequested()
 		{
 			var sample = _codecParserData.Container.ToUpperInvariant() switch
 			             {
@@ -24,9 +29,7 @@ namespace Grains.Tests.Integration.Features.Actions
 			             };
 
 			var file = Path.Combine("TestData", "CodecParser", sample);
-			var codecParser = new Parser();
-
-			_codecParserData.VideoInformation = codecParser.GetInformation(file);
+			_codecParserData.VideoInformation = await _parser.GetInformation(file);
 		}
 	}
 }

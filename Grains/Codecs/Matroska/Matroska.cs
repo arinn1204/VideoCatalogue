@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
 using Grains.Codecs.Models.AlignedModels;
@@ -13,15 +15,17 @@ namespace Grains.Codecs.Matroska
 {
 	public class Matroska : IMatroska
 	{
+		private readonly IEbml _ebml;
 		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
 
-		public Matroska(ISpecification specification)
+		public Matroska(ISpecification specification, IEbml ebml)
 		{
 			_ =
 				specification ?? throw new ArgumentNullException(nameof(specification));
+			_ebml = ebml;
 			_matroskaSpecification =
 				new Lazy<MatroskaSpecification>(
-					() => specification?.GetSpecification()
+					() => specification.GetSpecification()
 					                    .ConfigureAwait(false)
 					                    .GetAwaiter()
 					                    .GetResult());
@@ -33,21 +37,25 @@ namespace Grains.Codecs.Matroska
 			                                            .Elements
 			                                            .First(w => w.Name == "EBML")
 			                                            .Id;
-			var firstWord = Ebml.GetMasterIds(stream, _matroskaSpecification.Value);
+			var firstWord = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
 
-			return firstWord == ebmlHeaderValue;
+			if (firstWord != ebmlHeaderValue)
+			{
+				return false; //not EBML marked, all matroska will be
+			}
+
+			var header = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
+
+			return header.DocType == "matroska";
 		}
 
 		public FileInformation GetFileInformation(Stream stream)
 		{
-			var id = Ebml.GetMasterIds(stream, _matroskaSpecification.Value);
+			var id = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
+			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
 
-			var (width, size) = Ebml.GetWidthAndSize(stream);
-			
-			//stream.Seek(size, SeekOrigin.Current);
-			
 			uint word = 0;
-			while ((word = Ebml.GetMasterIds(stream, _matroskaSpecification.Value)) != 0)
+			while ((word = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value)) != 0)
 			{
 				if (word == 0)
 				{

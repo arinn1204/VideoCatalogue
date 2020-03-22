@@ -55,14 +55,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					{
 						Name = "EBML",
 						Level = 0,
-						Default = "0",
 						IdString = "0x1A45DFA3",
 						Type = "master",
 						IsMultiple = true,
 						IsMandatory = true,
 						MinimumVersion = 1,
 						Description =
-							"Set the EBML characteristics of the data to follow. Each EBML document has to start with this."
+							"Set the EBML characteristics of the data to follow. Each EBML document has to start with this.",
+						Default = default
 					});
 		}
 

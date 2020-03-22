@@ -21,6 +21,7 @@ namespace Grains.Tests.Integration.Features.Support
 				client => client.BaseAddress = new Uri(
 					"https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
 			serviceCollection.AddTransient<ISpecification, Specification>();
+			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<Parser, Parser>();
 
 			objectContainer.RegisterInstanceAs(

@@ -26,7 +26,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			_fixture.Register<IMatroska>(() => _fixture.Create<SUT.Matroska>());
 		}
 
-#region Matroska
+#region IsMatroska
 
 		[Fact]
 		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()

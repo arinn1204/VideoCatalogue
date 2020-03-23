@@ -23,9 +23,11 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
+			_fixture.Register<IMatroska>(() => _fixture.Create<SUT.Matroska>());
 		}
 
 #region Matroska
+
 		[Fact]
 		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
 		{
@@ -49,13 +51,16 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			using var writer = new BinaryWriter(stream);
 
 			_fixture.Freeze<Mock<IEbml>>()
-			        .Setup(s => s.GetHeaderInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()))
+			        .Setup(
+				         s => s.GetHeaderInformation(
+					         It.IsAny<Stream>(),
+					         It.IsAny<MatroskaSpecification>()))
 			        .Returns(
 				         new EbmlHeader
 				         {
 					         DocType = "matroska"
 				         });
-			         
+
 			var matroskaData = new[]
 			                   {
 				                   Convert.ToByte("1A", 16),
@@ -63,13 +68,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                   Convert.ToByte("DF", 16),
 				                   Convert.ToByte("A3", 16)
 			                   };
-			
+
 			writer.Write(matroskaData);
 			writer.Flush();
 
 			stream.Position = 0;
 
-			var matroska = _fixture.Create<SUT.Matroska>();
+			var matroska = _fixture.Create<IMatroska>();
 			var isMatroska = matroska.IsMatroska(stream);
 
 			isMatroska.Should()
@@ -100,13 +105,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			using var writer = new BinaryWriter(stream);
 			stream.Position = 0;
 
-			var matroska = _fixture.Create<SUT.Matroska>();
+			var matroska = _fixture.Create<IMatroska>();
 			var isMatroska = matroska.IsMatroska(stream);
 
 			isMatroska.Should()
 			          .BeFalse();
 		}
-		
+
 		[Fact]
 		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
 		{
@@ -130,13 +135,16 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);
 			_fixture.Freeze<Mock<IEbml>>()
-			        .Setup(s => s.GetHeaderInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()))
+			        .Setup(
+				         s => s.GetHeaderInformation(
+					         It.IsAny<Stream>(),
+					         It.IsAny<MatroskaSpecification>()))
 			        .Returns(
 				         new EbmlHeader
 				         {
 					         DocType = "not matroska"
 				         });
-			         
+
 			var matroskaData = new[]
 			                   {
 				                   Convert.ToByte("1A", 16),
@@ -144,39 +152,38 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                   Convert.ToByte("DF", 16),
 				                   Convert.ToByte("A3", 16)
 			                   };
-			
+
 			writer.Write(matroskaData);
 			writer.Flush();
-			
+
 			stream.Position = 0;
 
-			var matroska = _fixture.Create<SUT.Matroska>();
+			var matroska = _fixture.Create<IMatroska>();
 			var isMatroska = matroska.IsMatroska(stream);
 
 			isMatroska.Should()
 			          .BeFalse();
 		}
+
 #endregion
 
 #region GetFileInformation
+
 		[Fact]
 		public void ShouldThrowWhenNotEbml()
 		{
-			
 		}
-		
+
 		[Fact]
 		public void ShouldThrowWhenNotEbmlVersionOne()
 		{
-			
 		}
-		
+
 		[Fact]
 		public void ShouldThrowWhenNotMatroska()
 		{
-			
 		}
-#endregion		
-		
+
+#endregion
 	}
 }

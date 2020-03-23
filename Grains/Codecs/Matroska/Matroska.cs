@@ -16,13 +16,18 @@ namespace Grains.Codecs.Matroska
 	public class Matroska : IMatroska
 	{
 		private readonly IEbml _ebml;
+		private readonly IMatroskaSegment _matroskaSegment;
 		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
 
-		public Matroska(ISpecification specification, IEbml ebml)
+		public Matroska(
+			ISpecification specification,
+			IEbml ebml,
+			IMatroskaSegment matroskaSegment)
 		{
 			_ =
 				specification ?? throw new ArgumentNullException(nameof(specification));
 			_ebml = ebml;
+			_matroskaSegment = matroskaSegment;
 			_matroskaSpecification =
 				new Lazy<MatroskaSpecification>(
 					() => specification.GetSpecification()
@@ -53,17 +58,13 @@ namespace Grains.Codecs.Matroska
 		{
 			var id = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
 			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
-
-			uint word = 0;
-			while ((word = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value)) != 0)
-			{
-				if (word == 0)
-				{
-					break;
-				}
-			}
-
-			return new FileInformation();
+			var segmentInformation = _matroskaSegment.GetSegmentInformation(
+				stream,
+				_matroskaSpecification.Value);
+			return new FileInformation
+			       {
+				       Container = ebmlHeader.DocType
+			       };
 		}
 	}
 }

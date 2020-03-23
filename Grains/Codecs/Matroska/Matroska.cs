@@ -63,7 +63,10 @@ namespace Grains.Codecs.Matroska
 				_matroskaSpecification.Value);
 			return new FileInformation
 			       {
-				       Container = ebmlHeader.DocType
+				       Container = ebmlHeader.DocType,
+				       Audios = segmentInformation.Audios,
+				       Subtitles = segmentInformation.Subtitles,
+				       Videos = segmentInformation.Videos
 			       };
 		}
 	}

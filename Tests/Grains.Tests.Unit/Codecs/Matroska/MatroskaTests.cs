@@ -25,8 +25,9 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			_fixture.Customize(new AutoMoqCustomization());
 		}
 
+#region Matroska
 		[Fact]
-		public async Task ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
+		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
 		{
 			var element =
 				new MatroskaElement
@@ -44,8 +45,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						                    element
 					                    }
 				         });
-			await using var stream = new MemoryStream();
-			await using var writer = new BinaryWriter(stream);
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
 
 			_fixture.Freeze<Mock<IEbml>>()
 			        .Setup(s => s.GetHeaderInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()))
@@ -76,7 +77,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		}
 
 		[Fact]
-		public async Task ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
+		public void ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
 		{
 			var element =
 				new MatroskaElement
@@ -95,8 +96,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                    }
 				         });
 
-			await using var stream = new MemoryStream();
-			await using var writer = new BinaryWriter(stream);
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
 			stream.Position = 0;
 
 			var matroska = _fixture.Create<SUT.Matroska>();
@@ -107,7 +108,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		}
 		
 		[Fact]
-		public async Task ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
+		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
 		{
 			var element =
 				new MatroskaElement
@@ -126,8 +127,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                    }
 				         });
 
-			await using var stream = new MemoryStream();
-			await using var writer = new BinaryWriter(stream);
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
 			_fixture.Freeze<Mock<IEbml>>()
 			        .Setup(s => s.GetHeaderInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()))
 			        .Returns(
@@ -155,5 +156,27 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			isMatroska.Should()
 			          .BeFalse();
 		}
+#endregion
+
+#region GetFileInformation
+		[Fact]
+		public void ShouldThrowWhenNotEbml()
+		{
+			
+		}
+		
+		[Fact]
+		public void ShouldThrowWhenNotEbmlVersionOne()
+		{
+			
+		}
+		
+		[Fact]
+		public void ShouldThrowWhenNotMatroska()
+		{
+			
+		}
+#endregion		
+		
 	}
 }

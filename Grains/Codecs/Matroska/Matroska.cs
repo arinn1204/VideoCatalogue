@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
@@ -14,6 +15,7 @@ namespace Grains.Codecs.Matroska
 		private readonly IEbml _ebml;
 		private readonly IMatroskaSegment _matroskaSegment;
 		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
+		private readonly Lazy<uint> _ebmlId;
 
 		public Matroska(
 			ISpecification specification,
@@ -27,17 +29,20 @@ namespace Grains.Codecs.Matroska
 			_matroskaSpecification =
 				new Lazy<MatroskaSpecification>(
 					() => specification.GetSpecification()
-					                    .ConfigureAwait(false)
-					                    .GetAwaiter()
-					                    .GetResult());
+					                   .ConfigureAwait(false)
+					                   .GetAwaiter()
+					                   .GetResult());
+
+			_ebmlId = new Lazy<uint>(
+				() => _matroskaSpecification.Value
+				                            .Elements
+				                            .First(f => f.Name == "EBML")
+				                            .Id);
 		}
 
 		public bool IsMatroska(Stream stream)
 		{
-			var ebmlHeaderValue = _matroskaSpecification.Value
-			                                            .Elements
-			                                            .First(w => w.Name == "EBML")
-			                                            .Id;
+			var ebmlHeaderValue = _ebmlId.Value;
 			var firstWord = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			if (firstWord != ebmlHeaderValue)
@@ -53,7 +58,26 @@ namespace Grains.Codecs.Matroska
 		public FileInformation GetFileInformation(Stream stream)
 		{
 			var id = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
+
+			if (id != _ebmlId.Value)
+			{
+				throw new MatroskaException($"Unsupported ID, header is: {id}");
+			}
+
 			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
+
+			if (ebmlHeader.Version != 1)
+			{
+				throw new MatroskaException(
+					$"Unsupported version, can only support version one but file is version {ebmlHeader.Version}");
+			}
+
+			if (ebmlHeader.DocType != "matroska")
+			{
+				throw new MatroskaException(
+					$"Unsupported EBML document type. Only supporting matroska, but found {ebmlHeader.DocType}");
+			}
+
 			var segmentInformation = _matroskaSegment.GetSegmentInformation(
 				stream,
 				_matroskaSpecification.Value);

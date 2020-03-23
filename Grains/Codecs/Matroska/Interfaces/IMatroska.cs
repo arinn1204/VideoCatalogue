@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using GrainsInterfaces.Models.CodecParser;
 
 namespace Grains.Codecs.Matroska.Interfaces

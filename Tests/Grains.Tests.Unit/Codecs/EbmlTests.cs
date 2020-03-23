@@ -9,7 +9,6 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Models;
-using MoreLinq;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs

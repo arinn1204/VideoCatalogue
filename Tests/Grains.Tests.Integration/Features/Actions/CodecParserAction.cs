@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using Grains.Codecs;
 using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;

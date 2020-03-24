@@ -30,7 +30,6 @@ namespace Grains.Tests.Integration.Features.Assertions
 						                          {
 							                          Title = "small",
 							                          VideoCodec = Codec.H264,
-							                          Resolution = "560x320",
 							                          Duration = 5.58
 						                          }
 					                          },

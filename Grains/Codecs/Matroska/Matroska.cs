@@ -92,7 +92,9 @@ namespace Grains.Codecs.Matroska
 				       Container = ebmlHeader.DocType,
 				       Audios = segmentInformation.Audios,
 				       Subtitles = segmentInformation.Subtitles,
-				       Videos = segmentInformation.Videos
+				       Videos = segmentInformation.Videos,
+				       Id = id,
+				       EbmlVersion = (int)ebmlHeader.Version
 			       };
 		}
 	}

@@ -27,7 +27,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IMatroska>(() => _fixture.Create<SUT.Matroska>());
-			
+
 			var element =
 				new MatroskaElement
 				{
@@ -43,13 +43,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					Level = 0
 				};
 			_requiredSpecification = new MatroskaSpecification
-				  {
-					  Elements = new List<MatroskaElement>
-					             {
-						             element,
-						             segmentElement
-					             }
-				  };
+			                         {
+				                         Elements = new List<MatroskaElement>
+				                                    {
+					                                    element,
+					                                    segmentElement
+				                                    }
+			                         };
 
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
@@ -130,9 +130,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnRetrievedIdWhenNotEbml()
 		{
-			var id = _requiredSpecification.Elements.First()
-			                               .Id +
-			         5u;
+			var id = _requiredSpecification.Elements.First().Id + 5u;
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
@@ -196,6 +194,97 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 
 			error.Description.Should()
 			     .Be(expectedError);
+		}
+
+		[Fact]
+		public void ShouldReturnRetrievedFileInformation()
+		{
+			using var stream = new MemoryStream();
+
+			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			ebml
+			   .Setup(
+					s => s.GetHeaderInformation(
+						It.IsAny<Stream>(),
+						It.IsAny<MatroskaSpecification>()))
+			   .Returns(
+					new EbmlHeader
+					{
+						DocType = "matroska",
+						Version = 1u
+					});
+
+			ebml.Setup(
+				     s => s.GetMasterIds(
+					     It.IsAny<Stream>(),
+					     It.IsAny<MatroskaSpecification>()))
+			    .Returns(_requiredSpecification.Elements.First().Id);
+
+			var expectedSegmentInformation = new SegmentInformation
+			                                 {
+				                                 Audios = new[]
+				                                          {
+					                                          new AudioInformation
+					                                          {
+						                                          Channel = "5.1",
+						                                          Duration = 165.21579,
+						                                          Frequency = 48000
+					                                          }
+				                                          },
+				                                 Subtitles = new[]
+				                                             {
+					                                             new Subtitle
+					                                             {
+						                                             Language = "english",
+						                                             Name = "hdmv_pgs_subtitle"
+					                                             }
+				                                             },
+				                                 Videos = new[]
+				                                          {
+					                                          new VideoInformation
+					                                          {
+						                                          Duration = 1234,
+						                                          Height = 1920,
+						                                          Width = 1080,
+						                                          Title = "Title",
+						                                          VideoCodec = Codec.H264,
+						                                          Chapters = new[]
+						                                                     {
+							                                                     new Chapter
+							                                                     {
+								                                                     Start = 0,
+								                                                     End =
+									                                                     165.21579m
+							                                                     }
+						                                                     }
+					                                          }
+				                                          }
+			                                 };
+
+			var segmentInformation = _fixture.Freeze<Mock<IMatroskaSegment>>();
+			segmentInformation.Setup(
+				                   s => s.GetSegmentInformation(
+					                   It.IsAny<Stream>(),
+					                   It.IsAny<MatroskaSpecification>()))
+			                  .Returns(expectedSegmentInformation);
+			var matroska = _fixture.Create<IMatroska>();
+			var fileInformation = matroska.GetFileInformation(stream, out var error);
+
+			error.Should().BeNull();
+
+			fileInformation.Should()
+			               .BeEquivalentTo(
+				                new FileInformation
+				                {
+					                Audios = expectedSegmentInformation.Audios,
+					                Subtitles = expectedSegmentInformation.Subtitles,
+					                Videos = expectedSegmentInformation.Videos,
+					                Container = "matroska",
+					                Id = _requiredSpecification.Elements.First().Id,
+					                EbmlVersion = 1
+				                });
+
+			fileInformation.Videos.First().Resolution.Should().Be("1080p");
 		}
 
 #endregion

@@ -37,8 +37,9 @@ namespace Grains.Codecs.Matroska
 				() =>
 				{
 					var values = _matroskaSpecification.Value
-					                             .Elements
-					                             .Where(f => f.Level == 0);
+					                                   .Elements
+					                                   .Where(f => f.Level == 0)
+					                                   .ToList();
 
 					return (values.First(f => f.Name == "EBML")
 					              .Id,
@@ -74,7 +75,7 @@ namespace Grains.Codecs.Matroska
 					       Id = id
 				       };
 			}
-			
+
 			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
 
 			if (ebmlHeader.Version != 1 || ebmlHeader.DocType != "matroska")
@@ -85,11 +86,11 @@ namespace Grains.Codecs.Matroska
 				error = new MatroskaError(errorDescription);
 				return new FileInformation
 				       {
-					       EbmlVersion = (int)ebmlHeader.Version,
+					       EbmlVersion = (int) ebmlHeader.Version,
 					       Container = ebmlHeader.DocType
 				       };
 			}
-			
+
 			var segmentInformation = _matroskaSegment.GetSegmentInformation(
 				stream,
 				_matroskaSpecification.Value);

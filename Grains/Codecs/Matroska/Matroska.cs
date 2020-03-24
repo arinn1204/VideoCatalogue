@@ -61,23 +61,23 @@ namespace Grains.Codecs.Matroska
 
 			if (id != _ebmlId.Value)
 			{
-				throw new MatroskaException($"Unsupported ID, header is: {id}");
+				return new FileInformation
+				       {
+					       Id = id
+				       };
 			}
-
+			
 			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
 
-			if (ebmlHeader.Version != 1)
+			if (ebmlHeader.Version != 1 || ebmlHeader.DocType != "matroska")
 			{
-				throw new MatroskaException(
-					$"Unsupported version, can only support version one but file is version {ebmlHeader.Version}");
+				return new FileInformation
+				       {
+					       EbmlVersion = (int)ebmlHeader.Version,
+					       Container = ebmlHeader.DocType
+				       };
 			}
-
-			if (ebmlHeader.DocType != "matroska")
-			{
-				throw new MatroskaException(
-					$"Unsupported EBML document type. Only supporting matroska, but found {ebmlHeader.DocType}");
-			}
-
+			
 			var segmentInformation = _matroskaSegment.GetSegmentInformation(
 				stream,
 				_matroskaSpecification.Value);

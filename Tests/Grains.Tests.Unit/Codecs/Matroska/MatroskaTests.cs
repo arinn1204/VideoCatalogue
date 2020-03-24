@@ -38,6 +38,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					Name = "EBML",
 					IdString = "0x1A45DFA3"
 				};
+
+			var segmentElement =
+				new MatroskaElement
+				{
+					Name = "Segment",
+					IdString = "0x1A45DFA2"
+				};
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
 			        .ReturnsAsync(
@@ -45,10 +52,11 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         {
 					         Elements = new List<MatroskaElement>
 					                    {
-						                    element
+						                    element,
+						                    segmentElement
 					                    }
 				         });
-			
+
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
@@ -85,6 +93,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					Name = "EBML",
 					IdString = "0x1A45DFA3"
 				};
+
+			var segmentElement =
+				new MatroskaElement
+				{
+					Name = "Segment",
+					IdString = "0x1A45DFA2"
+				};
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
 			        .ReturnsAsync(
@@ -92,7 +107,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         {
 					         Elements = new List<MatroskaElement>
 					                    {
-						                    element
+						                    element,
+						                    segmentElement
 					                    }
 				         });
 
@@ -116,6 +132,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					Name = "EBML",
 					IdString = "0x1A45DFA3"
 				};
+			var segmentElement =
+				new MatroskaElement
+				{
+					Name = "Segment",
+					IdString = "0x1A45DFA2"
+				};
+
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
 			        .ReturnsAsync(
@@ -123,7 +146,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         {
 					         Elements = new List<MatroskaElement>
 					                    {
-						                    element
+						                    element,
+						                    segmentElement
 					                    }
 				         });
 
@@ -167,19 +191,26 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnRetrievedIdWhenNotEbml()
 		{
-			var element =
+			var ebmlElement =
 				new MatroskaElement
 				{
 					Name = "EBML",
 					IdString = "0x1A45DFA3"
 				};
-			
+
+			var segmentElement =
+				new MatroskaElement
+				{
+					Name = "Segment",
+					IdString = "0x1A45DFA2"
+				};
+
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
 					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(element.Id + 5u);
+			    .Returns(ebmlElement.Id + 5u);
 
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
@@ -188,7 +219,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         {
 					         Elements = new List<MatroskaElement>
 					                    {
-						                    element
+						                    ebmlElement,
+						                    segmentElement
 					                    }
 				         });
 			using var stream = new MemoryStream();
@@ -196,7 +228,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			var fileInformation = matroska.GetFileInformation(stream);
 
 			fileInformation.Id.Should()
-			               .Be((uint) element.Id + 5u);
+			               .Be((uint) ebmlElement.Id + 5u);
 		}
 
 		[Theory]
@@ -210,20 +242,27 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					Name = "EBML",
 					IdString = "0x1"
 				};
+			var segmentElement =
+				new MatroskaElement
+				{
+					Name = "Segment",
+					IdString = "0x1A45DFA2"
+				};
 			var specification = new MatroskaSpecification
 			                    {
 				                    Elements = new List<MatroskaElement>
 				                               {
-					                               element
+					                               element,
+					                               segmentElement
 				                               }
 			                    };
 
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
 			        .ReturnsAsync(specification);
-			
+
 			using var stream = new MemoryStream();
-			
+
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
 			ebml
 			   .Setup(
@@ -234,7 +273,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					new EbmlHeader
 					{
 						DocType = doctype,
-						Version = (uint)version
+						Version = (uint) version
 					});
 
 			ebml.Setup(

@@ -15,7 +15,7 @@ namespace Grains.Codecs.Matroska
 		private readonly IEbml _ebml;
 		private readonly IMatroskaSegment _matroskaSegment;
 		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
-		private readonly Lazy<uint> _ebmlId;
+		private readonly Lazy<(uint ebml, uint segment)> _ebmlAndSegmentId;
 
 		public Matroska(
 			ISpecification specification,
@@ -33,18 +33,25 @@ namespace Grains.Codecs.Matroska
 					                   .GetAwaiter()
 					                   .GetResult());
 
-			_ebmlId = new Lazy<uint>(
-				() => _matroskaSpecification.Value
-				                            .Elements
-				                            .First(f => f.Name == "EBML")
-				                            .Id);
+			_ebmlAndSegmentId = new Lazy<(uint ebml, uint segment)>(
+				() =>
+				{
+					var values = _matroskaSpecification.Value
+					                             .Elements
+					                             .Where(f => f.Name == "EBML" || f.Name == "Segment");
+
+					return (values.First(f => f.Name == "EBML")
+					              .Id,
+					        values.First(f => f.Name == "Segment")
+					              .Id);
+				});
 		}
 
 		public bool IsMatroska(Stream stream)
 		{
 			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
 
-			if (id != _ebmlId.Value)
+			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
 				return false; //not EBML marked, all matroska will be
 			}
@@ -58,7 +65,7 @@ namespace Grains.Codecs.Matroska
 		{
 			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
 
-			if (id != _ebmlId.Value)
+			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
 				return new FileInformation
 				       {

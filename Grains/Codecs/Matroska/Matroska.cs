@@ -70,10 +70,7 @@ namespace Grains.Codecs.Matroska
 			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
 				error = new MatroskaError($"{id} is not a valid ebml ID.");
-				return new FileInformation
-				       {
-					       Id = id
-				       };
+				return default;
 			}
 
 			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
@@ -84,11 +81,7 @@ namespace Grains.Codecs.Matroska
 					? $"Ebml version of '{ebmlHeader.Version}' is not supported."
 					: $"Ebml doctype of '{ebmlHeader.DocType}' is not supported.";
 				error = new MatroskaError(errorDescription);
-				return new FileInformation
-				       {
-					       EbmlVersion = (int) ebmlHeader.Version,
-					       Container = ebmlHeader.DocType
-				       };
+				return default;
 			}
 
 			var segmentInformation = _matroskaSegment.GetSegmentInformation(

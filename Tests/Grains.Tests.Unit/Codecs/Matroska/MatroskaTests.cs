@@ -143,8 +143,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
-			fileInformation.Id.Should()
-			               .Be(id);
+			fileInformation.Should()
+			               .BeNull();
 
 			error.Description.Should()
 			     .Be($"{id} is not a valid ebml ID.");
@@ -189,12 +189,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
 			fileInformation.Should()
-			               .BeEquivalentTo(
-				                new FileInformation
-				                {
-					                Container = doctype,
-					                EbmlVersion = version
-				                });
+			               .BeNull();
 			segmentInformation.Verify(
 				v => v.GetSegmentInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()),
 				Times.Never);

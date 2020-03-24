@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
@@ -19,8 +17,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 {
 	public class MatroskaTests
 	{
-		private readonly Fixture _fixture;
-		private readonly MatroskaSpecification _requiredSpecification;
+#region Setup/Teardown
 
 		public MatroskaTests()
 		{
@@ -56,97 +53,10 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			        .ReturnsAsync(_requiredSpecification);
 		}
 
-#region IsMatroska
-
-		[Fact]
-		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
-		{
-			var id = _requiredSpecification.Elements.First()
-			                               .Id;
-			var ebml = _fixture.Freeze<Mock<IEbml>>();
-			ebml.Setup(
-				     s => s.GetMasterIds(
-					     It.IsAny<Stream>(),
-					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(id);
-
-			using var stream = new MemoryStream();
-
-			_fixture.Freeze<Mock<IEbml>>()
-			        .Setup(
-				         s => s.GetHeaderInformation(
-					         It.IsAny<Stream>(),
-					         It.IsAny<MatroskaSpecification>()))
-			        .Returns(
-				         new EbmlHeader
-				         {
-					         DocType = "matroska"
-				         });
-
-			var matroska = _fixture.Create<IMatroska>();
-			var isMatroska = matroska.IsMatroska(stream);
-
-			isMatroska.Should()
-			          .BeTrue();
-		}
-
-		[Fact]
-		public void ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
-		{
-			using var stream = new MemoryStream();
-			var matroska = _fixture.Create<IMatroska>();
-			var isMatroska = matroska.IsMatroska(stream);
-
-			isMatroska.Should()
-			          .BeFalse();
-		}
-
-		[Fact]
-		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
-		{
-			using var stream = new MemoryStream();
-			_fixture.Freeze<Mock<IEbml>>()
-			        .Setup(
-				         s => s.GetHeaderInformation(
-					         It.IsAny<Stream>(),
-					         It.IsAny<MatroskaSpecification>()))
-			        .Returns(
-				         new EbmlHeader
-				         {
-					         DocType = "not matroska"
-				         });
-
-			var matroska = _fixture.Create<IMatroska>();
-			var isMatroska = matroska.IsMatroska(stream);
-
-			isMatroska.Should()
-			          .BeFalse();
-		}
-
 #endregion
 
-#region GetFileInformation
-
-		[Fact]
-		public void ShouldReturnRetrievedIdWhenNotEbml()
-		{
-			var id = _requiredSpecification.Elements.First().Id + 5u;
-			var ebml = _fixture.Freeze<Mock<IEbml>>();
-			ebml.Setup(
-				     s => s.GetMasterIds(
-					     It.IsAny<Stream>(),
-					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(id);
-			using var stream = new MemoryStream();
-			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream, out var error);
-
-			fileInformation.Should()
-			               .BeNull();
-
-			error.Description.Should()
-			     .Be($"{id} is not a valid ebml ID.");
-		}
+		private readonly Fixture _fixture;
+		private readonly MatroskaSpecification _requiredSpecification;
 
 		[Theory]
 		[InlineData(2, "matroska", "Ebml version of '2' is not supported.")]
@@ -194,6 +104,71 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 
 			error.Description.Should()
 			     .Be(expectedError);
+		}
+
+		[Fact]
+		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
+		{
+			var id = _requiredSpecification.Elements.First()
+			                               .Id;
+			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			ebml.Setup(
+				     s => s.GetMasterIds(
+					     It.IsAny<Stream>(),
+					     It.IsAny<MatroskaSpecification>()))
+			    .Returns(id);
+
+			using var stream = new MemoryStream();
+
+			_fixture.Freeze<Mock<IEbml>>()
+			        .Setup(
+				         s => s.GetHeaderInformation(
+					         It.IsAny<Stream>(),
+					         It.IsAny<MatroskaSpecification>()))
+			        .Returns(
+				         new EbmlHeader
+				         {
+					         DocType = "matroska"
+				         });
+
+			var matroska = _fixture.Create<IMatroska>();
+			var isMatroska = matroska.IsMatroska(stream);
+
+			isMatroska.Should()
+			          .BeTrue();
+		}
+
+		[Fact]
+		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
+		{
+			using var stream = new MemoryStream();
+			_fixture.Freeze<Mock<IEbml>>()
+			        .Setup(
+				         s => s.GetHeaderInformation(
+					         It.IsAny<Stream>(),
+					         It.IsAny<MatroskaSpecification>()))
+			        .Returns(
+				         new EbmlHeader
+				         {
+					         DocType = "not matroska"
+				         });
+
+			var matroska = _fixture.Create<IMatroska>();
+			var isMatroska = matroska.IsMatroska(stream);
+
+			isMatroska.Should()
+			          .BeFalse();
+		}
+
+		[Fact]
+		public void ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
+		{
+			using var stream = new MemoryStream();
+			var matroska = _fixture.Create<IMatroska>();
+			var isMatroska = matroska.IsMatroska(stream);
+
+			isMatroska.Should()
+			          .BeFalse();
 		}
 
 		[Fact]
@@ -287,6 +262,25 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			fileInformation.Videos.First().Resolution.Should().Be("1080p");
 		}
 
-#endregion
+		[Fact]
+		public void ShouldReturnRetrievedIdWhenNotEbml()
+		{
+			var id = _requiredSpecification.Elements.First().Id + 5u;
+			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			ebml.Setup(
+				     s => s.GetMasterIds(
+					     It.IsAny<Stream>(),
+					     It.IsAny<MatroskaSpecification>()))
+			    .Returns(id);
+			using var stream = new MemoryStream();
+			var matroska = _fixture.Create<IMatroska>();
+			var fileInformation = matroska.GetFileInformation(stream, out var error);
+
+			fileInformation.Should()
+			               .BeNull();
+
+			error.Description.Should()
+			     .Be($"{id} is not a valid ebml ID.");
+		}
 	}
 }

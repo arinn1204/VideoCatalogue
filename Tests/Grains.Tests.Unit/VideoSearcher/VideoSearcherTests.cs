@@ -100,12 +100,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -157,12 +168,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -214,12 +236,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -244,7 +277,8 @@ namespace Grains.Tests.Unit.VideoSearcher
 			   .BeEquivalentTo(
 					new[]
 					{
-						1974, 2016
+						1974,
+						2016
 					});
 		}
 
@@ -268,12 +302,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -317,8 +362,18 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
-				                        .Append(BuildFileFormat(new[] {@"Captain America"}))
-				                        .Append(BuildFileFormat(new[] {".*"})));
+				                        .Append(
+					                         BuildFileFormat(
+						                         new[]
+						                         {
+							                         @"Captain America"
+						                         }))
+				                        .Append(
+					                         BuildFileFormat(
+						                         new[]
+						                         {
+							                         ".*"
+						                         })));
 
 			var directory = new Mock<IDirectory>();
 			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
@@ -326,12 +381,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -387,12 +453,24 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar, sonsOfAnarchy}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar,
+							            sonsOfAnarchy
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -455,7 +533,12 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<VS.FileFormat>()
-				                        .Append(BuildFileFormat(new[] {@"Captain America"})));
+				                        .Append(
+					                         BuildFileFormat(
+						                         new[]
+						                         {
+							                         @"Captain America"
+						                         })));
 
 			var directory = new Mock<IDirectory>();
 			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
@@ -463,12 +546,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -513,12 +607,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -568,12 +673,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 
@@ -625,12 +741,23 @@ namespace Grains.Tests.Unit.VideoSearcher
 				          path =>
 				          {
 					          return path == "Y:"
-						          ? new[] {godFather, civilWar}
-						          : new[] {expectedCivilWar};
+						          ? new[]
+						            {
+							            godFather,
+							            civilWar
+						            }
+						          : new[]
+						            {
+							            expectedCivilWar
+						            };
 				          });
 
 			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(new[] {expectedCivilWar});
+			         .Returns(
+				          new[]
+				          {
+					          expectedCivilWar
+				          });
 			fileSystem.Setup(s => s.Directory)
 			          .Returns(directory.Object);
 

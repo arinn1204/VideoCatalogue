@@ -398,7 +398,10 @@ namespace Grains.Tests.Unit.VideoApi
 					       Title = "title",
 					       ImdbId = "tt12343",
 					       TmdbId = 1234,
-					       Genres = new[] {"The one and only"},
+					       Genres = new[]
+					                {
+						                "The one and only"
+					                },
 					       ReleaseDate = new DateTime(2020, 08, 18),
 					       Runtime = 142.34M,
 					       Overview = "There once was a story about this overperson",

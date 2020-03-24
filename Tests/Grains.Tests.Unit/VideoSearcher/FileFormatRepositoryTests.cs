@@ -46,10 +46,22 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"video_file.file_patterns",
 				new[]
 				{
-					"file_name_pattern", "title_group", "year_group", "season_group",
-					"episode_group", "container_group"
+					"file_name_pattern",
+					"title_group",
+					"year_group",
+					"season_group",
+					"episode_group",
+					"container_group"
 				},
-				new object[] {@"(.*)&FILTER&[sS](\d{1,2})", 0, 0, 0, 0, 0});
+				new object[]
+				{
+					@"(.*)&FILTER&[sS](\d{1,2})",
+					0,
+					0,
+					0,
+					0,
+					0
+				});
 			command.ExecuteNonQuery();
 
 			var repository = _fixture.Create<FileFormatRepository>();
@@ -75,19 +87,43 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"video_file.file_patterns",
 				new[]
 				{
-					"file_name_pattern", "title_group", "year_group", "season_group",
-					"episode_group", "container_group"
+					"file_name_pattern",
+					"title_group",
+					"year_group",
+					"season_group",
+					"episode_group",
+					"container_group"
 				},
-				new object[] {"(.*)", 0, null, null, null, 0});
+				new object[]
+				{
+					"(.*)",
+					0,
+					null,
+					null,
+					null,
+					0
+				});
 			command.ExecuteNonQuery();
 			command = _databaseFixture.AddAcceptableFileFormat(
 				"video_file.file_patterns",
 				new[]
 				{
-					"file_name_pattern", "title_group", "year_group", "season_group",
-					"episode_group", "container_group"
+					"file_name_pattern",
+					"title_group",
+					"year_group",
+					"season_group",
+					"episode_group",
+					"container_group"
 				},
-				new object[] {@"(.*) [sS]\d{1,2}[eE]\d{1,2}", 0, 0, 0, 0, 0});
+				new object[]
+				{
+					@"(.*) [sS]\d{1,2}[eE]\d{1,2}",
+					0,
+					0,
+					0,
+					0,
+					0
+				});
 			command.ExecuteNonQuery();
 
 			var repository = _fixture.Create<FileFormatRepository>();
@@ -132,13 +168,25 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var command = _databaseFixture.AddAcceptableFileFormat(
 				"video_file.file_types",
-				new[] {"file_type"},
-				new[] {"mkv"});
+				new[]
+				{
+					"file_type"
+				},
+				new[]
+				{
+					"mkv"
+				});
 			command.ExecuteNonQuery();
 			command = _databaseFixture.AddAcceptableFileFormat(
 				"video_file.file_types",
-				new[] {"file_type"},
-				new[] {"avi"});
+				new[]
+				{
+					"file_type"
+				},
+				new[]
+				{
+					"avi"
+				});
 			command.ExecuteNonQuery();
 
 			var repository = _fixture.Create<FileFormatRepository>();
@@ -160,13 +208,25 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var command = _databaseFixture.AddAcceptableFileFormat(
 				"video_file.filtered_keywords",
-				new[] {"keyword"},
-				new[] {"BLURAY"});
+				new[]
+				{
+					"keyword"
+				},
+				new[]
+				{
+					"BLURAY"
+				});
 			command.ExecuteNonQuery();
 			command = _databaseFixture.AddAcceptableFileFormat(
 				"video_file.filtered_keywords",
-				new[] {"keyword"},
-				new[] {"XVID"});
+				new[]
+				{
+					"keyword"
+				},
+				new[]
+				{
+					"XVID"
+				});
 			command.ExecuteNonQuery();
 
 			var repository = _fixture.Create<FileFormatRepository>();

@@ -16,7 +16,7 @@ namespace Grains.Codecs.Models.AlignedModels
 
 		[FieldOffset(3)]
 		public byte B4;
-		
+
 		[FieldOffset(4)]
 		public byte B5;
 

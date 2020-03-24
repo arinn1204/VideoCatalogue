@@ -2,8 +2,6 @@
 using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
 using GrainsInterfaces.Models.CodecParser;
@@ -13,9 +11,9 @@ namespace Grains.Codecs.Matroska
 	public class Matroska : IMatroska
 	{
 		private readonly IEbml _ebml;
+		private readonly Lazy<(uint ebml, uint segment)> _ebmlAndSegmentId;
 		private readonly IMatroskaSegment _matroskaSegment;
 		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
-		private readonly Lazy<(uint ebml, uint segment)> _ebmlAndSegmentId;
 
 		public Matroska(
 			ISpecification specification,
@@ -47,6 +45,8 @@ namespace Grains.Codecs.Matroska
 					              .Id);
 				});
 		}
+
+#region IMatroska Members
 
 		public bool IsMatroska(Stream stream)
 		{
@@ -94,8 +94,10 @@ namespace Grains.Codecs.Matroska
 				       Subtitles = segmentInformation.Subtitles,
 				       Videos = segmentInformation.Videos,
 				       Id = id,
-				       EbmlVersion = (int)ebmlHeader.Version
+				       EbmlVersion = (int) ebmlHeader.Version
 			       };
 		}
+
+#endregion
 	}
 }

@@ -72,9 +72,7 @@ namespace Grains.Tests.Integration.Features.Assertions
 		}
 
 		private string BuildFilePath(string baseFileName)
-		{
-			return Path.Combine("TestData", "VideoApi", baseFileName);
-		}
+			=> Path.Combine("TestData", "VideoApi", baseFileName);
 
 		private string GetFilename(string title)
 		{

@@ -12,18 +12,18 @@ namespace Grains.Codecs
 		{
 			_matroska = matroska;
 		}
-		
+
 		public FileInformation GetInformation(string path)
 		{
 			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 			var fileInformation = default(FileInformation);
-			
+
 			if (_matroska.IsMatroska(stream))
 			{
 				stream.Position = 0;
 				fileInformation = _matroska.GetFileInformation(stream, out var error);
 			}
-			
+
 
 			return fileInformation;
 		}

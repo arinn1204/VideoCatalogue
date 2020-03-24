@@ -6,7 +6,7 @@
 		{
 			Description = description;
 		}
-		
+
 		public string Description { get; }
 	}
 }

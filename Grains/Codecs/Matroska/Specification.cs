@@ -18,6 +18,8 @@ namespace Grains.Codecs.Matroska
 			_httpClientFactory = httpClientFactory;
 		}
 
+#region ISpecification Members
+
 		public async Task<MatroskaSpecification> GetSpecification()
 		{
 			var responseMessage = await GetContent();
@@ -25,6 +27,8 @@ namespace Grains.Codecs.Matroska
 			var content = SerializeFromXml(responseContent);
 			return content;
 		}
+
+#endregion
 
 		private MatroskaSpecification SerializeFromXml(Stream content)
 		{

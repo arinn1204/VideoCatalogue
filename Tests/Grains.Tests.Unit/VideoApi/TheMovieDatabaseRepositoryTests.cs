@@ -424,7 +424,10 @@ namespace Grains.Tests.Unit.VideoApi
 		{
 			var expected = new PersonDetail
 			               {
-				               Aliases = new[] {"Alias"},
+				               Aliases = new[]
+				                         {
+					                         "Alias"
+				                         },
 				               Biography = "Biography",
 				               Birthday = DateTime.Today,
 				               Deathday = null,

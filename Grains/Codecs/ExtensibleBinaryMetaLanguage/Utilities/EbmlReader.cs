@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
-using Grains.Codecs.Matroska.Models;
-using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 {
@@ -31,14 +29,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 
 		public static uint GetUint(Stream stream, long size)
 		{
-			var value = ReadBytes(stream, 0, (int)size);
-			return (uint)value;
+			var value = ReadBytes(stream, 0, (int) size);
+			return (uint) value;
 		}
-		
+
 		public static int GetInt(Stream stream, long size)
 		{
-			var value = ReadBytes(stream, 0, (int)size);
-			return (int)value;
+			var value = ReadBytes(stream, 0, (int) size);
+			return (int) value;
 		}
 
 		public static string GetString(
@@ -50,7 +48,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			for (var i = 0L; i < size; i++)
 			{
 				var byteRead = (byte) stream.ReadByte();
-				buffer = Enumerable.Append(buffer, byteRead);
+				buffer = buffer.Append(byteRead);
 			}
 
 			var targetEncoding = encoding ?? Encoding.UTF8;
@@ -80,7 +78,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			while (first != 0)
 			{
 				if ((firstByte | first) == first)
+				{
 					result++;
+				}
+
 				first >>= 1;
 			}
 

@@ -10,12 +10,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
 	public class Ebml : IEbml
 	{
+#region IEbml Members
+
 		public uint GetMasterIds(Stream stream, MatroskaSpecification specification)
 		{
 			var firstByte = (byte) stream.ReadByte();
 
 			if (specification.Elements
-			                 .Select(s => (Name: s.Name.ToUpperInvariant(), Id: s.Id))
+			                 .Select(s => (Name: s.Name.ToUpperInvariant(), s.Id))
 			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
 			                 .Select(s => s.Id)
 			                 .Contains(firstByte))
@@ -40,7 +42,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		{
 			var headerSpecs =
 				matroskaSpecification.Elements.Where(
-					w => (w.Name.StartsWith("EBML") && w.Name != "EBML") ||
+					w => w.Name.StartsWith("EBML") && w.Name != "EBML" ||
 					     w.Name.StartsWith("Doc"));
 			var header = new EbmlHeader();
 
@@ -78,9 +80,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			return header;
 		}
 
-		private long GetId(Stream stream)
-		{
-			return ((long) stream.ReadByte() << 8) + (long) stream.ReadByte();
-		}
+#endregion
+
+		private long GetId(Stream stream) => ((long) stream.ReadByte() << 8) + stream.ReadByte();
 	}
 }

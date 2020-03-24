@@ -101,7 +101,8 @@ namespace Grains.Tests.Unit.Fixtures
 		{
 			var tables = new[]
 			             {
-				             "video_file.file_patterns", "video_file.file_types",
+				             "video_file.file_patterns",
+				             "video_file.file_types",
 				             "video_file.filtered_keywords"
 			             };
 

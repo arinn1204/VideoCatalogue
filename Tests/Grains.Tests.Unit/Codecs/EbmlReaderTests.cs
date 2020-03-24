@@ -11,7 +11,7 @@ namespace Grains.Tests.Unit.Codecs
 {
 	public class EbmlReaderTests
 	{
-		private readonly MatroskaSpecification _specification;
+#region Setup/Teardown
 
 		public EbmlReaderTests()
 		{
@@ -42,6 +42,10 @@ namespace Grains.Tests.Unit.Codecs
 				                            }
 			                 };
 		}
+
+#endregion
+
+		private readonly MatroskaSpecification _specification;
 
 		[Theory]
 		[InlineData(8, 5367889050668557)]
@@ -93,21 +97,6 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldReturnProperUint()
-		{
-			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
-			writer.Write(Convert.ToByte("0xFF", 16));
-			writer.Flush();
-
-			stream.Position = 0;
-
-			EbmlReader.GetUint(stream, 1)
-			          .Should()
-			          .Be(255);
-		} 
-		
-		[Fact]
 		public void ShouldDeserializeString()
 		{
 			using var stream = new MemoryStream();
@@ -120,6 +109,21 @@ namespace Grains.Tests.Unit.Codecs
 			EbmlReader.GetString(stream, 8)
 			          .Should()
 			          .Be("matroska");
-		} 
+		}
+
+		[Fact]
+		public void ShouldReturnProperUint()
+		{
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
+			writer.Write(Convert.ToByte("0xFF", 16));
+			writer.Flush();
+
+			stream.Position = 0;
+
+			EbmlReader.GetUint(stream, 1)
+			          .Should()
+			          .Be(255);
+		}
 	}
 }

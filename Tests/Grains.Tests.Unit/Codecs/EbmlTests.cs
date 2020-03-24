@@ -16,7 +16,7 @@ namespace Grains.Tests.Unit.Codecs
 {
 	public class EbmlTests
 	{
-		private readonly Fixture _fixture;
+#region Setup/Teardown
 
 		public EbmlTests()
 		{
@@ -24,7 +24,11 @@ namespace Grains.Tests.Unit.Codecs
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IEbml>(() => _fixture.Create<Ebml>());
 		}
-		
+
+#endregion
+
+		private readonly Fixture _fixture;
+
 		[Theory]
 		[InlineData("EBML", "0x1A45DFA3")]
 		[InlineData("VOID", "0xEC")]
@@ -45,7 +49,6 @@ namespace Grains.Tests.Unit.Codecs
 						                               Name = "VOID",
 						                               IdString = "0xEC"
 					                               },
-					                               
 					                               new MatroskaElement
 					                               {
 						                               Name = "CRC-32",
@@ -86,7 +89,7 @@ namespace Grains.Tests.Unit.Codecs
 			    .Be(Convert.ToUInt32(expectedValue, 16));
 		}
 
-		
+
 		[Fact]
 		public void ShouldProperlyGetVersionNumberAndDocType()
 		{
@@ -103,7 +106,7 @@ namespace Grains.Tests.Unit.Codecs
 				           Convert.ToByte("04", 16), //data
 				           Convert.ToByte("42", 16),
 				           Convert.ToByte("82", 16),
-				           Convert.ToByte("88", 16), //width of 1, size 8
+				           Convert.ToByte("88", 16) //width of 1, size 8
 			           };
 			data = data.Concat(Encoding.UTF8.GetBytes("matroska"))
 			           .ToArray();
@@ -123,8 +126,8 @@ namespace Grains.Tests.Unit.Codecs
 					                               }
 				                               }
 			                    };
-			
-			
+
+
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);
 			writer.Write(data);
@@ -137,11 +140,12 @@ namespace Grains.Tests.Unit.Codecs
 			var headerData = ebml.GetHeaderInformation(stream, specification);
 
 			headerData.Should()
-			          .BeEquivalentTo(new EbmlHeader
-			                          {
-				                          Version = 1,
-				                          DocType = "matroska"
-			                          });
+			          .BeEquivalentTo(
+				           new EbmlHeader
+				           {
+					           Version = 1,
+					           DocType = "matroska"
+				           });
 		}
 	}
 }

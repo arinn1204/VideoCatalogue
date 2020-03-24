@@ -48,8 +48,15 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						                    element
 					                    }
 				         });
+			
+			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			ebml.Setup(
+				     s => s.GetMasterIds(
+					     It.IsAny<Stream>(),
+					     It.IsAny<MatroskaSpecification>()))
+			    .Returns(element.Id);
+
 			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
 
 			_fixture.Freeze<Mock<IEbml>>()
 			        .Setup(
@@ -61,19 +68,6 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         {
 					         DocType = "matroska"
 				         });
-
-			var matroskaData = new[]
-			                   {
-				                   Convert.ToByte("1A", 16),
-				                   Convert.ToByte("45", 16),
-				                   Convert.ToByte("DF", 16),
-				                   Convert.ToByte("A3", 16)
-			                   };
-
-			writer.Write(matroskaData);
-			writer.Flush();
-
-			stream.Position = 0;
 
 			var matroska = _fixture.Create<IMatroska>();
 			var isMatroska = matroska.IsMatroska(stream);
@@ -179,6 +173,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					Name = "EBML",
 					IdString = "0x1A45DFA3"
 				};
+			
+			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			ebml.Setup(
+				     s => s.GetMasterIds(
+					     It.IsAny<Stream>(),
+					     It.IsAny<MatroskaSpecification>()))
+			    .Returns(element.Id + 5u);
+
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
 			        .ReturnsAsync(
@@ -190,28 +192,11 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                    }
 				         });
 			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
-			writer.Write(
-				new[]
-				{
-					Convert.ToByte("1A", 16),
-					Convert.ToByte("24", 16),
-					Convert.ToByte("00", 16),
-					Convert.ToByte("00", 16)
-				});
-			writer.Flush();
-
-			stream.Position = 0;
-
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream);
 
-			var expectedValue = ((long) Convert.ToByte("1A", 16) << 24) +
-			                    ((long) Convert.ToByte("24", 16) << 16) +
-			                    ((long) Convert.ToByte("00", 16) << 8) +
-			                    ((long) Convert.ToByte("00", 16));
 			fileInformation.Id.Should()
-			               .Be((uint) expectedValue);
+			               .Be((uint) element.Id + 5u);
 		}
 
 		[Theory]
@@ -223,43 +208,40 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				new MatroskaElement
 				{
 					Name = "EBML",
-					IdString = "0x1A45DFA3"
+					IdString = "0x1"
 				};
+			var specification = new MatroskaSpecification
+			                    {
+				                    Elements = new List<MatroskaElement>
+				                               {
+					                               element
+				                               }
+			                    };
+
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(
-				         new MatroskaSpecification
-				         {
-					         Elements = new List<MatroskaElement>
-					                    {
-						                    element
-					                    }
-				         });
+			        .ReturnsAsync(specification);
+			
 			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
-			writer.Write(
-				new[]
-				{
-					Convert.ToByte("1A", 16),
-					Convert.ToByte("45", 16),
-					Convert.ToByte("DF", 16),
-					Convert.ToByte("A3", 16)
-				});
-			writer.Flush();
+			
+			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			ebml
+			   .Setup(
+					s => s.GetHeaderInformation(
+						It.IsAny<Stream>(),
+						It.IsAny<MatroskaSpecification>()))
+			   .Returns(
+					new EbmlHeader
+					{
+						DocType = doctype,
+						Version = (uint)version
+					});
 
-			stream.Position = 0;
-
-			_fixture.Freeze<Mock<IEbml>>()
-			        .Setup(
-				         s => s.GetHeaderInformation(
-					         It.IsAny<Stream>(),
-					         It.IsAny<MatroskaSpecification>()))
-			        .Returns(
-				         new EbmlHeader
-				         {
-					         Version = (uint)version,
-					         DocType = doctype
-				         });
+			ebml.Setup(
+				     s => s.GetMasterIds(
+					     It.IsAny<Stream>(),
+					     It.IsAny<MatroskaSpecification>()))
+			    .Returns(element.Id);
 
 			var segmentInformation = _fixture.Freeze<Mock<IMatroskaSegment>>();
 			segmentInformation.Setup(

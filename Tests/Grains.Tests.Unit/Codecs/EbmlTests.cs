@@ -7,6 +7,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Models;
 using Xunit;
@@ -21,7 +22,70 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
+			_fixture.Register<IEbml>(() => _fixture.Create<Ebml>());
 		}
+		
+		[Theory]
+		[InlineData("EBML", "0x1A45DFA3")]
+		[InlineData("VOID", "0xEC")]
+		[InlineData("CRC-32", "0xBF")]
+		public void ShouldReturnMatroskaId(string type, string expectedValue)
+		{
+			var specification = new MatroskaSpecification
+			                    {
+				                    Elements = new List<MatroskaElement>
+				                               {
+					                               new MatroskaElement
+					                               {
+						                               Name = "EBML",
+						                               IdString = "0x1A45DFA3"
+					                               },
+					                               new MatroskaElement
+					                               {
+						                               Name = "VOID",
+						                               IdString = "0xEC"
+					                               },
+					                               
+					                               new MatroskaElement
+					                               {
+						                               Name = "CRC-32",
+						                               IdString = "0xBF"
+					                               }
+				                               }
+			                    };
+
+
+			var data = type switch
+			           {
+				           "EBML" => new[]
+				                     {
+					                     Convert.ToByte("1A", 16),
+					                     Convert.ToByte("45", 16),
+					                     Convert.ToByte("DF", 16),
+					                     Convert.ToByte("A3", 16)
+				                     },
+				           "VOID" => new[]
+				                     {
+					                     Convert.ToByte("EC", 16)
+				                     },
+				           "CRC-32" => new[]
+				                       {
+					                       Convert.ToByte("BF", 16)
+				                       }
+			           };
+			using var stream = new MemoryStream();
+			using var writer = new BinaryWriter(stream);
+			writer.Write(data);
+			writer.Flush();
+
+			stream.Position = 0;
+
+			var ebml = _fixture.Create<IEbml>();
+			ebml.GetMasterIds(stream, specification)
+			    .Should()
+			    .Be(Convert.ToUInt32(expectedValue, 16));
+		}
+
 		
 		[Fact]
 		public void ShouldProperlyGetVersionNumberAndDocType()
@@ -68,7 +132,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var ebml = _fixture.Create<Ebml>();
+			var ebml = _fixture.Create<IEbml>();
 
 			var headerData = ebml.GetHeaderInformation(stream, specification);
 

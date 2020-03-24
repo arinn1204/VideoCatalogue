@@ -8,31 +8,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 {
 	public static class EbmlReader
 	{
-		public static uint GetMasterIds(Stream stream, MatroskaSpecification specification)
-		{
-			var firstByte = (byte) stream.ReadByte();
-
-			if (specification.Elements
-			                 .Select(s => (Name: s.Name.ToUpperInvariant(), Id: s.Id))
-			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
-			                 .Select(s => s.Id)
-			                 .Contains(firstByte))
-			{
-				return firstByte;
-			}
-
-			var word = new Float32
-			           {
-				           B4 = firstByte,
-				           B3 = (byte) stream.ReadByte(),
-				           B2 = (byte) stream.ReadByte(),
-				           B1 = (byte) stream.ReadByte()
-			           };
-
-			return word.UnsignedData;
-		}
-
-		public static (int width, long size) GetWidthAndSize(Stream stream)
+		public static long GetWidthAndSize(Stream stream)
 		{
 			var firstByte = (byte) stream.ReadByte();
 			var width = GetWidth(firstByte);
@@ -50,17 +26,25 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 				             _ => 0L
 			             };
 
-			return (width, result);
+			return result;
 		}
 
 		public static uint GetUint(Stream stream, long size)
 		{
 			var value = ReadBytes(stream, 0, (int)size);
-
 			return (uint)value;
 		}
+		
+		public static int GetInt(Stream stream, long size)
+		{
+			var value = ReadBytes(stream, 0, (int)size);
+			return (int)value;
+		}
 
-		public static string GetString(Stream stream, long size)
+		public static string GetString(
+			Stream stream,
+			long size,
+			Encoding encoding = null)
 		{
 			var buffer = Enumerable.Empty<byte>();
 			for (var i = 0L; i < size; i++)
@@ -69,7 +53,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 				buffer = Enumerable.Append(buffer, byteRead);
 			}
 
-			return Encoding.UTF8.GetString(buffer.ToArray());
+			var targetEncoding = encoding ?? Encoding.UTF8;
+
+			return targetEncoding.GetString(buffer.ToArray());
 		}
 
 

@@ -9,5 +9,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 		EbmlHeader GetHeaderInformation(
 			Stream stream,
 			MatroskaSpecification matroskaSpecification);
+
+		uint GetMasterIds(Stream stream, MatroskaSpecification specification);
 	}
 }

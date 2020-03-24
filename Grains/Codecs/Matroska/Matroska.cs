@@ -42,10 +42,9 @@ namespace Grains.Codecs.Matroska
 
 		public bool IsMatroska(Stream stream)
 		{
-			var ebmlHeaderValue = _ebmlId.Value;
-			var firstWord = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
+			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
 
-			if (firstWord != ebmlHeaderValue)
+			if (id != _ebmlId.Value)
 			{
 				return false; //not EBML marked, all matroska will be
 			}
@@ -57,7 +56,7 @@ namespace Grains.Codecs.Matroska
 
 		public FileInformation GetFileInformation(Stream stream)
 		{
-			var id = EbmlReader.GetMasterIds(stream, _matroskaSpecification.Value);
+			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			if (id != _ebmlId.Value)
 			{

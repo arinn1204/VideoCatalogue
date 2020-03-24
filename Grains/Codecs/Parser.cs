@@ -21,7 +21,7 @@ namespace Grains.Codecs
 			if (_matroska.IsMatroska(stream))
 			{
 				stream.Position = 0;
-				fileInformation = _matroska.GetFileInformation(stream);
+				fileInformation = _matroska.GetFileInformation(stream, out var error);
 			}
 			
 

@@ -225,16 +225,22 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         });
 			using var stream = new MemoryStream();
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream);
+			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
 			fileInformation.Id.Should()
 			               .Be((uint) ebmlElement.Id + 5u);
+
+			error.Description.Should()
+			     .Be($"{ebmlElement.Id + 5u} is not a valid ebml ID.");
 		}
 
 		[Theory]
-		[InlineData(2, "matroska")]
-		[InlineData(1, "not matroska")]
-		public void ShouldReturnEbmlVersionAndDoctypeIfArentSupported(int version, string doctype)
+		[InlineData(2, "matroska", "Ebml version of '2' is not supported.")]
+		[InlineData(1, "not matroska", "Ebml doctype of 'not matroska' is not supported.")]
+		public void ShouldReturnEbmlVersionAndDoctypeIfArentSupported(
+			int version,
+			string doctype,
+			string expectedError)
 		{
 			var element =
 				new MatroskaElement
@@ -289,7 +295,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                   It.IsAny<MatroskaSpecification>()))
 			                  .Returns(new SegmentInformation());
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream);
+			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
 			fileInformation.Should()
 			               .BeEquivalentTo(
@@ -301,6 +307,9 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			segmentInformation.Verify(
 				v => v.GetSegmentInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()),
 				Times.Never);
+
+			error.Description.Should()
+			     .Be(expectedError);
 		}
 
 #endregion

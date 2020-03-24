@@ -61,12 +61,14 @@ namespace Grains.Codecs.Matroska
 			return header.DocType == "matroska";
 		}
 
-		public FileInformation GetFileInformation(Stream stream)
+		public FileInformation GetFileInformation(Stream stream, out MatroskaError error)
 		{
+			error = null;
 			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
+				error = new MatroskaError($"{id} is not a valid ebml ID.");
 				return new FileInformation
 				       {
 					       Id = id
@@ -77,6 +79,10 @@ namespace Grains.Codecs.Matroska
 
 			if (ebmlHeader.Version != 1 || ebmlHeader.DocType != "matroska")
 			{
+				var errorDescription = ebmlHeader.Version != 1
+					? $"Ebml version of '{ebmlHeader.Version}' is not supported."
+					: $"Ebml doctype of '{ebmlHeader.DocType}' is not supported.";
+				error = new MatroskaError(errorDescription);
 				return new FileInformation
 				       {
 					       EbmlVersion = (int)ebmlHeader.Version,

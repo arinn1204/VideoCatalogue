@@ -38,7 +38,7 @@ namespace Grains.Codecs.Matroska
 				{
 					var values = _matroskaSpecification.Value
 					                             .Elements
-					                             .Where(f => f.Name == "EBML" || f.Name == "Segment");
+					                             .Where(f => f.Level == 0);
 
 					return (values.First(f => f.Name == "EBML")
 					              .Id,

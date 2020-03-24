@@ -32,13 +32,15 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				new MatroskaElement
 				{
 					Name = "EBML",
-					IdString = "0x1"
+					IdString = "0x1",
+					Level = 0
 				};
 			var segmentElement =
 				new MatroskaElement
 				{
 					Name = "Segment",
-					IdString = "0x2"
+					IdString = "0x2",
+					Level = 0
 				};
 			_requiredSpecification = new MatroskaSpecification
 				  {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -19,12 +20,38 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 	public class MatroskaTests
 	{
 		private readonly Fixture _fixture;
+		private readonly MatroskaSpecification _requiredSpecification;
 
 		public MatroskaTests()
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IMatroska>(() => _fixture.Create<SUT.Matroska>());
+			
+			var element =
+				new MatroskaElement
+				{
+					Name = "EBML",
+					IdString = "0x1"
+				};
+			var segmentElement =
+				new MatroskaElement
+				{
+					Name = "Segment",
+					IdString = "0x2"
+				};
+			_requiredSpecification = new MatroskaSpecification
+				  {
+					  Elements = new List<MatroskaElement>
+					             {
+						             element,
+						             segmentElement
+					             }
+				  };
+
+			_fixture.Freeze<Mock<ISpecification>>()
+			        .Setup(s => s.GetSpecification())
+			        .ReturnsAsync(_requiredSpecification);
 		}
 
 #region IsMatroska
@@ -32,37 +59,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
 		{
-			var element =
-				new MatroskaElement
-				{
-					Name = "EBML",
-					IdString = "0x1A45DFA3"
-				};
-
-			var segmentElement =
-				new MatroskaElement
-				{
-					Name = "Segment",
-					IdString = "0x1A45DFA2"
-				};
-			_fixture.Freeze<Mock<ISpecification>>()
-			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(
-				         new MatroskaSpecification
-				         {
-					         Elements = new List<MatroskaElement>
-					                    {
-						                    element,
-						                    segmentElement
-					                    }
-				         });
-
+			var id = _requiredSpecification.Elements.First()
+			                               .Id;
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
 					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(element.Id);
+			    .Returns(id);
 
 			using var stream = new MemoryStream();
 
@@ -87,35 +91,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
 		{
-			var element =
-				new MatroskaElement
-				{
-					Name = "EBML",
-					IdString = "0x1A45DFA3"
-				};
-
-			var segmentElement =
-				new MatroskaElement
-				{
-					Name = "Segment",
-					IdString = "0x1A45DFA2"
-				};
-			_fixture.Freeze<Mock<ISpecification>>()
-			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(
-				         new MatroskaSpecification
-				         {
-					         Elements = new List<MatroskaElement>
-					                    {
-						                    element,
-						                    segmentElement
-					                    }
-				         });
-
 			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
-			stream.Position = 0;
-
 			var matroska = _fixture.Create<IMatroska>();
 			var isMatroska = matroska.IsMatroska(stream);
 
@@ -126,33 +102,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
 		{
-			var element =
-				new MatroskaElement
-				{
-					Name = "EBML",
-					IdString = "0x1A45DFA3"
-				};
-			var segmentElement =
-				new MatroskaElement
-				{
-					Name = "Segment",
-					IdString = "0x1A45DFA2"
-				};
-
-			_fixture.Freeze<Mock<ISpecification>>()
-			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(
-				         new MatroskaSpecification
-				         {
-					         Elements = new List<MatroskaElement>
-					                    {
-						                    element,
-						                    segmentElement
-					                    }
-				         });
-
 			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
 			_fixture.Freeze<Mock<IEbml>>()
 			        .Setup(
 				         s => s.GetHeaderInformation(
@@ -163,19 +113,6 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         {
 					         DocType = "not matroska"
 				         });
-
-			var matroskaData = new[]
-			                   {
-				                   Convert.ToByte("1A", 16),
-				                   Convert.ToByte("45", 16),
-				                   Convert.ToByte("DF", 16),
-				                   Convert.ToByte("A3", 16)
-			                   };
-
-			writer.Write(matroskaData);
-			writer.Flush();
-
-			stream.Position = 0;
 
 			var matroska = _fixture.Create<IMatroska>();
 			var isMatroska = matroska.IsMatroska(stream);
@@ -191,47 +128,24 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnRetrievedIdWhenNotEbml()
 		{
-			var ebmlElement =
-				new MatroskaElement
-				{
-					Name = "EBML",
-					IdString = "0x1A45DFA3"
-				};
-
-			var segmentElement =
-				new MatroskaElement
-				{
-					Name = "Segment",
-					IdString = "0x1A45DFA2"
-				};
-
+			var id = _requiredSpecification.Elements.First()
+			                               .Id +
+			         5u;
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
 					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(ebmlElement.Id + 5u);
-
-			_fixture.Freeze<Mock<ISpecification>>()
-			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(
-				         new MatroskaSpecification
-				         {
-					         Elements = new List<MatroskaElement>
-					                    {
-						                    ebmlElement,
-						                    segmentElement
-					                    }
-				         });
+			    .Returns(id);
 			using var stream = new MemoryStream();
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
 			fileInformation.Id.Should()
-			               .Be((uint) ebmlElement.Id + 5u);
+			               .Be(id);
 
 			error.Description.Should()
-			     .Be($"{ebmlElement.Id + 5u} is not a valid ebml ID.");
+			     .Be($"{id} is not a valid ebml ID.");
 		}
 
 		[Theory]
@@ -242,31 +156,6 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			string doctype,
 			string expectedError)
 		{
-			var element =
-				new MatroskaElement
-				{
-					Name = "EBML",
-					IdString = "0x1"
-				};
-			var segmentElement =
-				new MatroskaElement
-				{
-					Name = "Segment",
-					IdString = "0x1A45DFA2"
-				};
-			var specification = new MatroskaSpecification
-			                    {
-				                    Elements = new List<MatroskaElement>
-				                               {
-					                               element,
-					                               segmentElement
-				                               }
-			                    };
-
-			_fixture.Freeze<Mock<ISpecification>>()
-			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(specification);
-
 			using var stream = new MemoryStream();
 
 			var ebml = _fixture.Freeze<Mock<IEbml>>();
@@ -286,7 +175,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
 					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(element.Id);
+			    .Returns(_requiredSpecification.Elements.First().Id);
 
 			var segmentInformation = _fixture.Freeze<Mock<IMatroskaSegment>>();
 			segmentInformation.Setup(

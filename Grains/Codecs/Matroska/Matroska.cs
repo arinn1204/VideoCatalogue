@@ -86,18 +86,23 @@ namespace Grains.Codecs.Matroska
 
 			var segmentInformation = new Segment();
 
-			while ((id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value)) ==
-			       _ebmlAndSegmentId.Value.segment)
+			if ((id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value)) !=
+			    _ebmlAndSegmentId.Value.segment)
 			{
-				var segment = _segmentReader.GetSegmentInformation(
-					stream,
-					_matroskaSpecification.Value);
-
-				segmentInformation.Audios = segmentInformation.Audios.Concat(segment.Audios);
-				segmentInformation.Videos = segmentInformation.Videos.Concat(segment.Videos);
-				segmentInformation.Subtitles =
-					segmentInformation.Subtitles.Concat(segment.Subtitles);
+				return new MatroskaData
+				       {
+					       Header = ebmlHeader,
+					       Segment = segmentInformation
+				       };
 			}
+
+			var segment = _segmentReader.GetSegmentInformation(
+				stream,
+				_matroskaSpecification.Value);
+
+			segmentInformation.Audios = segment.Audios;
+			segmentInformation.Videos = segment.Videos;
+			segmentInformation.Subtitles = segment.Subtitles;
 
 			return new MatroskaData
 			       {

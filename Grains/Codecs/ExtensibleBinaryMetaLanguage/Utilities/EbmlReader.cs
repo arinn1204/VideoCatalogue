@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 {
@@ -13,30 +14,41 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 
 			var result = width switch
 			             {
-				             8 => ReadBytes(stream, (long) stream.ReadByte() << 48, 6),
-				             7 => ReadBytes(stream, (long) firstByte << 48, 6),
-				             6 => ReadBytes(stream, ((long) firstByte & 3) << 40, 5),
-				             5 => ReadBytes(stream, ((long) firstByte & 7) << 32, 4),
-				             4 => ReadBytes(stream, ((long) firstByte & 15) << 24, 3),
-				             3 => ReadBytes(stream, ((long) firstByte & 31) << 16, 2),
-				             2 => ReadBytes(stream, ((long) firstByte & 63) << 8, 1),
-				             1 => ReadBytes(stream, firstByte & 127, 0),
+				             8 => ReadBytes(stream, 6, (long) stream.ReadByte() << 48),
+				             7 => ReadBytes(stream, 6, (long) firstByte << 48),
+				             6 => ReadBytes(stream, 5, ((long) firstByte & 3) << 40),
+				             5 => ReadBytes(stream, 4, ((long) firstByte & 7) << 32),
+				             4 => ReadBytes(stream, 3, ((long) firstByte & 15) << 24),
+				             3 => ReadBytes(stream, 2, ((long) firstByte & 31) << 16),
+				             2 => ReadBytes(stream, 1, ((long) firstByte & 63) << 8),
+				             1 => ReadBytes(stream, 0, firstByte & 127),
 				             _ => 0L
 			             };
 
 			return result;
 		}
 
-		public static uint GetUint(Stream stream, long size)
+		public static uint GetUint(Stream stream)
 		{
-			var value = ReadBytes(stream, 0, (int) size);
-			return (uint) value;
+			var word = new Float32
+			           {
+				           B4 = (byte) stream.ReadByte(),
+				           B3 = (byte) stream.ReadByte(),
+				           B2 = (byte) stream.ReadByte(),
+				           B1 = (byte) stream.ReadByte()
+			           };
+			return word.UnsignedData;
 		}
 
-		public static int GetInt(Stream stream, long size)
+		public static ushort GetUShort(Stream stream)
 		{
-			var value = ReadBytes(stream, 0, (int) size);
-			return (int) value;
+			var word = new Short
+			           {
+				           B2 = (byte) stream.ReadByte(),
+				           B1 = (byte) stream.ReadByte()
+			           };
+
+			return word.UnsignedData;
 		}
 
 		public static string GetString(
@@ -57,7 +69,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 		}
 
 
-		private static long ReadBytes(Stream stream, long seed, int bytesToRead)
+		public static long ReadBytes(Stream stream, int bytesToRead, long seed = 0)
 		{
 			var result = seed;
 			for (var i = bytesToRead; i > 0; i--)

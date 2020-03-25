@@ -5,7 +5,6 @@ using System.Text;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
-using Grains.Codecs.Matroska.Models;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
@@ -118,13 +117,24 @@ namespace Grains.Tests.Unit.Codecs
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);
 			writer.Write(Convert.ToByte("0xFF", 16));
+			writer.Write(Convert.ToByte("0x01", 16));
+			writer.Write(Convert.ToByte("0x23", 16));
+			writer.Write(Convert.ToByte("0x55", 16));
 			writer.Flush();
 
 			stream.Position = 0;
 
-			EbmlReader.GetUint(stream, 1)
+			EbmlReader.GetUint(stream)
 			          .Should()
-			          .Be(255);
+			          .Be(
+				           BitConverter.ToUInt32(
+					           new[]
+					           {
+						           Convert.ToByte("0x55", 16),
+						           Convert.ToByte("0x23", 16),
+						           Convert.ToByte("0x01", 16),
+						           Convert.ToByte("0xFF", 16)
+					           }));
 		}
 	}
 }

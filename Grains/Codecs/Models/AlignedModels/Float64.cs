@@ -2,7 +2,7 @@
 
 namespace Grains.Codecs.Models.AlignedModels
 {
-	[StructLayout(LayoutKind.Explicit)]
+	[StructLayout(LayoutKind.Explicit, Pack = 2)]
 	public struct Float64
 	{
 		[FieldOffset(0)]

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Grains.Codecs.Matroska.Models
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 {
 	[XmlRoot("element")]
-	public class MatroskaElement
+	public class EbmlElement
 	{
 		[XmlAttribute("name")]
 		public string Name { get; set; }

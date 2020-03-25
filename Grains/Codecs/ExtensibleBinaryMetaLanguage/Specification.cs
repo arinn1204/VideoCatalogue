@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
 
-namespace Grains.Codecs.Matroska
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 {
 	public class Specification
 		: ISpecification

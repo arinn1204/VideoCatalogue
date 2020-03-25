@@ -37,19 +37,19 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			var specification = new EbmlSpecification
 			                    {
-				                    Elements = new List<MatroskaElement>
+				                    Elements = new List<EbmlElement>
 				                               {
-					                               new MatroskaElement
+					                               new EbmlElement
 					                               {
 						                               Name = "EBML",
 						                               IdString = "0x1A45DFA3"
 					                               },
-					                               new MatroskaElement
+					                               new EbmlElement
 					                               {
 						                               Name = "VOID",
 						                               IdString = "0xEC"
 					                               },
-					                               new MatroskaElement
+					                               new EbmlElement
 					                               {
 						                               Name = "CRC-32",
 						                               IdString = "0xBF"
@@ -112,14 +112,14 @@ namespace Grains.Tests.Unit.Codecs
 			           .ToArray();
 			var specification = new EbmlSpecification
 			                    {
-				                    Elements = new List<MatroskaElement>
+				                    Elements = new List<EbmlElement>
 				                               {
-					                               new MatroskaElement
+					                               new EbmlElement
 					                               {
 						                               Name = "EBMLVersion",
 						                               IdString = "0x4286"
 					                               },
-					                               new MatroskaElement
+					                               new EbmlElement
 					                               {
 						                               Name = "DocType",
 						                               IdString = "0x4282"

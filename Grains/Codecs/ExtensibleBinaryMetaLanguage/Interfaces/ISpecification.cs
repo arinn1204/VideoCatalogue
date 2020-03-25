@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Grains.Codecs.Matroska.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 
-namespace Grains.Codecs.Matroska.Interfaces
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 {
 	public interface ISpecification
 	{

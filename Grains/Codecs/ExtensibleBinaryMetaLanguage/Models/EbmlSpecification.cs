@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Grains.Codecs.Matroska.Models
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 {
 	[XmlRoot("table")]
 	public class EbmlSpecification
 	{
 		[XmlElement("element")]
-		public List<MatroskaElement> Elements { get; set; }
+		public List<EbmlElement> Elements { get; set; }
 	}
 }

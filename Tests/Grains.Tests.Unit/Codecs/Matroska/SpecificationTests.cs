@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska;
 using Grains.Codecs.Matroska.Models;
 using Grains.Tests.Unit.TestUtilities;
@@ -51,7 +53,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			   .Elements
 			   .Should()
 			   .BeEquivalentTo(
-					new MatroskaElement
+					new EbmlElement
 					{
 						Name = "EBML",
 						Level = 0,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using FluentAssertions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Models;
 using Xunit;
@@ -17,24 +18,24 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			_specification = new EbmlSpecification
 			                 {
-				                 Elements = new List<MatroskaElement>
+				                 Elements = new List<EbmlElement>
 				                            {
-					                            new MatroskaElement
+					                            new EbmlElement
 					                            {
 						                            Name = "EBML",
 						                            IdString = "0x1A45DFA3"
 					                            },
-					                            new MatroskaElement
+					                            new EbmlElement
 					                            {
 						                            Name = "EBMLVersion",
 						                            IdString = "0x4286"
 					                            },
-					                            new MatroskaElement
+					                            new EbmlElement
 					                            {
 						                            Name = "Void",
 						                            IdString = "0xEC"
 					                            },
-					                            new MatroskaElement
+					                            new EbmlElement
 					                            {
 						                            Name = "CRC-32",
 						                            IdString = "0xBF"

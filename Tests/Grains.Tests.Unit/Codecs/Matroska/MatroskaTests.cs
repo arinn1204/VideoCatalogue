@@ -26,14 +26,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			_fixture.Register<IMatroska>(() => _fixture.Create<SUT.Matroska>());
 
 			var element =
-				new MatroskaElement
+				new EbmlElement
 				{
 					Name = "EBML",
 					IdString = "0x1",
 					Level = 0
 				};
 			var segmentElement =
-				new MatroskaElement
+				new EbmlElement
 				{
 					Name = "Segment",
 					IdString = "0x2",
@@ -41,7 +41,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				};
 			_requiredSpecification = new EbmlSpecification
 			                         {
-				                         Elements = new List<MatroskaElement>
+				                         Elements = new List<EbmlElement>
 				                                    {
 					                                    element,
 					                                    segmentElement

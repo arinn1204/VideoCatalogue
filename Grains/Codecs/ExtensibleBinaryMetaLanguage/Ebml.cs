@@ -17,7 +17,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			var firstByte = (byte) stream.ReadByte();
 
 			if (specification.Elements
-			                 .Select(s => (Name: s.Name.ToUpperInvariant(), s.Id))
 			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
 			                 .Select(s => s.Id)
 			                 .Contains(firstByte))
@@ -64,14 +63,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 			while (stream.Position < endPosition)
 			{
-				var id = GetId(stream);
+				var id = EbmlReader.GetUShort(stream);
 				size = EbmlReader.GetSize(stream);
 				var specification = idsBeingTracked.FirstOrDefault(w => w.id == id);
 
 				switch (specification.name)
 				{
 					case "EBMLVersion":
-						header.Version = EbmlReader.GetUint(stream, size);
+						header.Version = (uint)EbmlReader.ReadBytes(stream, (int)size);
 						break;
 					case "DocType":
 						header.DocType = EbmlReader.GetString(stream, size);
@@ -86,7 +85,5 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		}
 
 #endregion
-
-		private long GetId(Stream stream) => ((long) stream.ReadByte() << 8) + stream.ReadByte();
 	}
 }

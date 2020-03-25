@@ -5,7 +5,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 {
-	public class Attachments : ISegmentChild
+	public class Chapter : ISegmentChild
 	{
 #region ISegmentChild Members
 

@@ -14,14 +14,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			       {
 				       "SeekHead"    => new SeekHead(),
 				       "Info"        => new Info(),
-				       "Tracks"      => new Tracks(),
-				       "Chapters"    => new Chapters(),
+				       "Tracks"      => new Track(),
+				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),
-				       "Cues"        => new Cues(),
-				       "Attachments" => new Attachments(),
-				       "Tags"        => new Tags(),
+				       "Cues"        => new Cue(),
+				       "Attachments" => new Attachment(),
+				       "Tags"        => new Tag(),
 				       _ => throw new UnsupportedException(
-					       $"{name} is not a supported segment child name.")
+					       $"'{name}' is not a supported segment child name.")
 			       };
 		}
 

@@ -26,4 +26,8 @@
     <ProjectReference Include="..\GrainsInterfaces\GrainsInterfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs" />
+  </ItemGroup>
+
 </Project>

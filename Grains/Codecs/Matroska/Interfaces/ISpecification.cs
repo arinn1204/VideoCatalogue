@@ -5,6 +5,6 @@ namespace Grains.Codecs.Matroska.Interfaces
 {
 	public interface ISpecification
 	{
-		Task<MatroskaSpecification> GetSpecification();
+		Task<EbmlSpecification> GetSpecification();
 	}
 }

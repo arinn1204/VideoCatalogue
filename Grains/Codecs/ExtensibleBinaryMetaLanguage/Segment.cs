@@ -20,11 +20,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 		public SegmentInformation GetSegmentInformation(
 			Stream stream,
-			MatroskaSpecification matroskaSpecification)
+			EbmlSpecification ebmlSpecification)
 		{
 			var totalSize = EbmlReader.GetSize(stream);
 			var endPosition = stream.Position + totalSize;
-			var trackedElements = matroskaSpecification.Elements
+			var trackedElements = ebmlSpecification.Elements
 			                                           .Where(w => w.Level == 1)
 			                                           .ToDictionary(
 				                                            k => k.Id,
@@ -34,14 +34,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 			while (stream.Position < endPosition)
 			{
-				var id = _ebml.GetMasterIds(stream, matroskaSpecification);
+				var id = _ebml.GetMasterIds(stream, ebmlSpecification);
 				var size = EbmlReader.GetSize(stream);
 
 				if (trackedElements.ContainsKey(id))
 				{
 					var trackedElement = trackedElements[id];
 					var child = _segmentFactory.GetChild(trackedElement);
-					var childInformation = child.GetChildInformation(stream, matroskaSpecification);
+					var childInformation = child.GetChildInformation(stream, ebmlSpecification);
 					segmentInformation = child.Merge(segmentInformation, childInformation);
 				}
 

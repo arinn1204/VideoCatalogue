@@ -39,7 +39,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					IdString = "0x2",
 					Level = 0
 				};
-			_requiredSpecification = new MatroskaSpecification
+			_requiredSpecification = new EbmlSpecification
 			                         {
 				                         Elements = new List<MatroskaElement>
 				                                    {
@@ -56,7 +56,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 #endregion
 
 		private readonly Fixture _fixture;
-		private readonly MatroskaSpecification _requiredSpecification;
+		private readonly EbmlSpecification _requiredSpecification;
 
 		[Theory]
 		[InlineData(2, "matroska", "Ebml version of '2' is not supported.")]
@@ -73,7 +73,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			   .Setup(
 					s => s.GetHeaderInformation(
 						It.IsAny<Stream>(),
-						It.IsAny<MatroskaSpecification>()))
+						It.IsAny<EbmlSpecification>()))
 			   .Returns(
 					new EbmlHeader
 					{
@@ -84,14 +84,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
-					     It.IsAny<MatroskaSpecification>()))
+					     It.IsAny<EbmlSpecification>()))
 			    .Returns(_requiredSpecification.Elements.First().Id);
 
 			var segmentInformation = _fixture.Freeze<Mock<ISegment>>();
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
-					                   It.IsAny<MatroskaSpecification>()))
+					                   It.IsAny<EbmlSpecification>()))
 			                  .Returns(new SegmentInformation());
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
@@ -99,7 +99,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			fileInformation.Should()
 			               .BeNull();
 			segmentInformation.Verify(
-				v => v.GetSegmentInformation(It.IsAny<Stream>(), It.IsAny<MatroskaSpecification>()),
+				v => v.GetSegmentInformation(It.IsAny<Stream>(), It.IsAny<EbmlSpecification>()),
 				Times.Never);
 
 			error.Description.Should()
@@ -115,7 +115,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
-					     It.IsAny<MatroskaSpecification>()))
+					     It.IsAny<EbmlSpecification>()))
 			    .Returns(id);
 
 			using var stream = new MemoryStream();
@@ -124,7 +124,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			        .Setup(
 				         s => s.GetHeaderInformation(
 					         It.IsAny<Stream>(),
-					         It.IsAny<MatroskaSpecification>()))
+					         It.IsAny<EbmlSpecification>()))
 			        .Returns(
 				         new EbmlHeader
 				         {
@@ -146,7 +146,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			        .Setup(
 				         s => s.GetHeaderInformation(
 					         It.IsAny<Stream>(),
-					         It.IsAny<MatroskaSpecification>()))
+					         It.IsAny<EbmlSpecification>()))
 			        .Returns(
 				         new EbmlHeader
 				         {
@@ -181,7 +181,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			   .Setup(
 					s => s.GetHeaderInformation(
 						It.IsAny<Stream>(),
-						It.IsAny<MatroskaSpecification>()))
+						It.IsAny<EbmlSpecification>()))
 			   .Returns(
 					new EbmlHeader
 					{
@@ -193,7 +193,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
-					     It.IsAny<MatroskaSpecification>()))
+					     It.IsAny<EbmlSpecification>()))
 			    .Returns(() => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
 
 			var expectedSegmentInformation = new SegmentInformation
@@ -241,7 +241,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
-					                   It.IsAny<MatroskaSpecification>()))
+					                   It.IsAny<EbmlSpecification>()))
 			                  .Returns(expectedSegmentInformation);
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
@@ -270,7 +270,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
-					     It.IsAny<MatroskaSpecification>()))
+					     It.IsAny<EbmlSpecification>()))
 			    .Returns(id);
 			using var stream = new MemoryStream();
 			var matroska = _fixture.Create<IMatroska>();

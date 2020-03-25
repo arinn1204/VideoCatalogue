@@ -35,7 +35,7 @@ namespace Grains.Tests.Unit.Codecs
 		[InlineData("CRC-32", "0xBF")]
 		public void ShouldReturnMatroskaId(string type, string expectedValue)
 		{
-			var specification = new MatroskaSpecification
+			var specification = new EbmlSpecification
 			                    {
 				                    Elements = new List<MatroskaElement>
 				                               {
@@ -110,7 +110,7 @@ namespace Grains.Tests.Unit.Codecs
 			           };
 			data = data.Concat(Encoding.UTF8.GetBytes("matroska"))
 			           .ToArray();
-			var specification = new MatroskaSpecification
+			var specification = new EbmlSpecification
 			                    {
 				                    Elements = new List<MatroskaElement>
 				                               {

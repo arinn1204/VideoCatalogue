@@ -14,6 +14,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 		public SegmentChildInformation GetChildInformation(
 			Stream stream,
-			MatroskaSpecification specification) => throw new System.NotImplementedException();
+			EbmlSpecification specification) => throw new System.NotImplementedException();
 	}
 }

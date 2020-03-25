@@ -15,7 +15,7 @@ namespace Grains.Codecs.Matroska
 		private readonly IEbml _ebml;
 		private readonly Lazy<(uint ebml, uint segment)> _ebmlAndSegmentId;
 		private readonly ISegment _segment;
-		private readonly Lazy<MatroskaSpecification> _matroskaSpecification;
+		private readonly Lazy<EbmlSpecification> _matroskaSpecification;
 
 		public Matroska(
 			ISpecification specification,
@@ -27,7 +27,7 @@ namespace Grains.Codecs.Matroska
 			_ebml = ebml;
 			_segment = segment;
 			_matroskaSpecification =
-				new Lazy<MatroskaSpecification>(
+				new Lazy<EbmlSpecification>(
 					() => specification.GetSpecification()
 					                   .ConfigureAwait(false)
 					                   .GetAwaiter()

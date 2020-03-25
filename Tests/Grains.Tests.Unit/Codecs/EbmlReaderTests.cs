@@ -15,7 +15,7 @@ namespace Grains.Tests.Unit.Codecs
 
 		public EbmlReaderTests()
 		{
-			_specification = new MatroskaSpecification
+			_specification = new EbmlSpecification
 			                 {
 				                 Elements = new List<MatroskaElement>
 				                            {
@@ -45,7 +45,7 @@ namespace Grains.Tests.Unit.Codecs
 
 #endregion
 
-		private readonly MatroskaSpecification _specification;
+		private readonly EbmlSpecification _specification;
 
 		[Theory]
 		[InlineData(8, 5367889050668557)]

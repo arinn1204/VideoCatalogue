@@ -8,6 +8,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 	{
 		SegmentInformation GetSegmentInformation(
 			Stream stream,
-			MatroskaSpecification matroskaSpecification);
+			EbmlSpecification ebmlSpecification);
 	}
 }

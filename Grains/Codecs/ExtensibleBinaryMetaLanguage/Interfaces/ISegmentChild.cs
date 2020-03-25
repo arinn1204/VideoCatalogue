@@ -12,6 +12,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 
 		SegmentChildInformation GetChildInformation(
 			Stream stream,
-			MatroskaSpecification specification);
+			EbmlSpecification specification);
 	}
 }

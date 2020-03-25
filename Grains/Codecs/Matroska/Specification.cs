@@ -20,7 +20,7 @@ namespace Grains.Codecs.Matroska
 
 #region ISpecification Members
 
-		public async Task<MatroskaSpecification> GetSpecification()
+		public async Task<EbmlSpecification> GetSpecification()
 		{
 			var responseMessage = await GetContent();
 			var responseContent = await responseMessage.Content.ReadAsStreamAsync();
@@ -30,10 +30,10 @@ namespace Grains.Codecs.Matroska
 
 #endregion
 
-		private MatroskaSpecification SerializeFromXml(Stream content)
+		private EbmlSpecification SerializeFromXml(Stream content)
 		{
-			var serializer = new XmlSerializer(typeof(MatroskaSpecification));
-			return (MatroskaSpecification) serializer.Deserialize(content);
+			var serializer = new XmlSerializer(typeof(EbmlSpecification));
+			return (EbmlSpecification) serializer.Deserialize(content);
 		}
 
 		private async Task<HttpResponseMessage> GetContent()

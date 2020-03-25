@@ -4,7 +4,6 @@ namespace GrainsInterfaces.Models.CodecParser
 {
 	public class FileInformation
 	{
-		public uint Id { get; set; }
 		public string Container { get; set; }
 		public int EbmlVersion { get; set; }
 		public IEnumerable<VideoInformation> Videos { get; set; }

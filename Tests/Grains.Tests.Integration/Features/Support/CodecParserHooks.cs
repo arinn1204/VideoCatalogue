@@ -5,6 +5,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.Matroska;
 using Grains.Codecs.Matroska.Interfaces;
+using Grains.Codecs.Matroska.Models;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
@@ -25,6 +26,7 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddTransient<ISpecification, Specification>();
 			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<IEbml, Ebml>();
+			serviceCollection.AddTransient<ISegment, MatroskaSegment>();
 			serviceCollection.AddTransient<Parser, Parser>();
 
 			objectContainer.RegisterInstanceAs(

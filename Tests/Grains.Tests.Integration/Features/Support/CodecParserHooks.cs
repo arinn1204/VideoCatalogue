@@ -27,8 +27,9 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<IEbml, Ebml>();
 			serviceCollection.AddTransient<ISegment, Segment>();
-			serviceCollection.AddTransient<Parser, Parser>();
+			serviceCollection.AddTransient<ISegmentFactory, SegmentFactory>();
 
+			serviceCollection.AddTransient<Parser, Parser>();
 			objectContainer.RegisterInstanceAs(
 				serviceCollection.BuildServiceProvider()
 				                 .GetService<Parser>());

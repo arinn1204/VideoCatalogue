@@ -1,12 +1,11 @@
 ﻿using System.IO;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.Matroska.Models;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 {
-	public interface IEbml
+	public interface IEbmlHeader
 	{
-		EbmlHeader GetHeaderInformation(
+		EbmlHeaderData GetHeaderInformation(
 			Stream stream,
 			EbmlSpecification ebmlSpecification);
 

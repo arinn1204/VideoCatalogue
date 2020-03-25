@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
 using GrainsInterfaces.Models.CodecParser;
@@ -12,19 +11,19 @@ namespace Grains.Codecs.Matroska
 {
 	public class Matroska : IMatroska
 	{
-		private readonly IEbml _ebml;
 		private readonly Lazy<(uint ebml, uint segment)> _ebmlAndSegmentId;
-		private readonly ISegment _segment;
+		private readonly IEbmlHeader _ebmlHeader;
 		private readonly Lazy<EbmlSpecification> _matroskaSpecification;
+		private readonly ISegment _segment;
 
 		public Matroska(
 			ISpecification specification,
-			IEbml ebml,
+			IEbmlHeader ebmlHeader,
 			ISegment segment)
 		{
 			_ =
 				specification ?? throw new ArgumentNullException(nameof(specification));
-			_ebml = ebml;
+			_ebmlHeader = ebmlHeader;
 			_segment = segment;
 			_matroskaSpecification =
 				new Lazy<EbmlSpecification>(
@@ -52,14 +51,14 @@ namespace Grains.Codecs.Matroska
 
 		public bool IsMatroska(Stream stream)
 		{
-			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
+			var id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
 				return false; //not EBML marked, all matroska will be
 			}
 
-			var header = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
+			var header = _ebmlHeader.GetHeaderInformation(stream, _matroskaSpecification.Value);
 
 			return header.DocType == "matroska";
 		}
@@ -67,7 +66,7 @@ namespace Grains.Codecs.Matroska
 		public FileInformation GetFileInformation(Stream stream, out MatroskaError error)
 		{
 			error = null;
-			var id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value);
+			var id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
@@ -75,7 +74,7 @@ namespace Grains.Codecs.Matroska
 				return default;
 			}
 
-			var ebmlHeader = _ebml.GetHeaderInformation(stream, _matroskaSpecification.Value);
+			var ebmlHeader = _ebmlHeader.GetHeaderInformation(stream, _matroskaSpecification.Value);
 
 			if (ebmlHeader.Version != 1 || ebmlHeader.DocType != "matroska")
 			{
@@ -88,7 +87,7 @@ namespace Grains.Codecs.Matroska
 
 			var segmentInformation = new SegmentInformation();
 
-			while ((id = _ebml.GetMasterIds(stream, _matroskaSpecification.Value)) ==
+			while ((id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value)) ==
 			       _ebmlAndSegmentId.Value.segment)
 			{
 				var segment = _segment.GetSegmentInformation(

@@ -3,14 +3,13 @@ using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
-using Grains.Codecs.Matroska.Models;
 using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
-	public class Ebml : IEbml
+	public class EbmlHeader : IEbmlHeader
 	{
-#region IEbml Members
+#region IEbmlHeader Members
 
 		public uint GetMasterIds(Stream stream, EbmlSpecification specification)
 		{
@@ -40,7 +39,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				: 0;
 		}
 
-		public EbmlHeader GetHeaderInformation(
+		public EbmlHeaderData GetHeaderInformation(
 			Stream stream,
 			EbmlSpecification ebmlSpecification)
 		{
@@ -48,7 +47,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				ebmlSpecification.Elements.Where(
 					w => w.Name.StartsWith("EBML") && w.Name != "EBML" ||
 					     w.Name.StartsWith("Doc"));
-			var header = new EbmlHeader();
+			var header = new EbmlHeaderData();
 
 			var size = EbmlReader.GetSize(stream);
 			var endPosition = stream.Position + size;
@@ -70,7 +69,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				switch (specification.name)
 				{
 					case "EBMLVersion":
-						header.Version = (uint)EbmlReader.ReadBytes(stream, (int)size);
+						header.Version = (uint) EbmlReader.ReadBytes(stream, (int) size);
 						break;
 					case "DocType":
 						header.DocType = EbmlReader.GetString(stream, size);

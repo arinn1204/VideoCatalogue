@@ -9,7 +9,6 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.Matroska.Models;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
@@ -22,7 +21,7 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
-			_fixture.Register<IEbml>(() => _fixture.Create<Ebml>());
+			_fixture.Register<IEbmlHeader>(() => _fixture.Create<EbmlHeader>());
 		}
 
 #endregion
@@ -83,7 +82,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var ebml = _fixture.Create<IEbml>();
+			var ebml = _fixture.Create<IEbmlHeader>();
 			ebml.GetMasterIds(stream, specification)
 			    .Should()
 			    .Be(Convert.ToUInt32(expectedValue, 16));
@@ -135,13 +134,13 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var ebml = _fixture.Create<IEbml>();
+			var ebml = _fixture.Create<IEbmlHeader>();
 
 			var headerData = ebml.GetHeaderInformation(stream, specification);
 
 			headerData.Should()
 			          .BeEquivalentTo(
-				           new EbmlHeader
+				           new EbmlHeaderData
 				           {
 					           Version = 1,
 					           DocType = "matroska"

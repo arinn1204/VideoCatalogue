@@ -3,10 +3,8 @@ using BoDi;
 using Grains.Codecs;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska;
 using Grains.Codecs.Matroska.Interfaces;
-using Grains.Codecs.Matroska.Models;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
@@ -26,7 +24,7 @@ namespace Grains.Tests.Integration.Features.Support
 					"https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
 			serviceCollection.AddTransient<ISpecification, Specification>();
 			serviceCollection.AddTransient<IMatroska, Matroska>();
-			serviceCollection.AddTransient<IEbml, Ebml>();
+			serviceCollection.AddTransient<IEbmlHeader, EbmlHeader>();
 			serviceCollection.AddTransient<ISegment, Segment>();
 			serviceCollection.AddTransient<ISegmentFactory, SegmentFactory>();
 

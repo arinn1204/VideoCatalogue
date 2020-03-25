@@ -7,7 +7,6 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Interfaces;
-using Grains.Codecs.Matroska.Models;
 using GrainsInterfaces.Models.CodecParser;
 using Moq;
 using Xunit;
@@ -68,14 +67,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		{
 			using var stream = new MemoryStream();
 
-			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
 			ebml
 			   .Setup(
 					s => s.GetHeaderInformation(
 						It.IsAny<Stream>(),
 						It.IsAny<EbmlSpecification>()))
 			   .Returns(
-					new EbmlHeader
+					new EbmlHeaderData
 					{
 						DocType = doctype,
 						Version = (uint) version
@@ -111,7 +110,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		{
 			var id = _requiredSpecification.Elements.First()
 			                               .Id;
-			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
@@ -120,13 +119,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 
 			using var stream = new MemoryStream();
 
-			_fixture.Freeze<Mock<IEbml>>()
+			_fixture.Freeze<Mock<IEbmlHeader>>()
 			        .Setup(
 				         s => s.GetHeaderInformation(
 					         It.IsAny<Stream>(),
 					         It.IsAny<EbmlSpecification>()))
 			        .Returns(
-				         new EbmlHeader
+				         new EbmlHeaderData
 				         {
 					         DocType = "matroska"
 				         });
@@ -142,13 +141,13 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
 		{
 			using var stream = new MemoryStream();
-			_fixture.Freeze<Mock<IEbml>>()
+			_fixture.Freeze<Mock<IEbmlHeader>>()
 			        .Setup(
 				         s => s.GetHeaderInformation(
 					         It.IsAny<Stream>(),
 					         It.IsAny<EbmlSpecification>()))
 			        .Returns(
-				         new EbmlHeader
+				         new EbmlHeaderData
 				         {
 					         DocType = "not matroska"
 				         });
@@ -176,14 +175,14 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		{
 			using var stream = new MemoryStream();
 
-			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
 			ebml
 			   .Setup(
 					s => s.GetHeaderInformation(
 						It.IsAny<Stream>(),
 						It.IsAny<EbmlSpecification>()))
 			   .Returns(
-					new EbmlHeader
+					new EbmlHeaderData
 					{
 						DocType = "matroska",
 						Version = 1u
@@ -194,7 +193,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
 					     It.IsAny<EbmlSpecification>()))
-			    .Returns(() => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
+			    .Returns(
+				     () => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
 
 			var expectedSegmentInformation = new SegmentInformation
 			                                 {
@@ -266,7 +266,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		public void ShouldReturnRetrievedIdWhenNotEbml()
 		{
 			var id = _requiredSpecification.Elements.First().Id + 5u;
-			var ebml = _fixture.Freeze<Mock<IEbml>>();
+			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),

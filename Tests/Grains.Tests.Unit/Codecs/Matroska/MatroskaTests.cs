@@ -189,11 +189,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						Version = 1u
 					});
 
+			var count = 0;
 			ebml.Setup(
 				     s => s.GetMasterIds(
 					     It.IsAny<Stream>(),
 					     It.IsAny<MatroskaSpecification>()))
-			    .Returns(_requiredSpecification.Elements.First().Id);
+			    .Returns(() => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
 
 			var expectedSegmentInformation = new SegmentInformation
 			                                 {
@@ -255,7 +256,6 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                Subtitles = expectedSegmentInformation.Subtitles,
 					                Videos = expectedSegmentInformation.Videos,
 					                Container = "matroska",
-					                Id = _requiredSpecification.Elements.First().Id,
 					                EbmlVersion = 1
 				                });
 

@@ -33,7 +33,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				           B1 = (byte) stream.ReadByte()
 			           };
 
-			return word.UnsignedData;
+			var levelOneElements = specification.Elements.Where(w => w.Level == 1 || w.Level == 0)
+			                                    .Select(s => s.Id);
+
+			return levelOneElements.Contains(word.UnsignedData)
+				? word.UnsignedData
+				: 0;
 		}
 
 		public EbmlHeader GetHeaderInformation(
@@ -46,7 +51,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 					     w.Name.StartsWith("Doc"));
 			var header = new EbmlHeader();
 
-			var size = EbmlReader.GetWidthAndSize(stream);
+			var size = EbmlReader.GetSize(stream);
 			var endPosition = stream.Position + size;
 
 			var idsBeingTracked = Enumerable.Empty<(uint id, string name, string type)>();
@@ -60,7 +65,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			while (stream.Position < endPosition)
 			{
 				var id = GetId(stream);
-				size = EbmlReader.GetWidthAndSize(stream);
+				size = EbmlReader.GetSize(stream);
 				var specification = idsBeingTracked.FirstOrDefault(w => w.id == id);
 
 				switch (specification.name)

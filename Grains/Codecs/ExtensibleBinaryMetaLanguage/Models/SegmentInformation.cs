@@ -2,7 +2,7 @@
 using System.Linq;
 using GrainsInterfaces.Models.CodecParser;
 
-namespace Grains.Codecs.Matroska.Models
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 {
 	public class SegmentInformation
 	{

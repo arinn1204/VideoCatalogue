@@ -1,4 +1,4 @@
-﻿namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
+﻿namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 {
 	public interface ISegmentFactory
 	{

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.Matroska.Models;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 {
@@ -8,9 +7,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 	{
 		SegmentInformation Merge(
 			SegmentInformation totalParentInformation,
-			SegmentChildInformation childInformation);
+			object childInformation);
 
-		SegmentChildInformation GetChildInformation(
+		object GetChildInformation(
 			Stream stream,
 			EbmlSpecification specification);
 	}

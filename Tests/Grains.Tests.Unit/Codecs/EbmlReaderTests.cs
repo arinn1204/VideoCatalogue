@@ -90,7 +90,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var result = EbmlReader.GetWidthAndSize(stream);
+			var result = EbmlReader.GetSize(stream);
 
 			result.Should()
 			      .Be(expectedSize);

@@ -6,7 +6,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 {
 	public static class EbmlReader
 	{
-		public static long GetWidthAndSize(Stream stream)
+		public static long GetSize(Stream stream)
 		{
 			var firstByte = (byte) stream.ReadByte();
 			var width = GetWidth(firstByte);

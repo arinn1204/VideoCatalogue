@@ -86,12 +86,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					     It.IsAny<EbmlSpecification>()))
 			    .Returns(_requiredSpecification.Elements.First().Id);
 
-			var segmentInformation = _fixture.Freeze<Mock<ISegment>>();
+			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
 					                   It.IsAny<EbmlSpecification>()))
-			                  .Returns(new SegmentInformation());
+			                  .Returns(new Segment());
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
@@ -196,7 +196,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			    .Returns(
 				     () => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
 
-			var expectedSegmentInformation = new SegmentInformation
+			var expectedSegmentInformation = new Segment
 			                                 {
 				                                 Audios = new[]
 				                                          {
@@ -237,7 +237,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                                          }
 			                                 };
 
-			var segmentInformation = _fixture.Freeze<Mock<ISegment>>();
+			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),

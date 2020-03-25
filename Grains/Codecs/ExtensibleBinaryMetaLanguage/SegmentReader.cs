@@ -6,20 +6,20 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
-	public class Segment : ISegment
+	public class SegmentReader : ISegmentReader
 	{
 		private readonly IEbmlHeader _ebmlHeader;
 		private readonly ISegmentFactory _segmentFactory;
 
-		public Segment(IEbmlHeader ebmlHeader, ISegmentFactory segmentFactory)
+		public SegmentReader(IEbmlHeader ebmlHeader, ISegmentFactory segmentFactory)
 		{
 			_ebmlHeader = ebmlHeader;
 			_segmentFactory = segmentFactory;
 		}
 
-#region ISegment Members
+#region ISegmentReader Members
 
-		public SegmentInformation GetSegmentInformation(
+		public Segment GetSegmentInformation(
 			Stream stream,
 			EbmlSpecification ebmlSpecification)
 		{
@@ -31,7 +31,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				                                        k => k.Id,
 				                                        v => v.Name);
 
-			var segmentInformation = new SegmentInformation();
+			var segmentInformation = new Segment();
 
 			while (stream.Position < endPosition)
 			{

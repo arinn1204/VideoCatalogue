@@ -5,8 +5,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 {
 	public interface ISegmentChild
 	{
-		SegmentInformation Merge(
-			SegmentInformation totalParentInformation,
+		Segment Merge(
+			Segment totalParent,
 			object childInformation);
 
 		object GetChildInformation(

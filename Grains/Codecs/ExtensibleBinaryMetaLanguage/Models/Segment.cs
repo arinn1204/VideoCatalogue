@@ -4,9 +4,9 @@ using GrainsInterfaces.Models.CodecParser;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 {
-	public class SegmentInformation
+	public class Segment
 	{
-		public SegmentInformation()
+		public Segment()
 		{
 			Videos = Enumerable.Empty<VideoInformation>();
 			Audios = Enumerable.Empty<AudioInformation>();

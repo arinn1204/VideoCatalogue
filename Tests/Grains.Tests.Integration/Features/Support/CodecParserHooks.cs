@@ -25,7 +25,7 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddTransient<ISpecification, Specification>();
 			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<IEbmlHeader, EbmlHeader>();
-			serviceCollection.AddTransient<ISegment, Segment>();
+			serviceCollection.AddTransient<ISegmentReader, SegmentReader>();
 			serviceCollection.AddTransient<ISegmentFactory, SegmentFactory>();
 
 			serviceCollection.AddTransient<Parser, Parser>();

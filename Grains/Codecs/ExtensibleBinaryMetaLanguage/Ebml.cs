@@ -57,7 +57,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				                  (current, spec)
 					                  => current.Append((spec.Id, spec.Name, spec.Type)));
 
-			while (stream.Position <= endPosition)
+			while (stream.Position < endPosition)
 			{
 				var id = GetId(stream);
 				size = EbmlReader.GetWidthAndSize(stream);

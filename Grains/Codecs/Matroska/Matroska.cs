@@ -106,7 +106,6 @@ namespace Grains.Codecs.Matroska
 				       Audios = segmentInformation.Audios,
 				       Subtitles = segmentInformation.Subtitles,
 				       Videos = segmentInformation.Videos,
-				       Id = id,
 				       EbmlVersion = (int) ebmlHeader.Version
 			       };
 		}

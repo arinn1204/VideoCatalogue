@@ -87,7 +87,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					     It.IsAny<MatroskaSpecification>()))
 			    .Returns(_requiredSpecification.Elements.First().Id);
 
-			var segmentInformation = _fixture.Freeze<Mock<IMatroskaSegment>>();
+			var segmentInformation = _fixture.Freeze<Mock<ISegment>>();
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
@@ -236,7 +236,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                                          }
 			                                 };
 
-			var segmentInformation = _fixture.Freeze<Mock<IMatroskaSegment>>();
+			var segmentInformation = _fixture.Freeze<Mock<ISegment>>();
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),

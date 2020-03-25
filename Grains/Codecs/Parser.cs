@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
 using GrainsInterfaces.Models.CodecParser;
 
@@ -6,11 +7,15 @@ namespace Grains.Codecs
 {
 	public class Parser
 	{
+		private readonly IMapper _mapper;
 		private readonly IMatroska _matroska;
 
-		public Parser(IMatroska matroska)
+		public Parser(
+			IMatroska matroska,
+			IMapper mapper)
 		{
 			_matroska = matroska;
+			_mapper = mapper;
 		}
 
 		public FileInformation GetInformation(string path)
@@ -21,7 +26,9 @@ namespace Grains.Codecs
 			if (_matroska.IsMatroska(stream))
 			{
 				stream.Position = 0;
-				fileInformation = _matroska.GetFileInformation(stream, out var error);
+				var matroskaInfo = _matroska.GetFileInformation(stream, out var error);
+
+				fileInformation = _mapper.Map<FileInformation>(matroskaInfo);
 			}
 
 

@@ -5,7 +5,6 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
-using GrainsInterfaces.Models.CodecParser;
 
 namespace Grains.Codecs.Matroska
 {
@@ -63,7 +62,7 @@ namespace Grains.Codecs.Matroska
 			return header.DocType == "matroska";
 		}
 
-		public FileInformation GetFileInformation(Stream stream, out MatroskaError error)
+		public MatroskaData GetFileInformation(Stream stream, out MatroskaError error)
 		{
 			error = null;
 			var id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value);
@@ -100,13 +99,10 @@ namespace Grains.Codecs.Matroska
 					segmentInformation.Subtitles.Concat(segment.Subtitles);
 			}
 
-			return new FileInformation
+			return new MatroskaData
 			       {
-				       Container = ebmlHeader.DocType,
-				       Audios = segmentInformation.Audios,
-				       Subtitles = segmentInformation.Subtitles,
-				       Videos = segmentInformation.Videos,
-				       EbmlVersion = (int) ebmlHeader.Version
+				       Header = ebmlHeader,
+				       Segment = segmentInformation
 			       };
 		}
 

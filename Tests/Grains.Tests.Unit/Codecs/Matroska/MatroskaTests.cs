@@ -7,6 +7,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Interfaces;
+using Grains.Codecs.Matroska.Models;
 using GrainsInterfaces.Models.CodecParser;
 using Moq;
 using Xunit;
@@ -250,16 +251,22 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 
 			fileInformation.Should()
 			               .BeEquivalentTo(
-				                new FileInformation
+				                new MatroskaData
 				                {
-					                Audios = expectedSegmentInformation.Audios,
-					                Subtitles = expectedSegmentInformation.Subtitles,
-					                Videos = expectedSegmentInformation.Videos,
-					                Container = "matroska",
-					                EbmlVersion = 1
+					                Header = new EbmlHeaderData
+					                         {
+						                         Version = 1,
+						                         DocType = "matroska"
+					                         },
+					                Segment = new Segment
+					                          {
+						                          Audios = expectedSegmentInformation.Audios,
+						                          Subtitles = expectedSegmentInformation.Subtitles,
+						                          Videos = expectedSegmentInformation.Videos
+					                          }
 				                });
 
-			fileInformation.Videos.First().Resolution.Should().Be("1080p");
+			fileInformation.Segment.Videos.First().Resolution.Should().Be("1080p");
 		}
 
 		[Fact]

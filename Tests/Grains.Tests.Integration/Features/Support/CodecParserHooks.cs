@@ -27,6 +27,7 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddTransient<IEbmlHeader, EbmlHeader>();
 			serviceCollection.AddTransient<ISegmentReader, SegmentReader>();
 			serviceCollection.AddTransient<ISegmentFactory, SegmentFactory>();
+			serviceCollection.AddTransient<IReader, Reader>();
 
 			serviceCollection.AddTransient<Parser, Parser>();
 			objectContainer.RegisterInstanceAs(

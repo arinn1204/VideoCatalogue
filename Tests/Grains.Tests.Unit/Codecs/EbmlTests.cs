@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Moq;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
@@ -22,11 +22,44 @@ namespace Grains.Tests.Unit.Codecs
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IEbmlHeader>(() => _fixture.Create<EbmlHeader>());
+
+			_specification = new EbmlSpecification
+			                 {
+				                 Elements = new List<EbmlElement>
+				                            {
+					                            new EbmlElement
+					                            {
+						                            Name = "EBML",
+						                            IdString = "0x1A45DFA3"
+					                            },
+					                            new EbmlElement
+					                            {
+						                            Name = "VOID",
+						                            IdString = "0xEC"
+					                            },
+					                            new EbmlElement
+					                            {
+						                            Name = "CRC-32",
+						                            IdString = "0xBF"
+					                            },
+					                            new EbmlElement
+					                            {
+						                            Name = "EBMLVersion",
+						                            IdString = "0x4286"
+					                            },
+					                            new EbmlElement
+					                            {
+						                            Name = "DocType",
+						                            IdString = "0x4282"
+					                            }
+				                            }
+			                 };
 		}
 
 #endregion
 
 		private readonly Fixture _fixture;
+		private readonly EbmlSpecification _specification;
 
 		[Theory]
 		[InlineData("EBML", "0x1A45DFA3")]
@@ -34,56 +67,25 @@ namespace Grains.Tests.Unit.Codecs
 		[InlineData("CRC-32", "0xBF")]
 		public void ShouldReturnMatroskaId(string type, string expectedValue)
 		{
-			var specification = new EbmlSpecification
-			                    {
-				                    Elements = new List<EbmlElement>
-				                               {
-					                               new EbmlElement
-					                               {
-						                               Name = "EBML",
-						                               IdString = "0x1A45DFA3"
-					                               },
-					                               new EbmlElement
-					                               {
-						                               Name = "VOID",
-						                               IdString = "0xEC"
-					                               },
-					                               new EbmlElement
-					                               {
-						                               Name = "CRC-32",
-						                               IdString = "0xBF"
-					                               }
-				                               }
-			                    };
+			var hexValue = expectedValue.Replace("0x", string.Empty);
+			var counter = 0;
 
+			var reader = _fixture.Freeze<Mock<IReader>>();
+			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>(), 0L))
+			      .Returns(
+				       () =>
+				       {
+					       var returnByte = Convert.ToByte(
+						       string.Join(string.Empty, hexValue.Skip(counter).Take(2)),
+						       16);
 
-			var data = type switch
-			           {
-				           "EBML" => new[]
-				                     {
-					                     Convert.ToByte("1A", 16),
-					                     Convert.ToByte("45", 16),
-					                     Convert.ToByte("DF", 16),
-					                     Convert.ToByte("A3", 16)
-				                     },
-				           "VOID" => new[]
-				                     {
-					                     Convert.ToByte("EC", 16)
-				                     },
-				           "CRC-32" => new[]
-				                       {
-					                       Convert.ToByte("BF", 16)
-				                       }
-			           };
-			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
-			writer.Write(data);
-			writer.Flush();
+					       counter += 2;
 
-			stream.Position = 0;
+					       return returnByte;
+				       });
 
 			var ebml = _fixture.Create<IEbmlHeader>();
-			ebml.GetMasterIds(stream, specification)
+			ebml.GetMasterIds(new MemoryStream(), _specification)
 			    .Should()
 			    .Be(Convert.ToUInt32(expectedValue, 16));
 		}
@@ -92,51 +94,31 @@ namespace Grains.Tests.Unit.Codecs
 		[Fact]
 		public void ShouldProperlyGetVersionNumberAndDocType()
 		{
-			var data = new[]
-			           {
-				           Convert.ToByte("A3", 16),
-				           Convert.ToByte("42", 16),
-				           Convert.ToByte("86", 16),
-				           Convert.ToByte("81", 16), //width of 1, size 1
-				           Convert.ToByte("01", 16), //data
-				           Convert.ToByte("42", 16),
-				           Convert.ToByte("F2", 16),
-				           Convert.ToByte("81", 16), //width of 1, size 1
-				           Convert.ToByte("04", 16), //data
-				           Convert.ToByte("42", 16),
-				           Convert.ToByte("82", 16),
-				           Convert.ToByte("88", 16) //width of 1, size 8
-			           };
-			data = data.Concat(Encoding.UTF8.GetBytes("matroska"))
-			           .ToArray();
-			var specification = new EbmlSpecification
-			                    {
-				                    Elements = new List<EbmlElement>
-				                               {
-					                               new EbmlElement
-					                               {
-						                               Name = "EBMLVersion",
-						                               IdString = "0x4286"
-					                               },
-					                               new EbmlElement
-					                               {
-						                               Name = "DocType",
-						                               IdString = "0x4282"
-					                               }
-				                               }
-			                    };
+			var counter = 0;
+			var reader = _fixture.Freeze<Mock<IReader>>();
+			var ids = new[]
+			          {
+				          _specification.Elements.First(f => f.Name == "EBMLVersion").Id,
+				          _specification.Elements.First(f => f.Name == "DocType").Id,
+				          _specification.Elements.First(f => f.Name == "VOID").Id
+			          };
+			reader.Setup(s => s.GetSize(It.IsAny<Stream>()))
+			      .Returns(() => 35 - 2 - counter++);
 
+			reader.Setup(s => s.GetUShort(It.IsAny<Stream>()))
+			      .Returns(
+				       () => (ushort) ids[counter - 1 >= 3
+					                          ? 2
+					                          : counter - 1]);
 
-			using var stream = new MemoryStream();
-			using var writer = new BinaryWriter(stream);
-			writer.Write(data);
-			writer.Flush();
+			reader.Setup(s => s.GetString(It.IsAny<Stream>(), It.IsAny<long>(), null))
+			      .Returns("matroska");
 
-			stream.Position = 0;
+			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>(), 0L))
+			      .Returns(1);
 
 			var ebml = _fixture.Create<IEbmlHeader>();
-
-			var headerData = ebml.GetHeaderInformation(stream, specification);
+			var headerData = ebml.GetHeaderInformation(new MemoryStream(), _specification);
 
 			headerData.Should()
 			          .BeEquivalentTo(

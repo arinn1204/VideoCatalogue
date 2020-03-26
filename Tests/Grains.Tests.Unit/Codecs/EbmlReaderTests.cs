@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using FluentAssertions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
@@ -41,11 +44,16 @@ namespace Grains.Tests.Unit.Codecs
 					                            }
 				                            }
 			                 };
+
+			_fixture = new Fixture();
+			_fixture.Customize(new AutoMoqCustomization());
+			_fixture.Register<IReader>(() => _fixture.Create<Reader>());
 		}
 
 #endregion
 
 		private readonly EbmlSpecification _specification;
+		private readonly Fixture _fixture;
 
 		[Theory]
 		[InlineData(8, 5367889050668557)]
@@ -58,6 +66,7 @@ namespace Grains.Tests.Unit.Codecs
 		[InlineData(1, 127)]
 		public void ShouldReturnWidthAndSize(int expectedWidth, long expectedSize)
 		{
+			var reader = _fixture.Create<IReader>();
 			var width = expectedWidth switch
 			            {
 				            8 => 1,
@@ -90,7 +99,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var result = EbmlReader.GetSize(stream);
+			var result = reader.GetSize(stream);
 
 			result.Should()
 			      .Be(expectedSize);
@@ -99,6 +108,7 @@ namespace Grains.Tests.Unit.Codecs
 		[Fact]
 		public void ShouldDeserializeString()
 		{
+			var reader = _fixture.Create<IReader>();
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);
 			writer.Write(Encoding.UTF8.GetBytes("matroska"));
@@ -106,14 +116,15 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			EbmlReader.GetString(stream, 8)
-			          .Should()
-			          .Be("matroska");
+			reader.GetString(stream, 8)
+			      .Should()
+			      .Be("matroska");
 		}
 
 		[Fact]
 		public void ShouldReturnProperUint()
 		{
+			var reader = _fixture.Create<IReader>();
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);
 			writer.Write(Convert.ToByte("0xFF", 16));
@@ -124,17 +135,17 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			EbmlReader.GetUint(stream)
-			          .Should()
-			          .Be(
-				           BitConverter.ToUInt32(
-					           new[]
-					           {
-						           Convert.ToByte("0x55", 16),
-						           Convert.ToByte("0x23", 16),
-						           Convert.ToByte("0x01", 16),
-						           Convert.ToByte("0xFF", 16)
-					           }));
+			reader.GetUint(stream)
+			      .Should()
+			      .Be(
+				       BitConverter.ToUInt32(
+					       new[]
+					       {
+						       Convert.ToByte("0x55", 16),
+						       Convert.ToByte("0x23", 16),
+						       Convert.ToByte("0x01", 16),
+						       Convert.ToByte("0xFF", 16)
+					       }));
 		}
 	}
 }

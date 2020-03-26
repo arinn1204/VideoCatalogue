@@ -1,13 +1,17 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.Models.AlignedModels;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
-	public static class EbmlReader
+	public class Reader
+		: IReader
 	{
-		public static long GetSize(Stream stream)
+#region IReader Members
+
+		public long GetSize(Stream stream)
 		{
 			var firstByte = (byte) stream.ReadByte();
 			var width = GetWidth(firstByte);
@@ -28,7 +32,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			return result;
 		}
 
-		public static uint GetUint(Stream stream)
+		public uint GetUint(Stream stream)
 		{
 			var word = new Float32
 			           {
@@ -40,7 +44,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			return word.UnsignedData;
 		}
 
-		public static ushort GetUShort(Stream stream)
+		public ushort GetUShort(Stream stream)
 		{
 			var word = new Short
 			           {
@@ -51,7 +55,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			return word.UnsignedData;
 		}
 
-		public static string GetString(
+		public string GetString(
 			Stream stream,
 			long size,
 			Encoding encoding = null)
@@ -68,8 +72,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			return targetEncoding.GetString(buffer.ToArray());
 		}
 
-
-		public static long ReadBytes(Stream stream, int bytesToRead, long seed = 0)
+		public long ReadBytes(Stream stream, int bytesToRead, long seed = 0)
 		{
 			var result = seed;
 			for (var i = bytesToRead; i > 0; i--)
@@ -81,8 +84,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities
 			return result;
 		}
 
+#endregion
 
-		private static int GetWidth(byte firstByte)
+
+		private int GetWidth(byte firstByte)
 		{
 			byte result = 0;
 			var first = 255;

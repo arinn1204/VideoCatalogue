@@ -2,19 +2,20 @@
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
 	public class SegmentReader : ISegmentReader
 	{
 		private readonly IEbmlHeader _ebmlHeader;
+		private readonly IReader _reader;
 		private readonly ISegmentFactory _segmentFactory;
 
-		public SegmentReader(IEbmlHeader ebmlHeader, ISegmentFactory segmentFactory)
+		public SegmentReader(IEbmlHeader ebmlHeader, ISegmentFactory segmentFactory, IReader reader)
 		{
 			_ebmlHeader = ebmlHeader;
 			_segmentFactory = segmentFactory;
+			_reader = reader;
 		}
 
 #region ISegmentReader Members
@@ -23,7 +24,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			Stream stream,
 			EbmlSpecification ebmlSpecification)
 		{
-			var totalSize = EbmlReader.GetSize(stream);
+			var totalSize = _reader.GetSize(stream);
 			var endPosition = stream.Position + totalSize;
 			var trackedElements = ebmlSpecification.Elements
 			                                       .Where(w => w.Level == 1)
@@ -36,7 +37,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			while (stream.Position < endPosition)
 			{
 				var id = _ebmlHeader.GetMasterIds(stream, ebmlSpecification);
-				var size = EbmlReader.GetSize(stream);
+				var size = _reader.GetSize(stream);
 
 				if (trackedElements.ContainsKey(id))
 				{

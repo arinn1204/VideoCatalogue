@@ -2,18 +2,24 @@
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Utilities;
 using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
 	public class EbmlHeader : IEbmlHeader
 	{
+		private readonly IReader _reader;
+
+		public EbmlHeader(IReader reader)
+		{
+			_reader = reader;
+		}
+
 #region IEbmlHeader Members
 
 		public uint GetMasterIds(Stream stream, EbmlSpecification specification)
 		{
-			var firstByte = (byte) stream.ReadByte();
+			var firstByte = (byte) _reader.ReadBytes(stream, 1);
 
 			if (specification.Elements
 			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
@@ -26,9 +32,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			var word = new Float32
 			           {
 				           B4 = firstByte,
-				           B3 = (byte) stream.ReadByte(),
-				           B2 = (byte) stream.ReadByte(),
-				           B1 = (byte) stream.ReadByte()
+				           B3 = (byte) _reader.ReadBytes(stream, 1),
+				           B2 = (byte) _reader.ReadBytes(stream, 1),
+				           B1 = (byte) _reader.ReadBytes(stream, 1)
 			           };
 
 			var levelOneElements = specification.Elements.Where(w => w.Level == 1 || w.Level == 0)
@@ -49,7 +55,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 					     w.Name.StartsWith("Doc"));
 			var header = new EbmlHeaderData();
 
-			var size = EbmlReader.GetSize(stream);
+			var size = _reader.GetSize(stream);
 			var endPosition = stream.Position + size;
 
 			var idsBeingTracked = Enumerable.Empty<(uint id, string name, string type)>();
@@ -62,17 +68,17 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 			while (stream.Position < endPosition)
 			{
-				var id = EbmlReader.GetUShort(stream);
-				size = EbmlReader.GetSize(stream);
+				var id = _reader.GetUShort(stream);
+				size = _reader.GetSize(stream);
 				var specification = idsBeingTracked.FirstOrDefault(w => w.id == id);
 
 				switch (specification.name)
 				{
 					case "EBMLVersion":
-						header.Version = (uint) EbmlReader.ReadBytes(stream, (int) size);
+						header.Version = (uint) _reader.ReadBytes(stream, (int) size);
 						break;
 					case "DocType":
-						header.DocType = EbmlReader.GetString(stream, size);
+						header.DocType = _reader.GetString(stream, size);
 						break;
 					default:
 						stream.Seek(size, SeekOrigin.Current);

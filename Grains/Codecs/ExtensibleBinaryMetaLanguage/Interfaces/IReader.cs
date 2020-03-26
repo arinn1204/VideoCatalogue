@@ -14,6 +14,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 			long size,
 			Encoding encoding = null);
 
-		long ReadBytes(Stream stream, int bytesToRead, long seed = 0);
+		byte[] ReadBytes(Stream stream, int bytesToRead);
 	}
 }

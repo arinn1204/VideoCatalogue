@@ -62,26 +62,32 @@ namespace Grains.Tests.Unit.Codecs
 		private readonly EbmlSpecification _specification;
 
 		[Theory]
-		[InlineData("EBML", "0x1A45DFA3")]
-		[InlineData("VOID", "0xEC")]
-		[InlineData("CRC-32", "0xBF")]
-		public void ShouldReturnMatroskaId(string type, string expectedValue)
+		[InlineData("0x1A45DFA3")]
+		[InlineData("0xEC")]
+		[InlineData("0xBF")]
+		public void ShouldReturnMatroskaId(string expectedValue)
 		{
 			var hexValue = expectedValue.Replace("0x", string.Empty);
-			var counter = 0;
-
 			var reader = _fixture.Freeze<Mock<IReader>>();
-			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>(), 0L))
-			      .Returns(
-				       () =>
+
+			var skipCount = 0;
+			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>()))
+			      .Returns<Stream, int>(
+				       (stream, numberToRead) =>
 				       {
-					       var returnByte = Convert.ToByte(
-						       string.Join(string.Empty, hexValue.Skip(counter).Take(2)),
-						       16);
+					       var bytes = new string[numberToRead];
 
-					       counter += 2;
+					       for (var i = 0; i < numberToRead; i++)
+					       {
+						       var byteValue = string.Join(
+							       string.Empty,
+							       hexValue.Skip(skipCount).Take(2));
 
-					       return returnByte;
+						       skipCount += 2;
+						       bytes[i] = byteValue;
+					       }
+
+					       return bytes.Select(s => Convert.ToByte(s, 16)).ToArray();
 				       });
 
 			var ebml = _fixture.Create<IEbmlHeader>();
@@ -114,8 +120,12 @@ namespace Grains.Tests.Unit.Codecs
 			reader.Setup(s => s.GetString(It.IsAny<Stream>(), It.IsAny<long>(), null))
 			      .Returns("matroska");
 
-			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>(), 0L))
-			      .Returns(1);
+			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>()))
+			      .Returns(
+				       new byte[]
+				       {
+					       1
+				       });
 
 			var ebml = _fixture.Create<IEbmlHeader>();
 			var headerData = ebml.GetHeaderInformation(new MemoryStream(), _specification);

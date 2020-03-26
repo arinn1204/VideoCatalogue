@@ -18,14 +18,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 			var result = width switch
 			             {
-				             8 => ReadBytes(stream, 6, (long) stream.ReadByte() << 48),
-				             7 => ReadBytes(stream, 6, (long) firstByte << 48),
-				             6 => ReadBytes(stream, 5, ((long) firstByte & 3) << 40),
-				             5 => ReadBytes(stream, 4, ((long) firstByte & 7) << 32),
-				             4 => ReadBytes(stream, 3, ((long) firstByte & 15) << 24),
-				             3 => ReadBytes(stream, 2, ((long) firstByte & 31) << 16),
-				             2 => ReadBytes(stream, 1, ((long) firstByte & 63) << 8),
-				             1 => ReadBytes(stream, 0, firstByte & 127),
+				             8 => ReadBytes(stream, 6, (byte) stream.ReadByte()),
+				             7 => ReadBytes(stream, 6, firstByte),
+				             6 => ReadBytes(stream, 5, (byte) (firstByte & 3)),
+				             5 => ReadBytes(stream, 4, (byte) (firstByte & 7)),
+				             4 => ReadBytes(stream, 3, (byte) (firstByte & 15)),
+				             3 => ReadBytes(stream, 2, (byte) (firstByte & 31)),
+				             2 => ReadBytes(stream, 1, (byte) (firstByte & 63)),
+				             1 => ReadBytes(stream, 0, (byte) (firstByte & 127)),
 				             _ => 0L
 			             };
 
@@ -72,20 +72,34 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			return targetEncoding.GetString(buffer.ToArray());
 		}
 
-		public long ReadBytes(Stream stream, int bytesToRead, long seed = 0)
+		public byte[] ReadBytes(Stream stream, int bytesToRead)
 		{
-			var result = seed;
-			for (var i = bytesToRead; i > 0; i--)
+			if (bytesToRead == 0)
 			{
-				var multiplier = (i - 1) * 8;
-				result += (long) stream.ReadByte() << multiplier;
+				return new byte[]
+				       {
+					       0
+				       };
 			}
 
-			return result;
+			var bytes = new byte[bytesToRead];
+			stream.Read(bytes, 0, bytesToRead);
+			return bytes;
 		}
 
 #endregion
 
+		private long ReadBytes(Stream stream, int bytesToRead, long seed)
+		{
+			var result = seed << (bytesToRead * 8);
+
+			for (var i = bytesToRead; i > 0; i--)
+			{
+				result |= (long) stream.ReadByte() << ((i - 1) * 8);
+			}
+
+			return result;
+		}
 
 		private int GetWidth(byte firstByte)
 		{

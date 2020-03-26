@@ -19,7 +19,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 		public uint GetMasterIds(Stream stream, EbmlSpecification specification)
 		{
-			var firstByte = (byte) _reader.ReadBytes(stream, 1);
+			var firstByte = _reader.ReadBytes(stream, 1).First();
 
 			if (specification.Elements
 			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
@@ -29,12 +29,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				return firstByte;
 			}
 
+			var bytes = _reader.ReadBytes(stream, 3);
+
 			var word = new Float32
 			           {
 				           B4 = firstByte,
-				           B3 = (byte) _reader.ReadBytes(stream, 1),
-				           B2 = (byte) _reader.ReadBytes(stream, 1),
-				           B1 = (byte) _reader.ReadBytes(stream, 1)
+				           B3 = bytes.Skip(0).First(),
+				           B2 = bytes.Skip(1).First(),
+				           B1 = bytes.Skip(2).First()
 			           };
 
 			var levelOneElements = specification.Elements.Where(w => w.Level == 1 || w.Level == 0)
@@ -75,7 +77,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				switch (specification.name)
 				{
 					case "EBMLVersion":
-						header.Version = (uint) _reader.ReadBytes(stream, (int) size);
+						var bytes = _reader.ReadBytes(stream, (int) size);
+						header.Version = ConvertToUint(bytes);
 						break;
 					case "DocType":
 						header.DocType = _reader.GetString(stream, size);
@@ -90,5 +93,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		}
 
 #endregion
+
+		private uint ConvertToUint(byte[] bytes)
+		{
+			var result = 0U;
+			for (var i = bytes.Length - 1; i >= 0; i--)
+			{
+				var multiplier = (i - 1) * 8 < 0
+					? 0
+					: (i - 1) * 8;
+				result |= (uint) bytes[i] << multiplier;
+			}
+
+			return result;
+		}
 	}
 }

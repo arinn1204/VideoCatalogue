@@ -9,7 +9,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 	{
 		public static uint ConvertToUint(this byte[] bytes)
 		{
-			var paddedBytes = bytes.Pad(4).ToArray();
+			var paddedBytes = bytes.PadStart(4).ToArray();
 			var word = new Float32
 			           {
 				           B4 = paddedBytes[0],
@@ -22,7 +22,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 
 		public static ushort ConvertToUshort(this byte[] bytes)
 		{
-			var paddedBytes = bytes.Pad(2).ToArray();
+			var paddedBytes = bytes.PadStart(2).ToArray();
 			var word = new Short
 			           {
 				           B2 = paddedBytes[0],

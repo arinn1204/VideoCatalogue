@@ -23,7 +23,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			var firstByte = _reader.ReadBytes(stream, 1).First();
 
 			if (specification.Elements
-			                 .Where(w => w.Name == "VOID" || w.Name == "CRC-32")
+			                 .Where(w => w.Name == "Void" || w.Name == "CRC-32")
 			                 .Select(s => s.Id)
 			                 .Contains(firstByte))
 			{

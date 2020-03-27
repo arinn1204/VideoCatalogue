@@ -145,12 +145,15 @@ namespace Grains.Tests.Unit.Codecs
 					       stream.Position += bytesToRead;
 					       return bytesToRead switch
 					              {
-						              1 => BitConverter.GetBytes(1).Reverse().ToArray(),
+						              1 => new byte[]
+						                   {
+							                   1
+						                   },
 						              2 => ids[idCounter++]
 						                  .Select(s => Convert.ToByte(s, 16))
 						                  .ToArray(),
 						              8 => Encoding.UTF8.GetBytes("matroska"),
-						              _ => BitConverter.GetBytes(255).Reverse().ToArray()
+						              _ => BitConverter.GetBytes(255)
 					              };
 				       });
 

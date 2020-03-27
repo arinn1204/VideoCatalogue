@@ -49,8 +49,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 						size);
 					segmentInformation = child.Merge(segmentInformation, childInformation);
 				}
-
-				stream.Seek(size, SeekOrigin.Current);
+				else
+				{
+					stream.Seek(size, SeekOrigin.Current);
+				}
 			}
 
 			return segmentInformation;

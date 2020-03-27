@@ -3,11 +3,6 @@
 	public class SeekHead
 	{
 		/// <summary>
-		///     Gets or sets the binary ID corresponding to the SeekPosition.
-		/// </summary>
-		public long SeekId { get; set; }
-
-		/// <summary>
 		///     The position that the element is located at.
 		/// </summary>
 		public uint SeekPosition { get; set; }

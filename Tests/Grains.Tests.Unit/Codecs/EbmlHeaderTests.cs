@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
@@ -13,11 +14,11 @@ using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
 {
-	public class EbmlTests
+	public class EbmlHeaderTests
 	{
 #region Setup/Teardown
 
-		public EbmlTests()
+		public EbmlHeaderTests()
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
@@ -102,29 +103,55 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			var counter = 0;
 			var reader = _fixture.Freeze<Mock<IReader>>();
+			var sizes = new[]
+			            {
+				            35L,
+				            1L,
+				            8L,
+				            30L
+			            };
+
 			var ids = new[]
 			          {
-				          _specification.Elements.First(f => f.Name == "EBMLVersion").Id,
-				          _specification.Elements.First(f => f.Name == "DocType").Id,
-				          _specification.Elements.First(f => f.Name == "VOID").Id
+				          new[]
+				          {
+					          "42",
+					          "86"
+				          },
+				          new[]
+				          {
+					          "42",
+					          "82"
+				          },
+				          new[]
+				          {
+					          "EC"
+				          }
 			          };
 			reader.Setup(s => s.GetSize(It.IsAny<Stream>()))
-			      .Returns(() => 35 - 2 - counter++);
-
-			reader.Setup(s => s.GetUShort(It.IsAny<Stream>()))
-			      .Returns(
-				       () => (ushort) ids[counter - 1 >= 3
-					                          ? 2
-					                          : counter - 1]);
-
-			reader.Setup(s => s.GetString(It.IsAny<Stream>(), It.IsAny<long>(), null))
-			      .Returns("matroska");
-
-			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>()))
-			      .Returns(
-				       new byte[]
+			      .Returns<Stream>(
+				       stream =>
 				       {
-					       1
+					       var size = sizes[counter++];
+					       stream.Position += size;
+					       return size;
+				       });
+
+			var idCounter = 0;
+			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), It.IsAny<int>()))
+			      .Returns<Stream, int>(
+				       (stream, bytesToRead) =>
+				       {
+					       stream.Position += bytesToRead;
+					       return bytesToRead switch
+					              {
+						              1 => BitConverter.GetBytes(1).Reverse().ToArray(),
+						              2 => ids[idCounter++]
+						                  .Select(s => Convert.ToByte(s, 16))
+						                  .ToArray(),
+						              8 => Encoding.UTF8.GetBytes("matroska"),
+						              _ => BitConverter.GetBytes(255).Reverse().ToArray()
+					              };
 				       });
 
 			var ebml = _fixture.Create<IEbmlHeader>();

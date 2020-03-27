@@ -8,6 +8,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
@@ -116,7 +117,8 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			reader.GetString(stream, 8)
+			reader.ReadBytes(stream, 8)
+			      .ConvertToString()
 			      .Should()
 			      .Be("matroska");
 		}
@@ -135,7 +137,8 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			reader.GetUint(stream)
+			reader.ReadBytes(stream, 8)
+			      .ConvertToUint()
 			      .Should()
 			      .Be(
 				       BitConverter.ToUInt32(

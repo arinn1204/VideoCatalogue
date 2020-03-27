@@ -22,12 +22,16 @@
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GrainsInterfaces\GrainsInterfaces.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\GrainsInterfaces\GrainsInterfaces.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions"/>
+    </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
@@ -70,18 +71,17 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 			while (stream.Position < endPosition)
 			{
-				var id = _reader.GetUShort(stream);
+				var id = _reader.ReadBytes(stream, 2).ConvertToUshort();
 				size = _reader.GetSize(stream);
 				var specification = idsBeingTracked.FirstOrDefault(w => w.id == id);
 
 				switch (specification.name)
 				{
 					case "EBMLVersion":
-						var bytes = _reader.ReadBytes(stream, (int) size);
-						header.Version = ConvertToUint(bytes);
+						header.Version = _reader.ReadBytes(stream, (int) size).ConvertToUint();
 						break;
 					case "DocType":
-						header.DocType = _reader.GetString(stream, size);
+						header.DocType = _reader.ReadBytes(stream, (int) size).ConvertToString();
 						break;
 					default:
 						stream.Seek(size, SeekOrigin.Current);
@@ -93,19 +93,5 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		}
 
 #endregion
-
-		private uint ConvertToUint(byte[] bytes)
-		{
-			var result = 0U;
-			for (var i = bytes.Length - 1; i >= 0; i--)
-			{
-				var multiplier = (i - 1) * 8 < 0
-					? 0
-					: (i - 1) * 8;
-				result |= (uint) bytes[i] << multiplier;
-			}
-
-			return result;
-		}
 	}
 }

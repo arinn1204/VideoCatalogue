@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using MoreLinq;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
@@ -43,27 +44,20 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 			var currentSeekHead = new SeekHead();
 			while (stream.Position < endPosition)
 			{
-				var id = _reader.GetUShort(stream);
+				var id = _reader.ReadBytes(stream, 2).ConvertToUshort();
 				var sizeOfElement = _reader.GetSize(stream);
 
 				if (id == seekId)
 				{
-					var data = _reader.ReadBytes(stream, (int) sizeOfElement)
-					                  .Reverse()
-					                  .Pad(8)
-					                  .ToArray();
-					var seekIdValue = BitConverter.ToUInt64(data);
-					var element = specification.Elements.First(f => f.Id == seekIdValue);
-					currentSeekHead.Element = element;
+					GetSeekId(
+						stream,
+						specification,
+						sizeOfElement,
+						currentSeekHead);
 				}
 				else if (id == seekPositionId)
 				{
-					var data = _reader.ReadBytes(stream, (int) sizeOfElement)
-					                  .Reverse()
-					                  .Pad(4)
-					                  .ToArray();
-					var seekIdValue = BitConverter.ToUInt32(data);
-					currentSeekHead.SeekPosition = seekIdValue;
+					GetPosition(stream, sizeOfElement, currentSeekHead);
 				}
 
 				if (currentSeekHead.SeekPosition != default && currentSeekHead.Element != default)
@@ -79,12 +73,29 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 
 #endregion
 
-		private static IEnumerable<SeekHead> HandleSeekElement(SeekHead currentSeekHead)
+		private void GetPosition(Stream stream, long sizeOfElement, SeekHead currentSeekHead)
 		{
-			if (currentSeekHead.SeekPosition != default)
-			{
-				yield return currentSeekHead;
-			}
+			var data = _reader.ReadBytes(stream, (int) sizeOfElement)
+			                  .Reverse()
+			                  .Pad(4)
+			                  .ToArray();
+			var seekIdValue = BitConverter.ToUInt32(data);
+			currentSeekHead.SeekPosition = seekIdValue;
+		}
+
+		private void GetSeekId(
+			Stream stream,
+			EbmlSpecification specification,
+			long sizeOfElement,
+			SeekHead currentSeekHead)
+		{
+			var data = _reader.ReadBytes(stream, (int) sizeOfElement)
+			                  .Reverse()
+			                  .Pad(8)
+			                  .ToArray();
+			var seekIdValue = BitConverter.ToUInt64(data);
+			var element = specification.Elements.First(f => f.Id == seekIdValue);
+			currentSeekHead.Element = element;
 		}
 	}
 }

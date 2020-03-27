@@ -1,8 +1,5 @@
 ﻿using System.IO;
-using System.Linq;
-using System.Text;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
@@ -32,46 +29,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			return result;
 		}
 
-		public uint GetUint(Stream stream)
-		{
-			var word = new Float32
-			           {
-				           B4 = (byte) stream.ReadByte(),
-				           B3 = (byte) stream.ReadByte(),
-				           B2 = (byte) stream.ReadByte(),
-				           B1 = (byte) stream.ReadByte()
-			           };
-			return word.UnsignedData;
-		}
-
-		public ushort GetUShort(Stream stream)
-		{
-			var word = new Short
-			           {
-				           B2 = (byte) stream.ReadByte(),
-				           B1 = (byte) stream.ReadByte()
-			           };
-
-			return word.UnsignedData;
-		}
-
-		public string GetString(
-			Stream stream,
-			long size,
-			Encoding encoding = null)
-		{
-			var buffer = Enumerable.Empty<byte>();
-			for (var i = 0L; i < size; i++)
-			{
-				var byteRead = (byte) stream.ReadByte();
-				buffer = buffer.Append(byteRead);
-			}
-
-			var targetEncoding = encoding ?? Encoding.UTF8;
-
-			return targetEncoding.GetString(buffer.ToArray());
-		}
-
 		public byte[] ReadBytes(Stream stream, int bytesToRead)
 		{
 			if (bytesToRead == 0)
@@ -88,6 +45,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		}
 
 #endregion
+
 
 		private long ReadBytes(Stream stream, int bytesToRead, long seed)
 		{

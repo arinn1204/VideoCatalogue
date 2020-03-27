@@ -84,13 +84,15 @@ namespace Grains.Codecs.Matroska
 				return default;
 			}
 
+			var segmentInformation = new Segment();
+
 			if ((id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value)) !=
 			    _ebmlAndSegmentId.Value.segment)
 			{
 				return new MatroskaData
 				       {
 					       Header = ebmlHeader,
-					       Segment = new Segment()
+					       Segment = segmentInformation
 				       };
 			}
 
@@ -98,10 +100,14 @@ namespace Grains.Codecs.Matroska
 				stream,
 				_matroskaSpecification.Value);
 
+			segmentInformation.Audios = segment.Audios;
+			segmentInformation.Videos = segment.Videos;
+			segmentInformation.Subtitles = segment.Subtitles;
+
 			return new MatroskaData
 			       {
 				       Header = ebmlHeader,
-				       Segment = segment
+				       Segment = segmentInformation
 			       };
 		}
 

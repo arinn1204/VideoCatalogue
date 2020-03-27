@@ -6,13 +6,20 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
 	public class SegmentFactory : ISegmentFactory
 	{
+		private readonly IReader _reader;
+
+		public SegmentFactory(IReader reader)
+		{
+			_reader = reader;
+		}
+
 #region ISegmentFactory Members
 
 		public ISegmentChild GetChild(string name)
 		{
 			return name switch
 			       {
-				       "SeekHead"    => new SeekHead(),
+				       "SeekHead"    => new SeekHeadReader(_reader),
 				       "Info"        => new Info(),
 				       "Tracks"      => new Track(),
 				       "Chapters"    => new Chapter(),

@@ -43,7 +43,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				{
 					var trackedElement = trackedElements[id];
 					var child = _segmentFactory.GetChild(trackedElement);
-					var childInformation = child.GetChildInformation(stream, ebmlSpecification);
+					var childInformation = child.GetChildInformation(
+						stream,
+						ebmlSpecification,
+						size);
 					segmentInformation = child.Merge(segmentInformation, childInformation);
 				}
 

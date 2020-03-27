@@ -26,7 +26,7 @@ namespace Grains.Tests.Unit.Codecs
 		private readonly Fixture _fixture;
 
 		[Theory]
-		[InlineData("SeekHead", typeof(SeekHead))]
+		[InlineData("SeekHead", typeof(SeekHeadReader))]
 		[InlineData("Info", typeof(Info))]
 		[InlineData("Tracks", typeof(Track))]
 		[InlineData("Chapters", typeof(Chapter))]

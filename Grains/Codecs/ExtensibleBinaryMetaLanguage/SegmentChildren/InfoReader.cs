@@ -5,8 +5,15 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 {
-	public class Info : ISegmentChild
+	public class InfoReader : ISegmentChild
 	{
+		private readonly IReader _reader;
+
+		public InfoReader(IReader reader)
+		{
+			_reader = reader;
+		}
+
 #region ISegmentChild Members
 
 		public Segment Merge(

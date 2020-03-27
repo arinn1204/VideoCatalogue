@@ -27,7 +27,7 @@ namespace Grains.Tests.Unit.Codecs
 
 		[Theory]
 		[InlineData("SeekHead", typeof(SeekHeadReader))]
-		[InlineData("Info", typeof(Info))]
+		[InlineData("Info", typeof(InfoReader))]
 		[InlineData("Tracks", typeof(Track))]
 		[InlineData("Chapters", typeof(Chapter))]
 		[InlineData("Cluster", typeof(Cluster))]

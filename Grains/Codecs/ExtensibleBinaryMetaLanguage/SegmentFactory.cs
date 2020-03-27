@@ -20,7 +20,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			return name switch
 			       {
 				       "SeekHead"    => new SeekHeadReader(_reader),
-				       "Info"        => new Info(),
+				       "Info"        => new InfoReader(_reader),
 				       "Tracks"      => new Track(),
 				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),

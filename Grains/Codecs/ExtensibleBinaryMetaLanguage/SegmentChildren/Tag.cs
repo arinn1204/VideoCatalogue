@@ -10,7 +10,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 #region ISegmentChild Members
 
 		public Segment Merge(
-			Segment totalParent,
+			Segment segmentParent,
 			object childInformation)
 			=> throw new NotImplementedException();
 

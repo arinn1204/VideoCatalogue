@@ -21,11 +21,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 #region ISegmentChild Members
 
 		public Segment Merge(
-			Segment segmentParent,
+			Segment totalParent,
 			object childInformation)
 		{
-			segmentParent.SeekHeads = (IEnumerable<SeekHead>) childInformation;
-			return segmentParent;
+			var seekHead = (IEnumerable<SeekHead>) childInformation;
+
+			return totalParent;
 		}
 
 		public object GetChildInformation(

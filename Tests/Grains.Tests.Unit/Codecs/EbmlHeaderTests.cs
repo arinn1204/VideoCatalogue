@@ -35,7 +35,7 @@ namespace Grains.Tests.Unit.Codecs
 					                            },
 					                            new EbmlElement
 					                            {
-						                            Name = "VOID",
+						                            Name = "Void",
 						                            IdString = "0xEC"
 					                            },
 					                            new EbmlElement

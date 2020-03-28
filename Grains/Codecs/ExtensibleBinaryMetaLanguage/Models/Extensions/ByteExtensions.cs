@@ -8,6 +8,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 {
 	public static class ByteExtensions
 	{
+		public static object GetValue(this byte[] value, EbmlElement element)
+		{
+			return element.Type switch
+			       {
+				       "utf-8"    => value.ConvertToString(),
+				       "string"   => value.ConvertToString(Encoding.ASCII),
+				       "float"    => value.ConvertToFloat(),
+				       "date"     => value.ConvertToDateTime(),
+				       "uinteger" => value.ConvertToUint(),
+				       _          => value.ConvertToUlong()
+			       };
+		}
+
 		public static ulong ConvertToUlong(this byte[] bytes)
 		{
 			var paddedBytes = bytes.PadStart(8).ToArray();

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
@@ -65,7 +64,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 					var value = element.Name == "ChapterTranslate"
 						? EbmlConvert.DeserializeTo<ChapterTranslate>(
 							GetChapter(stream, sectionSize, codes).ToArray())
-						: GetValue(element, _reader.ReadBytes(stream, (int) sectionSize));
+						: _reader.ReadBytes(stream, (int) sectionSize).GetValue(element);
 
 					yield return (element.Name, value);
 				}
@@ -73,20 +72,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 				{
 					var nextByte = _reader.ReadBytes(stream, 1)[0];
 					data = data.Append(nextByte).ToArray();
-					var sectionId = data.ConvertToUint();
-					var sectionSize = _reader.GetSize(stream);
-
-					if (codes.ContainsKey(sectionId))
+					foreach (var valueTuple in GetValue(
+						stream,
+						codes,
+						data))
 					{
-						var element = codes[sectionId];
-						var sectionValue =
-							_reader.ReadBytes(stream, (int) sectionSize);
-						var value = GetValue(element, sectionValue);
-						yield return (element.Name, value);
-					}
-					else
-					{
-						stream.Seek(sectionSize, SeekOrigin.Current);
+						yield return valueTuple;
 					}
 				}
 			}
@@ -101,34 +92,35 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 			while (stream.Position < endOfChapter)
 			{
 				var data = _reader.ReadBytes(stream, 2).ToArray();
-				var sectionId = data.ConvertToUshort();
-				var sectionSize = _reader.GetSize(stream);
-				var element = codes[sectionId];
-				if (codes.ContainsKey(sectionId))
+				foreach (var valueTuple in GetValue(
+					stream,
+					codes,
+					data))
 				{
-					var sectionValue =
-						_reader.ReadBytes(stream, (int) sectionSize);
-					var value = GetValue(element, sectionValue);
-					yield return (element.Name, value);
-				}
-				else
-				{
-					stream.Seek(sectionSize, SeekOrigin.Current);
+					yield return valueTuple;
 				}
 			}
 		}
 
-		private object GetValue(EbmlElement element, byte[] value)
+		private IEnumerable<(string Name, object Value)> GetValue(
+			Stream stream,
+			IReadOnlyDictionary<uint, EbmlElement> codes,
+			byte[] data)
 		{
-			return element.Type switch
-			       {
-				       "utf-8"    => value.ConvertToString(),
-				       "string"   => value.ConvertToString(Encoding.ASCII),
-				       "float"    => value.ConvertToFloat(),
-				       "date"     => value.ConvertToDateTime(),
-				       "uinteger" => value.ConvertToUint(),
-				       _          => value.ConvertToUlong()
-			       };
+			var sectionId = data.ConvertToUint();
+			var sectionSize = _reader.GetSize(stream);
+			if (codes.ContainsKey(sectionId))
+			{
+				var element = codes[sectionId];
+				var sectionValue =
+					_reader.ReadBytes(stream, (int) sectionSize);
+				var value = sectionValue.GetValue(element);
+				yield return (element.Name, value);
+			}
+			else
+			{
+				stream.Seek(sectionSize, SeekOrigin.Current);
+			}
 		}
 	}
 }

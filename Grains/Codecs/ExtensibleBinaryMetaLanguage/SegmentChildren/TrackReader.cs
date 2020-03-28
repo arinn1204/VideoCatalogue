@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 {
@@ -22,7 +24,15 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 		public Segment Merge(
 			Segment segmentParent,
 			object childInformation)
-			=> throw new NotImplementedException();
+		{
+			var newSegment =
+				_mapper.Map<Segment, Segment>(
+					segmentParent,
+					opts => opts.AfterMap(
+						(src, dest) => dest.Tracks = childInformation as IEnumerable<Track>));
+
+			return newSegment;
+		}
 
 		public object GetChildInformation(Stream stream, EbmlSpecification specification, long size)
 			=> throw new NotImplementedException();

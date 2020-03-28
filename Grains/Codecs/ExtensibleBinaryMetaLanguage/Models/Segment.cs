@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 using GrainsInterfaces.Models.CodecParser;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
@@ -17,6 +18,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 		public IEnumerable<AudioInformation> Audios { get; set; }
 		public IEnumerable<Subtitle> Subtitles { get; set; }
 		public IEnumerable<SeekHead> SeekHeads { get; set; }
+		public IEnumerable<Track> Tracks { get; set; }
 		public Info SegmentInformation { get; set; }
 	}
 }

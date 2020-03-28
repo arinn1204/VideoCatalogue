@@ -10,8 +10,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 		{
 			var elementIds = new[]
 			                 {
-				                 "Void",
-				                 "CRC-32",
 				                 "SegmentUID",
 				                 "SegmentFilename",
 				                 "PrevUID",

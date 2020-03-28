@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+﻿using AutoMapper;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
 
@@ -6,11 +7,15 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
 	public class SegmentFactory : ISegmentFactory
 	{
+		private readonly IMapper _mapper;
 		private readonly IReader _reader;
 
-		public SegmentFactory(IReader reader)
+		public SegmentFactory(
+			IReader reader,
+			IMapper mapper)
 		{
 			_reader = reader;
+			_mapper = mapper;
 		}
 
 #region ISegmentFactory Members
@@ -19,8 +24,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		{
 			return name switch
 			       {
-				       "SeekHead"    => new SeekHeadReader(_reader),
-				       "Info"        => new InfoReader(_reader),
+				       "SeekHead"    => new SeekHeadReader(_reader, _mapper),
+				       "Info"        => new InfoReader(_reader, _mapper),
 				       "Tracks"      => new Track(),
 				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),

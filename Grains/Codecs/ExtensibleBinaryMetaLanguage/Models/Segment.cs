@@ -17,5 +17,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 		public IEnumerable<AudioInformation> Audios { get; set; }
 		public IEnumerable<Subtitle> Subtitles { get; set; }
 		public IEnumerable<SeekHead> SeekHeads { get; set; }
+		public Info SegmentInformation { get; set; }
 	}
 }

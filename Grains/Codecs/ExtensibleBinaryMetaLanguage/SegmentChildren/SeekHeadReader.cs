@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
@@ -9,11 +10,13 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 {
 	public class SeekHeadReader : ISegmentChild
 	{
+		private readonly IMapper _mapper;
 		private readonly IReader _reader;
 
-		public SeekHeadReader(IReader reader)
+		public SeekHeadReader(IReader reader, IMapper mapper)
 		{
 			_reader = reader;
+			_mapper = mapper;
 		}
 
 #region ISegmentChild Members

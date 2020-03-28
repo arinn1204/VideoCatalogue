@@ -33,7 +33,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 
 		private readonly Fixture _fixture;
 
-		private static void SetupReturnValues(Mock<IReader> reader)
+		private void SetupReturnValues(Mock<IReader> reader)
 		{
 			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 10))
 			      .Returns(() => CreateBytes(13312563392782758317)) // PrevUID
@@ -75,7 +75,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			      .Returns(CreateBytes("FFFF").ToArray());                            // Trash
 		}
 
-		private static void SetupTwoByteCalls(Mock<IReader> reader)
+		private void SetupTwoByteCalls(Mock<IReader> reader)
 		{
 			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 2))
 			      .Returns(CreateBytes("3CB9").ToArray())  // PrevUID
@@ -99,7 +99,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			      .Returns(CreateBytes("FFFF").ToArray()); // Trash
 		}
 
-		private static void SetupOneByteCalls(Mock<IReader> reader)
+		private void SetupOneByteCalls(Mock<IReader> reader)
 		{
 			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 1))
 			      .Returns(CreateBytes("23").ToArray())
@@ -112,10 +112,10 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			      .Returns(CreateBytes("FF").ToArray());
 		}
 
-		private static byte[] CreateBytes(string value, Encoding encoding)
+		private byte[] CreateBytes(string value, Encoding encoding)
 			=> encoding.GetBytes(value);
 
-		private static byte[] CreateBytes(DateTime value)
+		private byte[] CreateBytes(DateTime value)
 		{
 			var sinceMatroskaEpoch = value -
 			                         new DateTime(
@@ -131,20 +131,20 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			return BitConverter.GetBytes(sinceEpochInNanoSeconds).Reverse().ToArray();
 		}
 
-		private static byte[] CreateBytes(float value)
+		private byte[] CreateBytes(float value)
 			=> BitConverter.GetBytes(value).Reverse().ToArray();
 
-		private static byte[] CreateBytes(uint value)
+		private byte[] CreateBytes(uint value)
 			=> BitConverter.GetBytes(value).Reverse().ToArray();
 
 
-		private static byte[] CreateBytes(ushort value)
+		private byte[] CreateBytes(ushort value)
 			=> BitConverter.GetBytes(value).Reverse().ToArray();
 
-		private static byte[] CreateBytes(ulong value)
+		private byte[] CreateBytes(ulong value)
 			=> BitConverter.GetBytes(value).Reverse().ToArray();
 
-		private static IEnumerable<byte> CreateBytes(string value)
+		private IEnumerable<byte> CreateBytes(string value)
 		{
 			for (var i = 0; i < value.Length; i += 2)
 			{

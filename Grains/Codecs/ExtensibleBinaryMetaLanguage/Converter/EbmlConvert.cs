@@ -41,7 +41,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 					                    (true, false) => propertyByName,
 					                    (false, true) => propertyByAttribute,
 					                    (false, false) => throw new EbmlConverterException(
-						                    $"Ambiguous match. Element name of '{name}' on IsEnabled and property name '{propertyByAttribute.Name}'."),
+						                    $"Ambiguous match. Element name of '{name}' associated with '{propertyByAttribute.Name}' and property name '{name}'."),
 					                    (true, true) => throw new EbmlConverterException(
 						                    $"There is no element with the name '{name}'.")
 				                    };

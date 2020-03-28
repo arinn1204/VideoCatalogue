@@ -60,7 +60,7 @@ namespace Grains.Tests.Unit.Codecs.Converter
 			result.Should()
 			      .Throw<EbmlConverterException>()
 			      .WithMessage(
-				       "Ambiguous match. Element name of 'Duplicate' on IsEnabled and property name 'IsEnabled'.");
+				       "Ambiguous match. Element name of 'Duplicate' associated with 'IsEnabled' and property name 'Duplicate'.");
 		}
 
 		[Fact]

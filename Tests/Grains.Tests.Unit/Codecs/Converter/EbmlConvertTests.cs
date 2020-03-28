@@ -65,6 +65,19 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		}
 
 		[Fact]
+		public void ShouldThrowWhenMultipleElementsHaveSameName()
+		{
+			Action result =
+				() => EbmlConvert.DeserializeTo<BadDummyEbmlConverterTwoPropertiesMatch>(
+					("Duplicate", "Filename"));
+
+			result.Should()
+			      .Throw<EbmlConverterException>()
+			      .WithMessage(
+				       "Ambiguous match. There are multiple elements with name 'Duplicate'.");
+		}
+
+		[Fact]
 		public void ShouldThrowWhenNameDoesNotExist()
 		{
 			Action result =

@@ -62,7 +62,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 		{
 			var propertyByAttribute =
 				typeof(TTarget).GetProperties()
-				               .FirstOrDefault(
+				               .Where(
 					                w => w.CustomAttributes.Any(
 						                a => a.AttributeType ==
 						                     typeof(EbmlElementAttribute) &&
@@ -70,8 +70,15 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 						                             .ConstructorArguments
 						                             .FirstOrDefault()
 						                             .Value ==
-						                     name));
-			return propertyByAttribute;
+						                     name))
+				               .ToList();
+
+			var propertyToReturn = propertyByAttribute.Count <= 1
+				? propertyByAttribute.FirstOrDefault()
+				: throw new EbmlConverterException(
+					$"Ambiguous match. There are multiple elements with name '{name}'.");
+
+			return propertyToReturn;
 		}
 	}
 }

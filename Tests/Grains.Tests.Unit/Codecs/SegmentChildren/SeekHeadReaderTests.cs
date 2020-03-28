@@ -8,6 +8,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
+using Grains.Tests.Unit.TestUtilities;
 using Moq;
 using Xunit;
 
@@ -22,6 +23,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<ISegmentChild>(() => _fixture.Create<SeekHeadReader>());
+			_fixture.Inject(MapperHelper.CreateMapper());
 			_fixture.Inject(
 				new EbmlSpecification
 				{
@@ -64,6 +66,23 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 #endregion
 
 		private readonly Fixture _fixture;
+
+		[Fact]
+		public void ShouldMergeInfoWithSegment()
+		{
+			var seekHeads = Enumerable.Empty<SeekHead>();
+			var oldSegment = new Segment();
+
+			var reader = _fixture.Create<ISegmentChild>();
+			var newSegment = reader.Merge(oldSegment, seekHeads);
+
+			newSegment.Should()
+			          .NotBe(oldSegment);
+
+			newSegment.SeekHeads
+			          .Should()
+			          .AllBeEquivalentTo(seekHeads);
+		}
 
 		[Fact]
 		public void ShouldReturnSeekHeads()

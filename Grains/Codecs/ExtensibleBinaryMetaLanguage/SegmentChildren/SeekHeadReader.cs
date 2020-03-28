@@ -25,8 +25,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 			Segment segmentParent,
 			object childInformation)
 		{
-			segmentParent.SeekHeads = (IEnumerable<SeekHead>) childInformation;
-			return segmentParent;
+			var newSegment = _mapper.Map<Segment, Segment>(
+				segmentParent,
+				opts => opts.AfterMap(
+					(src, dest) => dest.SeekHeads = childInformation as IEnumerable<SeekHead>));
+
+			return newSegment;
 		}
 
 		public object GetChildInformation(

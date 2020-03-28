@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 {
@@ -7,31 +8,21 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 	{
 		public static IReadOnlyDictionary<uint, EbmlElement> GetInfoElements(
 			this EbmlSpecification @this)
-		{
-			var elementIds = new[]
-			                 {
-				                 "SegmentUID",
-				                 "SegmentFilename",
-				                 "PrevUID",
-				                 "PrevFilename",
-				                 "NextUID",
-				                 "NextFilename",
-				                 "SegmentFamily",
-				                 "ChapterTranslate",
-				                 "ChapterTranslateEditionUID",
-				                 "ChapterTranslateCodec",
-				                 "ChapterTranslateID",
-				                 "TimecodeScale",
-				                 "Duration",
-				                 "DateUTC",
-				                 "Title",
-				                 "MuxingApp",
-				                 "WritingApp"
-			                 };
+			=> GetElements(@this, "Info");
 
-			return @this.Elements
-			            .Where(w => elementIds.Contains(w.Name))
-			            .ToDictionary(k => k.Id);
+		public static IReadOnlyDictionary<uint, EbmlElement> GetTrackElements(
+			this EbmlSpecification @this)
+			=> GetElements(@this, "Tracks");
+
+		private static IReadOnlyDictionary<uint, EbmlElement> GetElements(
+			EbmlSpecification specification,
+			string elementName,
+			int level = 1)
+		{
+			return specification.Elements
+			                    .SkipUntil(t => t.Name == elementName)
+			                    .TakeUntil(t => t.Level == level)
+			                    .ToDictionary(k => k.Id);
 		}
 	}
 }

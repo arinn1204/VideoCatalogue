@@ -3,7 +3,7 @@
 namespace Grains.Tests.Unit.Codecs.Converter
 {
 	[EbmlMaster]
-	public class BadDummyEbmlConverter
+	public class BadDummyEbmlConverterElementAndPropertyNameMatch
 	{
 		[EbmlElement("Duplicate")]
 		public bool IsEnabled { get; set; }

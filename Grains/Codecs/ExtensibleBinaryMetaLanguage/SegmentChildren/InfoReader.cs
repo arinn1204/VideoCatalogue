@@ -24,11 +24,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 			Segment segmentParent,
 			object childInformation)
 		{
-			var newSegment = _mapper.Map<Segment>(
+			var newSegment = _mapper.Map<Segment, Segment>(
 				segmentParent,
 				opts => opts.AfterMap(
 					(source, dest)
-						=> ((Segment) dest).SegmentInformation = childInformation as Info));
+						=> dest.SegmentInformation = childInformation as Info));
 
 			return newSegment;
 		}

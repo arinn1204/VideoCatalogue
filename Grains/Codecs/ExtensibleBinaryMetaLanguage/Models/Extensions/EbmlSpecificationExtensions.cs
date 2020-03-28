@@ -21,7 +21,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 		{
 			return specification.Elements
 			                    .SkipUntil(t => t.Name == elementName)
-			                    .TakeUntil(t => t.Level == level)
+			                    .TakeWhile(t => t.Level != level)
 			                    .ToDictionary(k => k.Id);
 		}
 	}

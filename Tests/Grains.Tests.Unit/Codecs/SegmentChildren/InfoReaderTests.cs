@@ -18,8 +18,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<ISegmentChild>(() => _fixture.Create<InfoReader>());
-			var mapper = MapperHelper.CreateMapper();
-			_fixture.Inject(mapper);
+			_fixture.Inject(MapperHelper.CreateMapper());
 		}
 
 #endregion

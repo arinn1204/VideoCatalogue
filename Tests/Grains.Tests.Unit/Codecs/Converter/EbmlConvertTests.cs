@@ -3,6 +3,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Exceptions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Tests.Unit.Codecs.Converter.Models;
 using Grains.Tests.Unit.Fixtures;
 using Xunit;
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
@@ -24,6 +26,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 			var target = new TTarget();
 			foreach (var (name, value) in values)
 			{
+				var valueToSet = value;
 				var propertyByName = typeof(TTarget).GetProperty(name);
 				var propertyByAttribute = GetPropertyByAttribute<TTarget>(name);
 
@@ -32,7 +35,17 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 					propertyByName,
 					name);
 
-				propertyToSet?.SetValue(target, value);
+				var underlyingType = Nullable.GetUnderlyingType(propertyToSet.PropertyType);
+				if (underlyingType != null && underlyingType != value.GetType())
+				{
+					valueToSet = Convert.ChangeType(value, underlyingType);
+				}
+				else if (underlyingType == null && propertyToSet.PropertyType != value.GetType())
+				{
+					valueToSet = Convert.ChangeType(value, propertyToSet.PropertyType);
+				}
+
+				propertyToSet?.SetValue(target, valueToSet);
 			}
 
 			return target;

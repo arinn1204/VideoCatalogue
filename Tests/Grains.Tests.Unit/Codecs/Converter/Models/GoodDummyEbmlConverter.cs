@@ -10,5 +10,7 @@ namespace Grains.Tests.Unit.Codecs.Converter.Models
 
 		[EbmlElement("NotDuplicate")]
 		public string NotDuplicate { get; set; }
+
+		public ulong? ThisValueIsALong { get; set; }
 	}
 }

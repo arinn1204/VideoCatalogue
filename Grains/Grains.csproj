@@ -27,11 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs"/>
     </ItemGroup>
 
 </Project>

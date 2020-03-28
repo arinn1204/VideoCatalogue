@@ -49,7 +49,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			      .Returns(() => CreateBytes(13312563392782758320))          //SegmentFamily
 			      .Returns(
 				       () => CreateBytes(
-					       13312563392782758380)) //ChapterTranslateEditionUID
+					       uint.MaxValue - 1)) //ChapterTranslateEditionUID
 			      .Returns(
 				       () => CreateBytes(
 					       1)) //ChapterTranslateCodec
@@ -202,7 +202,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 						                   {
 							                   ChapterTranslateCodec = 1,
 							                   ChapterTranslateID = 1,
-							                   ChapterTranslateEditionUID = 13312563392782758380
+							                   ChapterTranslateEditionUID = uint.MaxValue - 1
 						                   }
 					});
 		}

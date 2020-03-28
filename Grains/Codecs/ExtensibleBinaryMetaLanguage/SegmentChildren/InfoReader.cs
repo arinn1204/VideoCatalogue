@@ -1,9 +1,10 @@
 ﻿#nullable enable
-using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using AutoMapper;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
@@ -14,35 +15,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 	{
 		private readonly IMapper _mapper;
 		private readonly IReader _reader;
-		private readonly string[] _usedCodes;
 
 		public InfoReader(IReader reader, IMapper mapper)
 		{
 			_reader = reader;
 			_mapper = mapper;
-
-			_usedCodes = new[]
-			             {
-				             "Void",
-				             "CRC-32",
-				             "SegmentUID",
-				             "SegmentFilename",
-				             "PrevUID",
-				             "PrevFilename",
-				             "NextUID",
-				             "NextFilename",
-				             "SegmentFamily",
-				             "ChapterTranslate",
-				             "ChapterTranslateEditionUID",
-				             "ChapterTranslateCodec",
-				             "ChapterTranslateID",
-				             "TimecodeScale",
-				             "Duration",
-				             "DateUTC",
-				             "Title",
-				             "MuxingApp",
-				             "WritingApp"
-			             };
 		}
 
 #region ISegmentChild Members
@@ -63,11 +40,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 		public object GetChildInformation(Stream stream, EbmlSpecification specification, long size)
 		{
 			var endPoint = stream.Position + size;
-			var codes = specification.Elements.Where(w => _usedCodes.Contains(w.Name))
-			                         .ToDictionary(k => k.Id);
+			var codes = specification.GetInfoElements();
 
-			var info = new Info();
+			var data = GetInfoData(stream, endPoint, codes);
+			return EbmlConvert.DeserializeTo<Info>(data.ToArray());
+		}
 
+#endregion
+
+		private IEnumerable<(string Name, object Value)> GetInfoData(
+			Stream stream,
+			long endPoint,
+			IReadOnlyDictionary<uint, EbmlElement> codes)
+		{
 			while (stream.Position < endPoint)
 			{
 				var data = _reader.ReadBytes(stream, 2).ToArray();
@@ -75,46 +60,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 				if (codes.ContainsKey(data.ConvertToUshort()))
 				{
 					var sectionId = data.ConvertToUshort();
-					var sectionSize = _reader.GetSize(stream);
 					var element = codes[sectionId];
-					if (element.Name == "ChapterTranslate")
-					{
-						var chapter = new ChapterTranslate();
-						var chapterSize = sectionSize;
-						var endOfChapter = chapterSize + stream.Position;
-						while (stream.Position < endOfChapter)
-						{
-							data = _reader.ReadBytes(stream, 2).ToArray();
-							sectionId = data.ConvertToUshort();
-							sectionSize = _reader.GetSize(stream);
-							element = codes[sectionId];
-							if (codes.ContainsKey(sectionId))
-							{
-								var sectionValue =
-									_reader.ReadBytes(stream, (int) sectionSize);
-								var value = GetValue(element, sectionValue);
-								AddToObject(chapter, element.Name, value);
-							}
-							else
-							{
-								stream.Seek(sectionSize, SeekOrigin.Current);
-							}
-						}
+					var sectionSize = _reader.GetSize(stream);
+					var value = element.Name == "ChapterTranslate"
+						? EbmlConvert.DeserializeTo<ChapterTranslate>(
+							GetChapter(stream, sectionSize, codes).ToArray())
+						: GetValue(element, _reader.ReadBytes(stream, (int) sectionSize));
 
-						info.ChapterTranslate = chapter;
-					}
-					else
-					{
-						var sectionValue =
-							_reader.ReadBytes(stream, (int) sectionSize);
-						var value = GetValue(element, sectionValue);
-						AddToObject(info, element.Name, value);
-					}
+					yield return (element.Name, value);
 				}
 				else
 				{
 					var nextByte = _reader.ReadBytes(stream, 1)[0];
-					data = Enumerable.Append(data, nextByte).ToArray();
+					data = data.Append(nextByte).ToArray();
 					var sectionId = data.ConvertToUint();
 					var sectionSize = _reader.GetSize(stream);
 
@@ -123,9 +81,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 						var element = codes[sectionId];
 						var sectionValue =
 							_reader.ReadBytes(stream, (int) sectionSize);
-
 						var value = GetValue(element, sectionValue);
-						AddToObject(info, element.Name, value);
+						yield return (element.Name, value);
 					}
 					else
 					{
@@ -133,52 +90,45 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 					}
 				}
 			}
-
-			return info;
 		}
 
-#endregion
+		private IEnumerable<(string Name, object Value)> GetChapter(
+			Stream stream,
+			long chapterSize,
+			IReadOnlyDictionary<uint, EbmlElement> codes)
+		{
+			var endOfChapter = chapterSize + stream.Position;
+			while (stream.Position < endOfChapter)
+			{
+				var data = _reader.ReadBytes(stream, 2).ToArray();
+				var sectionId = data.ConvertToUshort();
+				var sectionSize = _reader.GetSize(stream);
+				var element = codes[sectionId];
+				if (codes.ContainsKey(sectionId))
+				{
+					var sectionValue =
+						_reader.ReadBytes(stream, (int) sectionSize);
+					var value = GetValue(element, sectionValue);
+					yield return (element.Name, value);
+				}
+				else
+				{
+					stream.Seek(sectionSize, SeekOrigin.Current);
+				}
+			}
+		}
 
 		private object GetValue(EbmlElement element, byte[] value)
 		{
 			return element.Type switch
 			       {
-				       "utf-8"  => value.ConvertToString(),
-				       "string" => value.ConvertToString(Encoding.ASCII),
-				       "float"  => value.ConvertToFloat(),
-				       "date"   => value.ConvertToDateTime(),
-				       _        => value.ConvertToUlong()
+				       "utf-8"    => value.ConvertToString(),
+				       "string"   => value.ConvertToString(Encoding.ASCII),
+				       "float"    => value.ConvertToFloat(),
+				       "date"     => value.ConvertToDateTime(),
+				       "uinteger" => value.ConvertToUint(),
+				       _          => value.ConvertToUlong()
 			       };
-		}
-
-		private void AddToObject(object objectToModify, string propertyName, object value)
-		{
-			var type = propertyName switch
-			           {
-				           nameof(Info.Duration)                               => typeof(float),
-				           nameof(Info.Title)                                  => typeof(string),
-				           nameof(Info.DateUTC)                                => typeof(DateTime),
-				           nameof(Info.MuxingApp)                              => typeof(string),
-				           nameof(Info.NextFilename)                           => typeof(string),
-				           nameof(Info.NextUID)                                => typeof(ulong),
-				           nameof(Info.PrevFilename)                           => typeof(string),
-				           nameof(Info.PrevUID)                                => typeof(ulong),
-				           nameof(Info.SegmentFamily)                          => typeof(ulong),
-				           nameof(Info.SegmentFilename)                        => typeof(string),
-				           nameof(Info.SegmentUID)                             => typeof(ulong),
-				           nameof(Info.TimecodeScale)                          => typeof(uint),
-				           nameof(Info.WritingApp)                             => typeof(string),
-				           nameof(ChapterTranslate.ChapterTranslateCodec)      => typeof(uint),
-				           nameof(ChapterTranslate.ChapterTranslateID)         => typeof(uint),
-				           nameof(ChapterTranslate.ChapterTranslateEditionUID) => typeof(ulong),
-				           _                                                   => typeof(object)
-			           };
-
-			var newValue = Convert.ChangeType(value, type);
-
-			objectToModify.GetType()
-			              .GetProperty(propertyName)
-			             ?.SetValue(objectToModify, newValue);
 		}
 	}
 }

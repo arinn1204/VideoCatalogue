@@ -12,6 +12,21 @@ namespace Grains.Tests.Unit.Codecs.Converter
 	public class EbmlConvertTests
 	{
 		[Fact]
+		public void ShouldCastValueIfItIsSameTypeAndABiggerSize()
+		{
+			uint value = 100;
+			var result =
+				EbmlConvert.DeserializeTo<GoodDummyEbmlConverter>(("ThisValueIsALong", value));
+
+			result.Should()
+			      .BeEquivalentTo(
+				       new GoodDummyEbmlConverter
+				       {
+					       ThisValueIsALong = 100
+				       });
+		}
+
+		[Fact]
 		public void ShouldMatchParameterTuplesWithPropertiesWhenAssigning()
 		{
 			var result = EbmlConvert.DeserializeTo<Info>(

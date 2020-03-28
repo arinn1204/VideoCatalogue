@@ -29,18 +29,16 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		[Fact]
 		public void ShouldMatchParameterWithEbmlElementAttributesToSetValue()
 		{
-			var result = EbmlConvert.DeserializeTo<Info>(
-				("DateUTC", new DateTime(2020, 2, 2)),
-				("NextFilename", "Filename"),
-				("PrevUID", 13312563392782758320));
+			var result = EbmlConvert.DeserializeTo<GoodDummyEbmlConverter>(
+				("Duplicate", true),
+				("NotDuplicate", "I work!"));
 
 			result.Should()
 			      .BeEquivalentTo(
-				       new Info
+				       new GoodDummyEbmlConverter
 				       {
-					       PreviousUid = 13312563392782758320,
-					       NextFilename = "Filename",
-					       TimeOfCreation = new DateTime(2020, 2, 2)
+					       IsEnabled = true,
+					       NotDuplicate = "I work!"
 				       });
 		}
 

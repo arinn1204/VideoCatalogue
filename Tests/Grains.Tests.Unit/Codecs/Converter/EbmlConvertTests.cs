@@ -55,7 +55,8 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		public void ShouldThrowWhenElementIdInAttributeMatchesADifferentProperty()
 		{
 			Action result =
-				() => EbmlConvert.DeserializeTo<BadDummyEbmlConverter>(("Duplicate", "Filename"));
+				() => EbmlConvert.DeserializeTo<BadDummyEbmlConverterElementAndPropertyNameMatch>(
+					("Duplicate", "Filename"));
 
 			result.Should()
 			      .Throw<EbmlConverterException>()

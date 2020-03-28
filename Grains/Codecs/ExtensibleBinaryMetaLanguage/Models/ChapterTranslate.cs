@@ -2,8 +2,8 @@
 {
 	public class ChapterTranslate
 	{
-		public uint? ChapterTranslateEditionUid { get; set; }
+		public ulong? ChapterTranslateEditionUID { get; set; }
 		public uint ChapterTranslateCodec { get; set; }
-		public uint ChapterTranslateId { get; set; }
+		public uint ChapterTranslateID { get; set; }
 	}
 }

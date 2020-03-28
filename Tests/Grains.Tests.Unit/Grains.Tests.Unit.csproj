@@ -41,6 +41,9 @@
     <None Update="TestData\VideoSearcher\filesWithoutFeaturettes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\Matroska\Specification.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

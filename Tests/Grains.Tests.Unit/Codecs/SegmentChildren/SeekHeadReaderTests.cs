@@ -8,59 +8,24 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
+using Grains.Tests.Unit.Fixtures;
 using Grains.Tests.Unit.TestUtilities;
 using Moq;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs.SegmentChildren
 {
-	public class SeekHeadReaderTests
+	public class SeekHeadReaderTests : IClassFixture<MatroskaFixture>
 	{
 #region Setup/Teardown
 
-		public SeekHeadReaderTests()
+		public SeekHeadReaderTests(MatroskaFixture fixture)
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<ISegmentChild>(() => _fixture.Create<SeekHeadReader>());
 			_fixture.Inject(MapperHelper.CreateMapper());
-			_fixture.Inject(
-				new EbmlSpecification
-				{
-					Elements = new List<EbmlElement>
-					           {
-						           new EbmlElement
-						           {
-							           Name = "SeekHead",
-							           IdString = "0x114d9b74"
-						           },
-						           new EbmlElement
-						           {
-							           Name = "Seek",
-							           IdString = "0x4DBB"
-						           },
-						           new EbmlElement
-						           {
-							           Name = "SeekID",
-							           IdString = "0x53AB"
-						           },
-						           new EbmlElement
-						           {
-							           Name = "SeekPosition",
-							           IdString = "0x53AC"
-						           },
-						           new EbmlElement
-						           {
-							           Name = "Info",
-							           IdString = "0x114d9b75"
-						           },
-						           new EbmlElement
-						           {
-							           Name = "Tracks",
-							           IdString = "0x114d9b76"
-						           }
-					           }
-				});
+			_fixture.Inject(fixture.Specification);
 		}
 
 #endregion
@@ -114,10 +79,10 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			      .Returns(
 				       new[]
 				       {
-					       Convert.ToByte("11", 16),
-					       Convert.ToByte("4d", 16),
-					       Convert.ToByte("9b", 16),
-					       Convert.ToByte("75", 16)
+					       Convert.ToByte("15", 16),
+					       Convert.ToByte("49", 16),
+					       Convert.ToByte("a9", 16),
+					       Convert.ToByte("66", 16)
 				       })
 			      .Returns(
 				       new[]

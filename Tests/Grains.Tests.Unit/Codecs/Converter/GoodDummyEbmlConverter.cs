@@ -8,6 +8,7 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		[EbmlElement("Duplicate")]
 		public bool IsEnabled { get; set; }
 
+		[EbmlElement("NotDuplicate")]
 		public string NotDuplicate { get; set; }
 	}
 }

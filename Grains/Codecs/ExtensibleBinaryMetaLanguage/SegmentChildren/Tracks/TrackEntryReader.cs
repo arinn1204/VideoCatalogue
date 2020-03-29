@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
@@ -20,7 +21,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 
 #region ITrackEntryReader Members
 
-		public TrackEntry ReadEntry(Stream stream, EbmlSpecification specification)
+		public IEnumerable<TrackEntry> ReadEntry(Stream stream, EbmlSpecification specification)
 			=> throw new NotImplementedException();
 
 #endregion

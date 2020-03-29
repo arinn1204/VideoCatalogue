@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
@@ -40,7 +41,29 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 		}
 
 		public object GetChildInformation(Stream stream, EbmlSpecification specification, long size)
-			=> throw new NotImplementedException();
+		{
+			var endPosition = stream.Position + size;
+			var trackEntryId = specification.Elements.Find(f => f.Name == "TrackEntry");
+			var tracks = Enumerable.Empty<Track>();
+			while (stream.Position < endPosition)
+			{
+				var id = _reader.ReadBytes(stream, 1).ConvertToUshort();
+				var size2 = _reader.GetSize(stream);
+
+				if (id == trackEntryId.Id)
+				{
+					var entries = _entryReader.ReadEntry(stream, specification);
+					var track = new Track(entries);
+					tracks = tracks.Append(track);
+				}
+				else
+				{
+					stream.Seek(size2, SeekOrigin.Current);
+				}
+			}
+
+			return tracks;
+		}
 
 #endregion
 	}

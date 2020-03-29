@@ -151,5 +151,39 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			          .Should()
 			          .AllBeEquivalentTo(info);
 		}
+
+
+		[Fact]
+		public void ShouldNotCheckTrackEntryIfIdIsNotOfTrackEntry()
+		{
+			var reader = _fixture.Freeze<Mock<IReader>>();
+			var stream = new MemoryStream();
+			reader.Setup(s => s.ReadBytes(stream, 1))
+			      .Returns(
+				       new byte[]
+				       {
+					       1
+				       });
+
+			reader.Setup(s => s.GetSize(stream))
+			      .Returns(1);
+
+			var trackEntry = _fixture.Freeze<Mock<ITrackEntryReader>>();
+			trackEntry.Setup(s => s.ReadEntry(stream, _specification))
+			          .Returns(
+				           new[]
+				           {
+					           new TrackEntry
+					           {
+						           Language = "English"
+					           }
+				           });
+
+			var trackReader = _fixture.Create<ISegmentChild>();
+
+			trackReader.GetChildInformation(stream, _specification, 5);
+
+			trackEntry.Verify(v => v.ReadEntry(stream, _specification), Times.Never);
+		}
 	}
 }

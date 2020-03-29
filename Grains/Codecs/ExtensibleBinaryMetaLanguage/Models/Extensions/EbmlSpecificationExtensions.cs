@@ -6,6 +6,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 {
 	public static class EbmlSpecificationExtensions
 	{
+		public static IEnumerable<uint> GetSkippableElements(this EbmlSpecification @this)
+			=> @this.Elements.Where(w => (w.Name == "Void") | (w.Name == "CRC-32"))
+			        .Select(s => s.Id);
+
 		public static IReadOnlyDictionary<uint, EbmlElement> GetInfoElements(
 			this EbmlSpecification @this)
 			=> GetElements(@this, "Info");

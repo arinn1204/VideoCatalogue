@@ -7,7 +7,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 	public class Segment
 	{
 		public IEnumerable<SeekHead> SeekHeads { get; set; }
-		public IEnumerable<Track> Tracks { get; set; }
+		public Track Track { get; set; }
 		public Info SegmentInformation { get; set; }
 	}
 }

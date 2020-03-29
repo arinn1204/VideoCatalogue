@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
@@ -34,8 +33,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			var newSegment =
 				_mapper.Map<Segment, Segment>(
 					segmentParent,
-					opts => opts.AfterMap(
-						(src, dest) => dest.Tracks = childInformation as IEnumerable<Track>));
+					opts => opts.AfterMap((src, dest) => dest.Track = childInformation as Track));
 
 			return newSegment;
 		}
@@ -47,7 +45,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 		{
 			var endPosition = stream.Position + segmentChildSize;
 			var trackEntryId = specification.Elements.Find(f => f.Name == "TrackEntry");
-			var tracks = Enumerable.Empty<Track>();
+			var trackEntries = Enumerable.Empty<TrackEntry>();
 			while (stream.Position < endPosition)
 			{
 				var id = _reader.ReadBytes(stream, 1).ConvertToUshort();
@@ -55,9 +53,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 
 				if (id == trackEntryId.Id)
 				{
-					var entries = _entryReader.ReadEntry(stream, specification, trackEntrySize);
-					var track = new Track(entries);
-					tracks = tracks.Append(track);
+					var entry = _entryReader.ReadEntry(stream, specification, trackEntrySize);
+					trackEntries = trackEntries.Append(entry);
 				}
 				else
 				{
@@ -65,7 +62,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 				}
 			}
 
-			return tracks;
+			return new Track(trackEntries);
 		}
 
 #endregion

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AutoFixture;
@@ -67,24 +66,18 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 
 			var entryCounter = 0;
 			var trackEntry = _fixture.Freeze<Mock<ITrackEntryReader>>();
-			trackEntry.Setup(s => s.ReadEntry(stream, _specification))
+			trackEntry.Setup(s => s.ReadEntry(stream, _specification, It.IsAny<long>()))
 			          .Returns(
-				           () => new[]
-				                 {
-					                 new TrackEntry
-					                 {
-						                 Language = languages.Skip(entryCounter++).First()
-					                 },
-					                 new TrackEntry
-					                 {
-						                 Language = "English"
-					                 }
-				                 });
+				           () =>
+					           new TrackEntry
+					           {
+						           Language = languages.Skip(entryCounter++).First()
+					           });
 
 			var trackReader = _fixture.Create<ISegmentChild>();
 
 			var tracks = trackReader.GetChildInformation(stream, _specification, 5)
-			                        .As<IEnumerable<Track>>();
+			                        .As<Track>();
 
 			tracks.Should()
 			      .BeEquivalentTo(
@@ -94,35 +87,11 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 					                      {
 						                      new TrackEntry
 						                      {
-							                      Language = "English"
-						                      },
-						                      new TrackEntry
-						                      {
 							                      Language = "español"
-						                      }
-					                      }
-				       },
-				       new Track
-				       {
-					       TrackEntries = new[]
-					                      {
-						                      new TrackEntry
-						                      {
-							                      Language = "English"
 						                      },
 						                      new TrackEntry
 						                      {
 							                      Language = "português"
-						                      }
-					                      }
-				       },
-				       new Track
-				       {
-					       TrackEntries = new[]
-					                      {
-						                      new TrackEntry
-						                      {
-							                      Language = "English"
 						                      },
 						                      new TrackEntry
 						                      {
@@ -142,14 +111,14 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			var oldSegment = new Segment();
 
 			var reader = _fixture.Create<ISegmentChild>();
-			var newSegment = reader.Merge(oldSegment, Enumerable.Empty<Track>().Append(info));
+			var newSegment = reader.Merge(oldSegment, info);
 
 			newSegment.Should()
 			          .NotBe(oldSegment);
 
-			newSegment.Tracks
+			newSegment.Track
 			          .Should()
-			          .AllBeEquivalentTo(info);
+			          .BeEquivalentTo(info);
 		}
 
 
@@ -169,21 +138,20 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			      .Returns(1);
 
 			var trackEntry = _fixture.Freeze<Mock<ITrackEntryReader>>();
-			trackEntry.Setup(s => s.ReadEntry(stream, _specification))
+			trackEntry.Setup(s => s.ReadEntry(stream, _specification, It.IsAny<long>()))
 			          .Returns(
-				           new[]
+				           new TrackEntry
 				           {
-					           new TrackEntry
-					           {
-						           Language = "English"
-					           }
+					           Language = "English"
 				           });
 
 			var trackReader = _fixture.Create<ISegmentChild>();
 
 			trackReader.GetChildInformation(stream, _specification, 5);
 
-			trackEntry.Verify(v => v.ReadEntry(stream, _specification), Times.Never);
+			trackEntry.Verify(
+				v => v.ReadEntry(stream, _specification, It.IsAny<long>()),
+				Times.Never);
 		}
 	}
 }

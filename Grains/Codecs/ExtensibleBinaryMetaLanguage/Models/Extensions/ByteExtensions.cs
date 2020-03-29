@@ -17,6 +17,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 				       "float"    => value.ConvertToFloat(),
 				       "date"     => value.ConvertToDateTime(),
 				       "uinteger" => value.ConvertToUint(),
+				       "binary"   => value,
 				       _          => value.ConvertToUlong()
 			       };
 		}

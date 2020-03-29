@@ -8,6 +8,7 @@ using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
 using Grains.Tests.Unit.Fixtures;
 using Grains.Tests.Unit.TestUtilities;

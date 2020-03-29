@@ -7,6 +7,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 {

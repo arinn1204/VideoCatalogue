@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 using GrainsInterfaces.Models.CodecParser;
 

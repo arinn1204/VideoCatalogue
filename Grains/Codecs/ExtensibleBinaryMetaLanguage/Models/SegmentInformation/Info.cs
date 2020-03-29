@@ -2,7 +2,7 @@
 using System;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation
 {
 	[EbmlMaster]
 	public class Info

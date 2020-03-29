@@ -5,7 +5,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks;
 using Grains.Tests.Unit.Fixtures;
 using Grains.Tests.Unit.TestUtilities;
 using Xunit;

@@ -6,17 +6,19 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 {
 	public class TrackReader : ISegmentChild
 	{
 		private readonly IMapper _mapper;
 		private readonly IReader _reader;
+		private readonly ITrackFactory _trackFactory;
 
-		public TrackReader(IReader reader, IMapper mapper)
+		public TrackReader(IReader reader, IMapper mapper, ITrackFactory trackFactory)
 		{
 			_reader = reader;
 			_mapper = mapper;
+			_trackFactory = trackFactory;
 		}
 
 #region ISegmentChild Members

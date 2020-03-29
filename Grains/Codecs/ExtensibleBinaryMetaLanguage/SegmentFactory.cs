@@ -2,6 +2,7 @@
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
@@ -26,7 +27,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			       {
 				       "SeekHead"    => new SeekHeadReader(_reader, _mapper),
 				       "Info"        => new InfoReader(_reader, _mapper),
-				       "Tracks"      => new TrackReader(_reader, _mapper),
+				       "Tracks"      => new TrackReader(_reader, _mapper, new TrackFactory()),
 				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),
 				       "Cues"        => new Cue(),

@@ -6,6 +6,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs

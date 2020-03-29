@@ -20,7 +20,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 
 #region ITrackEntryReader Members
 
-		public IEnumerable<TrackEntry> ReadEntry(Stream stream, EbmlSpecification specification)
+		public IEnumerable<TrackEntry> ReadEntry(
+			Stream stream,
+			EbmlSpecification specification,
+			long trackEntrySize)
 			=> throw new NotImplementedException();
 
 #endregion

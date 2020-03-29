@@ -51,17 +51,17 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			while (stream.Position < endPosition)
 			{
 				var id = _reader.ReadBytes(stream, 1).ConvertToUshort();
-				var trackSize = _reader.GetSize(stream);
+				var trackEntrySize = _reader.GetSize(stream);
 
 				if (id == trackEntryId.Id)
 				{
-					var entries = _entryReader.ReadEntry(stream, specification);
+					var entries = _entryReader.ReadEntry(stream, specification, trackEntrySize);
 					var track = new Track(entries);
 					tracks = tracks.Append(track);
 				}
 				else
 				{
-					stream.Seek(trackSize, SeekOrigin.Current);
+					stream.Seek(trackEntrySize, SeekOrigin.Current);
 				}
 			}
 

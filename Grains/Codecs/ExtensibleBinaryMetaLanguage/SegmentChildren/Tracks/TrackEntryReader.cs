@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
@@ -10,13 +9,13 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 {
 	public class TrackEntryReader : ITrackEntryReader
 	{
-		private readonly IMapper _mapper;
 		private readonly IReader _reader;
+		private readonly ITrackFactory _trackFactory;
 
-		public TrackEntryReader(IReader reader, IMapper mapper)
+		public TrackEntryReader(IReader reader, ITrackFactory trackFactory)
 		{
 			_reader = reader;
-			_mapper = mapper;
+			_trackFactory = trackFactory;
 		}
 
 #region ITrackEntryReader Members

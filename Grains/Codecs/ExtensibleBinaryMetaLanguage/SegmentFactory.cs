@@ -30,7 +30,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				       "Tracks" => new TrackReader(
 					       _reader,
 					       _mapper,
-					       new TrackEntryReader(_reader, _mapper)),
+					       new TrackEntryReader(_reader, new TrackEntryFactory(_reader))),
 				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),
 				       "Cues"        => new Cue(),

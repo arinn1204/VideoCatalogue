@@ -12,6 +12,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 		object GetChildInformation(
 			Stream stream,
 			EbmlSpecification specification,
-			long size);
+			long segmentChildSize);
 	}
 }

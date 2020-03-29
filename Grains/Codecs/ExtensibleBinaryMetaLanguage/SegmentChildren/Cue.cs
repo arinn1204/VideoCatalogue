@@ -14,7 +14,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 			object childInformation)
 			=> throw new NotImplementedException();
 
-		public object GetChildInformation(Stream stream, EbmlSpecification specification, long size)
+		public object GetChildInformation(
+			Stream stream,
+			EbmlSpecification specification,
+			long segmentChildSize)
 			=> throw new NotImplementedException();
 
 #endregion

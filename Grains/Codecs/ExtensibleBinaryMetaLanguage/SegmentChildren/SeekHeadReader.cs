@@ -36,12 +36,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 		public object GetChildInformation(
 			Stream stream,
 			EbmlSpecification specification,
-			long size)
+			long segmentChildSize)
 		{
 			var seekElementId = specification.Elements
 			                                 .First(w => w.Name == "Seek")
 			                                 .Id;
-			var endPosition = stream.Position + size;
+			var endPosition = stream.Position + segmentChildSize;
 
 			var seekHeads = Enumerable.Empty<SeekHead>();
 

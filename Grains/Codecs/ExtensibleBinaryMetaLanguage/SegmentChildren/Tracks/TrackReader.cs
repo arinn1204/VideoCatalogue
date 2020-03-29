@@ -40,15 +40,18 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			return newSegment;
 		}
 
-		public object GetChildInformation(Stream stream, EbmlSpecification specification, long size)
+		public object GetChildInformation(
+			Stream stream,
+			EbmlSpecification specification,
+			long segmentChildSize)
 		{
-			var endPosition = stream.Position + size;
+			var endPosition = stream.Position + segmentChildSize;
 			var trackEntryId = specification.Elements.Find(f => f.Name == "TrackEntry");
 			var tracks = Enumerable.Empty<Track>();
 			while (stream.Position < endPosition)
 			{
 				var id = _reader.ReadBytes(stream, 1).ConvertToUshort();
-				var size2 = _reader.GetSize(stream);
+				var trackSize = _reader.GetSize(stream);
 
 				if (id == trackEntryId.Id)
 				{
@@ -58,7 +61,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 				}
 				else
 				{
-					stream.Seek(size2, SeekOrigin.Current);
+					stream.Seek(trackSize, SeekOrigin.Current);
 				}
 			}
 

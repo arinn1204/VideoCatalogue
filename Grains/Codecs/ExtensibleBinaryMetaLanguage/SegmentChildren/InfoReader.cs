@@ -37,9 +37,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren
 			return newSegment;
 		}
 
-		public object GetChildInformation(Stream stream, EbmlSpecification specification, long size)
+		public object GetChildInformation(
+			Stream stream,
+			EbmlSpecification specification,
+			long segmentChildSize)
 		{
-			var endPoint = stream.Position + size;
+			var endPoint = stream.Position + segmentChildSize;
 			var codes = specification.GetInfoElements();
 
 			var data = GetInfoData(stream, endPoint, codes);

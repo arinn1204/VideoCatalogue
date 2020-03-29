@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+﻿using System;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 {
@@ -10,6 +11,13 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 		{
 			_reader = reader;
 		}
+
+#region ITrackFactory Members
+
+		public ITrackReader GetTrackReader(string elementName)
+			=> throw new NotImplementedException();
+
+#endregion
 
 		public ITrackReader GetReader(string name)
 		{

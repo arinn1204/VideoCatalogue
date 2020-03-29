@@ -2,5 +2,6 @@
 {
 	public interface ITrackFactory
 	{
+		ITrackReader GetTrackReader(string elementName);
 	}
 }

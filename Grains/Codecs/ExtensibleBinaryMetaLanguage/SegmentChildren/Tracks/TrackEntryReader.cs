@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
@@ -54,7 +55,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 				}
 
 				var element = trackSpecs[id];
-				var value = ProcessElement(stream, element);
+				var value = ProcessElement(
+					stream,
+					element,
+					trackSpecs,
+					skippedElements);
 
 				values = values.Append(value);
 				data = Array.Empty<byte>();
@@ -67,14 +72,25 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 
 		private (string name, object value) ProcessElement(
 			Stream stream,
-			EbmlElement element)
+			EbmlElement element,
+			IReadOnlyDictionary<uint, EbmlElement> trackSpecs,
+			Dictionary<uint, uint> skippedElements)
 		{
 			var size = _reader.GetSize(stream);
 			var data = _reader.ReadBytes(stream, (int) size);
+			if (element.Type != "master")
+			{
+				return GetValue(element, data);
+			}
 
-			return element.Type == "master"
-				? (element.Name, default)
-				: GetValue(element, data);
+			var elementReader = _trackFactory.GetTrackReader(element.Name);
+			var value = elementReader.GetValue(
+				stream,
+				element,
+				trackSpecs,
+				skippedElements);
+
+			return (element.Name, value);
 		}
 
 

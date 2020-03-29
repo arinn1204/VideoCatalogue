@@ -1,5 +1,5 @@
-﻿using System;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 {
@@ -15,20 +15,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 #region ITrackFactory Members
 
 		public ITrackReader GetTrackReader(string elementName)
-			=> throw new NotImplementedException();
-
-#endregion
-
-		public ITrackReader GetReader(string name)
 		{
-			return name switch
+			return elementName switch
 			       {
 				       "TrackTranslate"   => new TrackTranslateReader(_reader),
 				       "Video"            => new VideoReader(_reader),
 				       "Audio"            => new AudioReader(_reader),
 				       "TrackOperation"   => new TrackOperationReader(_reader),
-				       "ContentEncodings" => new ContentEncodingReader(_reader)
+				       "ContentEncodings" => new ContentEncodingReader(_reader),
+				       _ => throw new UnsupportedException(
+					       $"'{elementName}' is not a supported track child name.")
 			       };
 		}
+
+#endregion
 	}
 }

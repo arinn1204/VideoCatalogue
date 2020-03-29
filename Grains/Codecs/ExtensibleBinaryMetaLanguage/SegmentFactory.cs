@@ -10,13 +10,16 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 	{
 		private readonly IMapper _mapper;
 		private readonly IReader _reader;
+		private readonly ITrackEntryReader _trackEntryReader;
 
 		public SegmentFactory(
 			IReader reader,
-			IMapper mapper)
+			IMapper mapper,
+			ITrackEntryReader trackEntryReader)
 		{
 			_reader = reader;
 			_mapper = mapper;
+			_trackEntryReader = trackEntryReader;
 		}
 
 #region ISegmentFactory Members
@@ -30,7 +33,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				       "Tracks" => new TrackReader(
 					       _reader,
 					       _mapper,
-					       new TrackEntryReader(_reader, new TrackEntryFactory(_reader))),
+					       _trackEntryReader),
 				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),
 				       "Cues"        => new Cue(),

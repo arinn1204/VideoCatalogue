@@ -10,13 +10,18 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 {
 	public class TrackReader : ISegmentChild
 	{
+		private readonly ITrackEntryReader _entryReader;
 		private readonly IMapper _mapper;
 		private readonly IReader _reader;
 
-		public TrackReader(IReader reader, IMapper mapper)
+		public TrackReader(
+			IReader reader,
+			IMapper mapper,
+			ITrackEntryReader entryReader)
 		{
 			_reader = reader;
 			_mapper = mapper;
+			_entryReader = entryReader;
 		}
 
 #region ISegmentChild Members

@@ -179,16 +179,16 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 			   .BeEquivalentTo(
 					new Info
 					{
-						SegmentUID = 13312563392782758319,
-						NextUID = 13312563392782758318,
-						PrevUID = 13312563392782758317,
+						SegmentUID = CreateBytes(13312563392782758319),
+						NextUID = CreateBytes(13312563392782758318),
+						PrevUID = CreateBytes(13312563392782758317),
 						SegmentFilename = "Django Unchained",
 						NextFilename = "Django Unleashed",
 						PrevFilename = "Django: The chainbringer",
 						Duration = 2.75F * 60 * 60 * 1000,
 						Title = "Django Unchained",
 						MuxingApp = "Muxer",
-						SegmentFamily = 13312563392782758320,
+						SegmentFamily = CreateBytes(13312563392782758320),
 						TimecodeScale = 1_000_000,
 						WritingApp = "I'm can write things",
 						DateUTC = new DateTime(
@@ -202,7 +202,7 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 						ChapterTranslate = new ChapterTranslate
 						                   {
 							                   ChapterTranslateCodec = 1,
-							                   ChapterTranslateID = 1,
+							                   ChapterTranslateID = CreateBytes(1),
 							                   ChapterTranslateEditionUID = uint.MaxValue - 1
 						                   }
 					});

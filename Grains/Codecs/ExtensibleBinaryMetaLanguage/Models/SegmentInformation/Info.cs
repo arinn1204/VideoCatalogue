@@ -8,21 +8,21 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation
 	public class Info
 	{
 		[EbmlElement("SegmentUID")]
-		public ulong? SegmentUID { get; set; }
+		public byte[]? SegmentUID { get; set; }
 
 		public string? SegmentFilename { get; set; }
 
 		[EbmlElement("PrevUID")]
-		public ulong? PrevUID { get; set; }
+		public byte[]? PrevUID { get; set; }
 
 		[EbmlElement("PrevFilename")]
 		public string? PrevFilename { get; set; }
 
 		[EbmlElement("NextUID")]
-		public ulong? NextUID { get; set; }
+		public byte[]? NextUID { get; set; }
 
 		public string? NextFilename { get; set; }
-		public ulong? SegmentFamily { get; set; }
+		public byte[]? SegmentFamily { get; set; }
 		public uint TimecodeScale { get; set; }
 		public float? Duration { get; set; }
 

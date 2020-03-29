@@ -29,16 +29,16 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		[Fact]
 		public void ShouldMatchParameterTuplesWithPropertiesWhenAssigning()
 		{
-			var result = EbmlConvert.DeserializeTo<Info>(
-				("SegmentFamily", 13312563392782758320),
-				("NextFilename", "Filename"));
+			var result = EbmlConvert.DeserializeTo<GoodDummyEbmlConverter>(
+				("IsEnabled", true),
+				("NotDuplicate", "I exist!"));
 
 			result.Should()
 			      .BeEquivalentTo(
-				       new Info
+				       new GoodDummyEbmlConverter
 				       {
-					       SegmentFamily = 13312563392782758320,
-					       NextFilename = "Filename"
+					       IsEnabled = true,
+					       NotDuplicate = "I exist!"
 				       });
 		}
 

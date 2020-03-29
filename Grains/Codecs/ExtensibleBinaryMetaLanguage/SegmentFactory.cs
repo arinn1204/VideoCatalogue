@@ -27,7 +27,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			       {
 				       "SeekHead"    => new SeekHeadReader(_reader, _mapper),
 				       "Info"        => new InfoReader(_reader, _mapper),
-				       "Tracks"      => new TrackReader(_reader, _mapper, new TrackFactory()),
+				       "Tracks"      => new TrackReader(_reader, _mapper),
 				       "Chapters"    => new Chapter(),
 				       "Cluster"     => new Cluster(),
 				       "Cues"        => new Cue(),

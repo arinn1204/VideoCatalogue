@@ -12,13 +12,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 	{
 		private readonly IMapper _mapper;
 		private readonly IReader _reader;
-		private readonly ITrackFactory _trackFactory;
 
-		public TrackReader(IReader reader, IMapper mapper, ITrackFactory trackFactory)
+		public TrackReader(IReader reader, IMapper mapper)
 		{
 			_reader = reader;
 			_mapper = mapper;
-			_trackFactory = trackFactory;
 		}
 
 #region ISegmentChild Members

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AutoBogus;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
@@ -8,7 +9,6 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
-using GrainsInterfaces.Models.CodecParser;
 using Moq;
 using Xunit;
 using SUT = Grains.Codecs.Matroska;
@@ -197,46 +197,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			    .Returns(
 				     () => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
 
-			var expectedSegmentInformation = new Segment
-			                                 {
-				                                 Audios = new[]
-				                                          {
-					                                          new AudioInformation
-					                                          {
-						                                          Channel = "5.1",
-						                                          Duration = 165.21579,
-						                                          Frequency = 48000
-					                                          }
-				                                          },
-				                                 Subtitles = new[]
-				                                             {
-					                                             new Subtitle
-					                                             {
-						                                             Language = "english",
-						                                             Name = "hdmv_pgs_subtitle"
-					                                             }
-				                                             },
-				                                 Videos = new[]
-				                                          {
-					                                          new VideoInformation
-					                                          {
-						                                          Duration = 1234,
-						                                          Height = 1920,
-						                                          Width = 1080,
-						                                          Title = "Title",
-						                                          VideoCodec = Codec.H264,
-						                                          Chapters = new[]
-						                                                     {
-							                                                     new Chapter
-							                                                     {
-								                                                     Start = 0,
-								                                                     End =
-									                                                     165.21579m
-							                                                     }
-						                                                     }
-					                                          }
-				                                          }
-			                                 };
+			var expectedSegmentInformation = new AutoFaker<Segment>().Generate();
 
 			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
 			segmentInformation.Setup(
@@ -258,15 +219,10 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						                         Version = 1,
 						                         DocType = "matroska"
 					                         },
-					                Segment = new Segment
-					                          {
-						                          Audios = expectedSegmentInformation.Audios,
-						                          Subtitles = expectedSegmentInformation.Subtitles,
-						                          Videos = expectedSegmentInformation.Videos
-					                          }
+					                Segment = expectedSegmentInformation
 				                });
 
-			fileInformation.Segment.Videos.First().Resolution.Should().Be("1080p");
+			fileInformation.Segment.Should().Be(expectedSegmentInformation);
 		}
 
 		[Fact]

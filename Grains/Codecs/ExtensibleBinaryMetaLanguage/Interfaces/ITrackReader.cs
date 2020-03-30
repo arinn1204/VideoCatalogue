@@ -9,6 +9,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 		object GetValue(
 			Stream stream,
 			EbmlElement element,
+			long elementSize,
 			IReadOnlyDictionary<uint, EbmlElement> trackSpecs,
 			Dictionary<uint, uint> skippedElements);
 	}

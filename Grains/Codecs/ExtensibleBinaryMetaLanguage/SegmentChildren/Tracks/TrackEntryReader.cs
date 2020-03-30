@@ -87,6 +87,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			var value = elementReader.GetValue(
 				stream,
 				element,
+				size,
 				trackSpecs,
 				skippedElements);
 

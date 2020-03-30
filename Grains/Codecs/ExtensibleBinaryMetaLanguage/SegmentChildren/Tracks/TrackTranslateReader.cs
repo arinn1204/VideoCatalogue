@@ -20,6 +20,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 		public object GetValue(
 			Stream stream,
 			EbmlElement element,
+			long elementSize,
 			IReadOnlyDictionary<uint, EbmlElement> trackSpecs,
 			Dictionary<uint, uint> skippedElements)
 			=> throw new NotImplementedException();

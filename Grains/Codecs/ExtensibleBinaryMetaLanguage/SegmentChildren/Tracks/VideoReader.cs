@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 {
@@ -20,9 +20,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 		public object GetValue(
 			Stream stream,
 			EbmlElement element,
+			long elementSize,
 			IReadOnlyDictionary<uint, EbmlElement> trackSpecs,
 			Dictionary<uint, uint> skippedElements)
-			=> throw new NotImplementedException();
+		{
+			var video = new Video();
+
+			return video;
+		}
 
 #endregion
 	}

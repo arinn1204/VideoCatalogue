@@ -29,10 +29,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			var trackSpecs = specification.GetTrackElements();
 			var skippedElements = specification.GetSkippableElements()
 			                                   .ToDictionary(k => k);
-			var endPosition = stream.Position + trackEntrySize;
 			var values = GetValues(
 					stream,
-					endPosition,
+					trackEntrySize,
 					skippedElements,
 					trackSpecs)
 			   .ToArray();
@@ -44,11 +43,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 
 		private IEnumerable<(string, object)> GetValues(
 			Stream stream,
-			long endPosition,
+			long elementSize,
 			Dictionary<uint, uint> skippedElements,
 			IReadOnlyDictionary<uint, EbmlElement> trackSpecs)
 		{
 			var data = Array.Empty<byte>();
+			var endPosition = stream.Position + elementSize;
 			while (stream.Position < endPosition)
 			{
 				data = data.Concat(_reader.ReadBytes(stream, 1))
@@ -87,19 +87,20 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			Dictionary<uint, uint> skippedElements)
 		{
 			var size = _reader.GetSize(stream);
-			var data = _reader.ReadBytes(stream, (int) size);
 			if (element.Type != "master")
 			{
+				var data = _reader.ReadBytes(stream, (int) size);
 				return GetValue(element, data);
 			}
 
 			var values = GetValues(
-				stream,
-				stream.Position + size,
-				skippedElements,
-				trackSpecs);
+					stream,
+					size,
+					skippedElements,
+					trackSpecs)
+			   .ToArray();
 
-			var value = EbmlConvert.DeserializeTo(element.Name, values.ToArray());
+			var value = EbmlConvert.DeserializeTo(element.Name, values);
 			return (element.Name, value);
 		}
 

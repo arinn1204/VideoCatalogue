@@ -29,7 +29,6 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddTransient<ISegmentReader, SegmentReader>();
 			serviceCollection.AddTransient<ISegmentFactory, SegmentFactory>();
 			serviceCollection.AddTransient<ITrackEntryReader, TrackEntryReader>();
-			serviceCollection.AddTransient<ITrackFactory, TrackEntryFactory>();
 			serviceCollection.AddTransient<IReader, Reader>();
 
 			serviceCollection.AddTransient<Parser, Parser>();

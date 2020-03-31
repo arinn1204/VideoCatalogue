@@ -13,12 +13,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 	public class TrackEntryReader : ITrackEntryReader
 	{
 		private readonly IReader _reader;
-		private readonly ITrackFactory _trackFactory;
 
-		public TrackEntryReader(IReader reader, ITrackFactory trackFactory)
+		public TrackEntryReader(IReader reader)
 		{
 			_reader = reader;
-			_trackFactory = trackFactory;
 		}
 
 #region ITrackEntryReader Members
@@ -32,9 +30,25 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 			var skippedElements = specification.GetSkippableElements()
 			                                   .ToDictionary(k => k);
 			var endPosition = stream.Position + trackEntrySize;
-			var data = Array.Empty<byte>();
-			var values = Enumerable.Empty<(string, object)>();
+			var values = GetValues(
+					stream,
+					endPosition,
+					skippedElements,
+					trackSpecs)
+			   .ToArray();
 
+			return EbmlConvert.DeserializeTo<TrackEntry>(values);
+		}
+
+#endregion
+
+		private IEnumerable<(string, object)> GetValues(
+			Stream stream,
+			long endPosition,
+			Dictionary<uint, uint> skippedElements,
+			IReadOnlyDictionary<uint, EbmlElement> trackSpecs)
+		{
+			var data = Array.Empty<byte>();
 			while (stream.Position < endPosition)
 			{
 				data = data.Concat(_reader.ReadBytes(stream, 1))
@@ -61,14 +75,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 					trackSpecs,
 					skippedElements);
 
-				values = values.Append(value);
 				data = Array.Empty<byte>();
+				yield return value;
 			}
-
-			return EbmlConvert.DeserializeTo<TrackEntry>(values.ToArray());
 		}
-
-#endregion
 
 		private (string name, object value) ProcessElement(
 			Stream stream,
@@ -83,14 +93,13 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks
 				return GetValue(element, data);
 			}
 
-			var elementReader = _trackFactory.GetTrackReader(element.Name);
-			var value = elementReader.GetValue(
+			var values = GetValues(
 				stream,
-				element,
-				size,
-				trackSpecs,
-				skippedElements);
+				stream.Position + size,
+				skippedElements,
+				trackSpecs);
 
+			var value = EbmlConvert.DeserializeTo(element.Name, values.ToArray());
 			return (element.Name, value);
 		}
 

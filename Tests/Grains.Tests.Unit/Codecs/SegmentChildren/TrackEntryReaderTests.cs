@@ -124,50 +124,42 @@ namespace Grains.Tests.Unit.Codecs.SegmentChildren
 		{
 			var stream = new MemoryStream();
 			var reader = _fixture.Freeze<Mock<IReader>>();
-			reader.Setup(s => s.ReadBytes(stream, 1))
+			reader.SetupSequence(s => s.ReadBytes(stream, 1))
 			      .Returns(
 				       new[]
 				       {
 					       Convert.ToByte("0xE0", 16)
+				       })
+			      .Returns(
+				       new[]
+				       {
+					       Convert.ToByte("0xB0", 16)
+				       })
+			      .Returns(
+				       new[]
+				       {
+					       Convert.ToByte("0xBA", 16)
 				       });
 
-			reader.Setup(s => s.ReadBytes(stream, 5))
+			reader.SetupSequence(s => s.ReadBytes(stream, 10))
 			      .Returns(
 				       new byte[]
 				       {
 					       15
-				       });
+				       })
+			      .Returns(BitConverter.GetBytes(1080).Reverse().ToArray())
+			      .Returns(BitConverter.GetBytes(1920).Reverse().ToArray());
 
 			reader.Setup(s => s.GetSize(stream))
 			      .Returns<Stream>(
 				       s =>
 				       {
 					       s.Position += 5;
-					       return 5;
+					       return 10;
 				       });
 
-			var trackFactory = _fixture.Freeze<Mock<ITrackFactory>>();
-			var trackReader = new Mock<ITrackReader>();
-
-			trackFactory.Setup(s => s.GetTrackReader("Video"))
-			            .Returns(trackReader.Object);
-
-			trackReader.Setup(
-				            s => s.GetValue(
-					            stream,
-					            It.IsAny<EbmlElement>(),
-					            It.IsAny<long>(),
-					            It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
-					            It.IsAny<Dictionary<uint, uint>>()))
-			           .Returns(
-				            new Video
-				            {
-					            PixelHeight = 1920,
-					            PixelWidth = 1080
-				            });
-
 			var trackEntryReader = _fixture.Create<ITrackEntryReader>();
-			var trackEntry = trackEntryReader.ReadEntry(stream, _specification, 5);
+			var trackEntry = trackEntryReader.ReadEntry(stream, _specification, 15);
 
 			trackEntry.VideoSettings
 			          .Should()

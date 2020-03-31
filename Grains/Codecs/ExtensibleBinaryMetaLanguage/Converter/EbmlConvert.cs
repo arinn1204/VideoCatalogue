@@ -68,7 +68,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 				{
 					valueToSet = Convert.ChangeType(value, underlyingType);
 				}
-				else if (underlyingType == null && propertyToSet.PropertyType != value.GetType())
+				else if (underlyingType == null && propertyToSet.PropertyType != value?.GetType())
 				{
 					valueToSet = Convert.ChangeType(value, propertyToSet.PropertyType);
 				}

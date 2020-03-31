@@ -3,6 +3,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Exceptions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
 using Grains.Tests.Unit.Codecs.Converter.Models;
 using Grains.Tests.Unit.Fixtures;
 using Xunit;
@@ -24,6 +25,16 @@ namespace Grains.Tests.Unit.Codecs.Converter
 				       {
 					       ThisValueIsALong = 100
 				       });
+		}
+
+		[Fact]
+		public void ShouldCreateMasterObjectWhenNameGivenMatchesClass()
+		{
+			var result =
+				EbmlConvert.DeserializeTo(nameof(TrackEntry));
+
+			result.Should()
+			      .BeEquivalentTo(new TrackEntry());
 		}
 
 		[Fact]

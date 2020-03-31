@@ -10,13 +10,41 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 {
 	public static class EbmlConvert
 	{
-		public static TTarget DeserializeTo<TTarget>(params (string name, object value)[] values)
-			where TTarget : new()
+		public static TTarget? DeserializeTo<TTarget>(params (string name, object value)[] values)
+			where TTarget : class, new()
 		{
 			return typeof(TTarget).CustomAttributes.All(
 				a => a.AttributeType != typeof(EbmlMasterAttribute))
 				? default
 				: CreateTarget<TTarget>(values);
+		}
+
+		public static object? DeserializeTo(
+			string targetObjectName,
+			params (string name, object value)[] values)
+		{
+			var targetType = typeof(EbmlConvert)
+			                .Assembly
+			                .DefinedTypes
+			                .Where(
+				                 w => w.CustomAttributes.Any(
+					                 a => a.AttributeType == typeof(EbmlMasterAttribute)))
+			                .FirstOrDefault(f => f.Name == targetObjectName);
+
+			return typeof(EbmlConvert)
+			      .GetMethod(
+				       "DeserializeTo",
+				       new[]
+				       {
+					       typeof((string name, object value)[])
+				       })
+			     ?.MakeGenericMethod(targetType ?? typeof(object))
+			      .Invoke(
+				       null,
+				       new object?[]
+				       {
+					       values
+				       });
 		}
 
 		private static TTarget CreateTarget<TTarget>(
@@ -63,7 +91,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 				                    (false, true, _)     => propertyByAttribute,
 				                    (false, false, true) => propertyByName,
 				                    (false, false, false) => throw new EbmlConverterException(
-					                    $"Ambiguous match. Element name of '{name}' associated with '{propertyByAttribute.Name}' and property name '{name}'."),
+					                    $"Ambiguous match. Element name of '{name}' associated with '{propertyByAttribute?.Name}' and property name '{name}'."),
 				                    (true, true, _) => throw new EbmlConverterException(
 					                    $"There is no element with the name '{name}'.")
 			                    };

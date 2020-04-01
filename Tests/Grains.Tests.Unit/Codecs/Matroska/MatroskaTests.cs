@@ -92,7 +92,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
-					                   It.IsAny<EbmlSpecification>()))
+					                   It.IsAny<EbmlSpecification>(),
+					                   It.IsAny<long>()))
 			                  .Returns(new Segment());
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
@@ -100,7 +101,10 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			fileInformation.Should()
 			               .BeNull();
 			segmentInformation.Verify(
-				v => v.GetSegmentInformation(It.IsAny<Stream>(), It.IsAny<EbmlSpecification>()),
+				v => v.GetSegmentInformation(
+					It.IsAny<Stream>(),
+					It.IsAny<EbmlSpecification>(),
+					It.IsAny<long>()),
 				Times.Never);
 
 			error.Description.Should()
@@ -204,7 +208,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
-					                   It.IsAny<EbmlSpecification>()))
+					                   It.IsAny<EbmlSpecification>(),
+					                   It.IsAny<long>()))
 			                  .Returns(expectedSegmentInformation);
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);

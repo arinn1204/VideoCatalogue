@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
@@ -24,26 +23,21 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 		public Segment GetSegmentInformation(
 			Stream stream,
-			EbmlSpecification ebmlSpecification)
+			EbmlSpecification ebmlSpecification,
+			long segmentSize)
 		{
-			var totalSize = _reader.GetSize(stream);
 			var trackedElements = ebmlSpecification.Elements
 			                                       .ToDictionary(k => k.Id);
 			var skippedElements = ebmlSpecification
 			                     .GetSkippableElements()
 			                     .ToList(); // list as it should be a short list of skipped ids, this makes it inconsequential to enumerate
 
-			var stopWatch = new Stopwatch();
-			stopWatch.Start();
-
 			var values = GetChildren(
 					stream,
-					totalSize,
+					segmentSize,
 					trackedElements,
 					skippedElements)
 			   .ToArray();
-
-			stopWatch.Stop();
 
 			return EbmlConvert.DeserializeTo<Segment>(values);
 		}

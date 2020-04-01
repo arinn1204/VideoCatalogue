@@ -13,17 +13,20 @@ namespace Grains.Codecs.Matroska
 		private readonly Lazy<(uint ebml, uint segment)> _ebmlAndSegmentId;
 		private readonly IEbmlHeader _ebmlHeader;
 		private readonly Lazy<EbmlSpecification> _matroskaSpecification;
+		private readonly IReader _reader;
 		private readonly ISegmentReader _segmentReader;
 
 		public Matroska(
 			ISpecification specification,
 			IEbmlHeader ebmlHeader,
-			ISegmentReader segmentReader)
+			ISegmentReader segmentReader,
+			IReader reader)
 		{
 			_ =
 				specification ?? throw new ArgumentNullException(nameof(specification));
 			_ebmlHeader = ebmlHeader;
 			_segmentReader = segmentReader;
+			_reader = reader;
 			_matroskaSpecification =
 				new Lazy<EbmlSpecification>(
 					() => specification.GetSpecification()
@@ -93,9 +96,12 @@ namespace Grains.Codecs.Matroska
 				       };
 			}
 
+			var segmentSize = _reader.GetSize(stream);
+
 			var segment = _segmentReader.GetSegmentInformation(
 				stream,
-				_matroskaSpecification.Value);
+				_matroskaSpecification.Value,
+				segmentSize);
 
 			return new MatroskaData
 			       {

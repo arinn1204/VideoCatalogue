@@ -8,6 +8,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
 	{
 		Segment GetSegmentInformation(
 			Stream stream,
-			EbmlSpecification ebmlSpecification);
+			EbmlSpecification ebmlSpecification,
+			long segmentSize);
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
 
 namespace Grains.Codecs.Matroska.Models
 {

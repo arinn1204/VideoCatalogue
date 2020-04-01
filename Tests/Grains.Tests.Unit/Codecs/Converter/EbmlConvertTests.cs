@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Exceptions;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.SegmentInformation;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Tracks;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Tests.Unit.Codecs.Converter.Models;
 using Grains.Tests.Unit.Fixtures;
 using Xunit;
@@ -38,6 +40,21 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		}
 
 		[Fact]
+		public void ShouldDeserializeOnClassNameOrOnElementNameInMasterAttribute()
+		{
+			var result = EbmlConvert.DeserializeTo(
+				"Tracks",
+				("TrackEntry", new TrackEntry()));
+
+			result.Should()
+			      .BeEquivalentTo(
+				       new Track
+				       {
+					       TrackEntries = Enumerable.Empty<TrackEntry>().Append(new TrackEntry())
+				       });
+		}
+
+		[Fact]
 		public void ShouldMatchParameterTuplesWithPropertiesWhenAssigning()
 		{
 			var result = EbmlConvert.DeserializeTo<GoodDummyEbmlConverter>(
@@ -66,6 +83,48 @@ namespace Grains.Tests.Unit.Codecs.Converter
 				       {
 					       IsEnabled = true,
 					       NotDuplicate = "I work!"
+				       });
+		}
+
+		[Fact]
+		public void ShouldProperlyDeserializeMultipleKeysWithSameNameIntoEnumerable()
+		{
+			var firstSeek = new Seek
+			                {
+				                SeekId = new byte[]
+				                         {
+					                         1,
+					                         2,
+					                         3
+				                         },
+				                SeekPosition = 12345
+			                };
+
+
+			var secondSeek = new Seek
+			                 {
+				                 SeekId = new byte[]
+				                          {
+					                          1,
+					                          2,
+					                          5
+				                          },
+				                 SeekPosition = 123453134
+			                 };
+
+			var result = EbmlConvert.DeserializeTo<SeekHead>(
+				("Seek", firstSeek),
+				("Seek", secondSeek));
+
+			result.Should()
+			      .BeEquivalentTo(
+				       new SeekHead
+				       {
+					       Seeks = new[]
+					               {
+						               firstSeek,
+						               secondSeek
+					               }
 				       });
 		}
 

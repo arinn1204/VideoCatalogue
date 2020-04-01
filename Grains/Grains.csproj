@@ -28,7 +28,27 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\SegmentInformation\ChapterTranslate.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\SegmentInformation\Info.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Audio.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Colour.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentCompression.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentEncoding.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentEncryption.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentEncryptionAesSettings.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\MasteringMetadata.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Projection.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Track.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackCombinePlanes.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackEntry.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackJoinBlocks.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackOperation.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackPlane.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackTranslate.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Video.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackEntryReader.cs"/>
+        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackReader.cs"/>
     </ItemGroup>
 
 </Project>

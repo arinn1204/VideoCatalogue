@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -23,13 +24,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 			string targetObjectName,
 			params (string name, object value)[] values)
 		{
-			var targetType = typeof(EbmlConvert)
-			                .Assembly
-			                .DefinedTypes
-			                .Where(
-				                 w => w.CustomAttributes.Any(
-					                 a => a.AttributeType == typeof(EbmlMasterAttribute)))
-			                .FirstOrDefault(f => f.Name == targetObjectName);
+			var masterTypes = typeof(EbmlConvert)
+			                 .Assembly
+			                 .DefinedTypes
+			                 .Where(
+				                  w => w.CustomAttributes.Any(
+					                  a => a.AttributeType == typeof(EbmlMasterAttribute)));
+			var targetType = masterTypes
+			   .FirstOrDefault(
+					f => f.Name == targetObjectName ||
+					     f.CustomAttributes.Any(
+						     a => Equals(
+							     targetObjectName,
+							     a.ConstructorArguments.FirstOrDefault().Value)));
 
 			return typeof(EbmlConvert)
 			      .GetMethod(
@@ -52,9 +59,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 			where TTarget : new()
 		{
 			var target = new TTarget();
-			foreach (var (name, value) in values)
+			foreach (var groupedValues in values.GroupBy(g => g.name))
 			{
-				var valueToSet = value;
+				var name = groupedValues.Key;
+				var value = groupedValues.Select(s => s.value).ToArray();
 				var propertyByName = typeof(TTarget).GetProperty(name);
 				var propertyByAttribute = GetPropertyByAttribute<TTarget>(name);
 
@@ -63,20 +71,72 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 					propertyByName,
 					name);
 
-				var underlyingType = Nullable.GetUnderlyingType(propertyToSet.PropertyType);
-				if (underlyingType != null && underlyingType != value.GetType())
-				{
-					valueToSet = Convert.ChangeType(value, underlyingType);
-				}
-				else if (underlyingType == null && propertyToSet.PropertyType != value?.GetType())
-				{
-					valueToSet = Convert.ChangeType(value, propertyToSet.PropertyType);
-				}
+				var valueToSet = propertyToSet.PropertyType != typeof(string) &&
+				                 propertyToSet.PropertyType
+				                              .GetInterfaces()
+				                              .Any(
+					                               a =>
+					                               {
+						                               var isIEnumerable = typeof(IEnumerable);
+						                               return a == isIEnumerable;
+					                               })
+					? HandleMultipleObjects(propertyToSet, value)
+					: HandleSingleObject(propertyToSet, value[0]);
+
 
 				propertyToSet?.SetValue(target, valueToSet);
 			}
 
 			return target;
+		}
+
+		private static object HandleMultipleObjects(
+			PropertyInfo propertyToSet,
+			IEnumerable<object> values)
+		{
+			var underlyingTypeForProperty = propertyToSet
+			                               .PropertyType
+			                               .GetGenericArguments();
+
+			if (propertyToSet.PropertyType.IsArray && values.Single().GetType().IsArray)
+			{
+				return HandleSingleObject(propertyToSet, values.First());
+			}
+
+			if (underlyingTypeForProperty.Length != 1)
+			{
+				return values;
+			}
+
+			var conversionType = underlyingTypeForProperty[0];
+			var convertedValues = values.Select(s => s);
+			return typeof(Enumerable)
+			      .GetMethod(nameof(Enumerable.Cast))
+			     ?.MakeGenericMethod(conversionType)
+			      .Invoke(
+				       null,
+				       new object[]
+				       {
+					       convertedValues
+				       });
+		}
+
+		private static object HandleSingleObject(
+			PropertyInfo propertyToSet,
+			object value)
+		{
+			var valueToSet = value;
+			var underlyingType = Nullable.GetUnderlyingType(propertyToSet.PropertyType);
+			if (underlyingType != null && underlyingType != value.GetType())
+			{
+				valueToSet = Convert.ChangeType(value, underlyingType);
+			}
+			else if (underlyingType == null && propertyToSet.PropertyType != value?.GetType())
+			{
+				valueToSet = Convert.ChangeType(value, propertyToSet.PropertyType);
+			}
+
+			return valueToSet;
 		}
 
 		private static PropertyInfo DeterminePropertyToSet(

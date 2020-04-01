@@ -6,7 +6,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Profiles
 	{
 		public SegmentProfile()
 		{
-			CreateMap<Segment, Segment>();
+			CreateMap<Segment.SeekHead.Segment, Segment.SeekHead.Segment>();
 		}
 	}
 }

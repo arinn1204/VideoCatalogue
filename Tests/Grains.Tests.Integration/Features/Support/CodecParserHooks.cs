@@ -3,7 +3,6 @@ using BoDi;
 using Grains.Codecs;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.SegmentChildren.Tracks;
 using Grains.Codecs.Matroska;
 using Grains.Codecs.Matroska.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,8 +26,6 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<IEbmlHeader, EbmlHeader>();
 			serviceCollection.AddTransient<ISegmentReader, SegmentReader>();
-			serviceCollection.AddTransient<ISegmentFactory, SegmentFactory>();
-			serviceCollection.AddTransient<ITrackEntryReader, TrackEntryReader>();
 			serviceCollection.AddTransient<IReader, Reader>();
 
 			serviceCollection.AddTransient<Parser, Parser>();

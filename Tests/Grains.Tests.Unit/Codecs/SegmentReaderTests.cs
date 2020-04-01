@@ -6,6 +6,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
 using Grains.Tests.Unit.Fixtures;
 using Moq;
 using Xunit;
@@ -45,7 +46,7 @@ namespace Grains.Tests.Unit.Codecs
 			      .Returns(100_000);
 
 			var segmentReader = _fixture.Create<ISegmentReader>();
-			_ = segmentReader.GetSegmentInformation(stream, _specification, 25);
+			var segment = segmentReader.GetSegmentInformation(stream, _specification, 25);
 
 			stream.Position
 			      .Should()
@@ -53,6 +54,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			reader.Verify(v => v.ReadBytes(stream, 1), Times.Once);
 			reader.Verify(v => v.GetSize(stream), Times.Once);
+			segment.Should().BeEquivalentTo(new Segment());
 		}
 	}
 }

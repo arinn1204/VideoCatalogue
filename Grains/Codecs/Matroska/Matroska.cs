@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
 
@@ -87,26 +88,25 @@ namespace Grains.Codecs.Matroska
 				return default;
 			}
 
-			if ((id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value)) !=
-			    _ebmlAndSegmentId.Value.segment)
+			var segments = Enumerable.Empty<Segment>();
+
+			while (_ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value) ==
+			       _ebmlAndSegmentId.Value.segment)
 			{
-				return new MatroskaData
-				       {
-					       Header = ebmlHeader
-				       };
+				var segmentSize = _reader.GetSize(stream);
+
+				var segment = _segmentReader.GetSegmentInformation(
+					stream,
+					_matroskaSpecification.Value,
+					segmentSize);
+
+				segments = segments.Append(segment);
 			}
-
-			var segmentSize = _reader.GetSize(stream);
-
-			var segment = _segmentReader.GetSegmentInformation(
-				stream,
-				_matroskaSpecification.Value,
-				segmentSize);
 
 			return new MatroskaData
 			       {
 				       Header = ebmlHeader,
-				       Segment = segment
+				       Segment = segments.FirstOrDefault()
 			       };
 		}
 

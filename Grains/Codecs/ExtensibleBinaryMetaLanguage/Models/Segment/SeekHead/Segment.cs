@@ -9,6 +9,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead
 	{
 		public SeekHead SeekHead { get; set; }
 		public Track Track { get; set; }
+
+		[EbmlElement("Info")]
 		public Info SegmentInformation { get; set; }
 	}
 }

@@ -239,6 +239,42 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
+		public void ShouldReadMultipleTimesUntilGettingByteWithData()
+		{
+			var ids = new[]
+			          {
+				          "11",
+				          "4D",
+				          "9B",
+				          "74"
+			          }.Select(s => Convert.ToByte(s, 16))
+			           .ToArray();
+			var stream = new MemoryStream();
+			var reader = _fixture.Freeze<Mock<IReader>>();
+			var byteCounter = 0;
+			reader.Setup(s => s.ReadBytes(stream, 1))
+			      .Returns(
+				       () => new[]
+				             {
+					             ids[byteCounter++]
+				             });
+
+			reader.Setup(s => s.GetSize(stream))
+			      .Returns<Stream>(
+				       s =>
+				       {
+					       s.Position++;
+					       return 0;
+				       });
+
+			var segmentReader = _fixture.Create<ISegmentReader>();
+			var segment = segmentReader.GetSegmentInformation(stream, _specification, 1);
+
+
+			segment.SeekHead.Should().BeEquivalentTo(new SeekHead());
+		}
+
+		[Fact]
 		public void ShouldSkipOverSkippedElements()
 		{
 			var stream = new MemoryStream();

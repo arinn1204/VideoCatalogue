@@ -7,7 +7,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead
 	[EbmlMaster]
 	public class Segment
 	{
-		public SeekHead SeekHeads { get; set; }
+		public SeekHead SeekHead { get; set; }
 		public Track Track { get; set; }
 		public Info SegmentInformation { get; set; }
 	}

@@ -10,6 +10,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes
 
 		public EbmlMasterAttribute(string elementName)
 		{
+			ElementName = elementName;
 		}
+
+		public string ElementName { get; }
 	}
 }

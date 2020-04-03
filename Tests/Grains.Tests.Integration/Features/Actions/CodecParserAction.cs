@@ -28,7 +28,8 @@ namespace Grains.Tests.Integration.Features.Actions
 			             };
 
 			var file = Path.Combine("TestData", "CodecParser", sample);
-			_codecParserData.VideoInformation = _parser.GetInformation(file);
+			_codecParserData.VideoInformation = _parser.GetInformation(file, out var error);
+			_codecParserData.ParserError = error;
 		}
 	}
 }

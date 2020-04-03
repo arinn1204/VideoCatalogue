@@ -63,16 +63,18 @@ namespace Grains.Tests.Unit.Codecs
 			      .Returns(info.SegmentFamily)
 			      .Returns(
 				       BitConverter.GetBytes(
-					                    info.ChapterTranslate.ChapterTranslateEditionUID.HasValue
-						                    ? info.ChapterTranslate.ChapterTranslateEditionUID.Value
+					                    info.ChapterTranslates.First()
+					                        .ChapterTranslateEditionUID.HasValue
+						                    ? info.ChapterTranslates.First()
+						                          .ChapterTranslateEditionUID.Value
 						                    : 1)
 				                   .Reverse()
 				                   .ToArray())
 			      .Returns(
-				       BitConverter.GetBytes(info.ChapterTranslate.ChapterTranslateCodec)
+				       BitConverter.GetBytes(info.ChapterTranslates.First().ChapterTranslateCodec)
 				                   .Reverse()
 				                   .ToArray())
-			      .Returns(info.ChapterTranslate.ChapterTranslateID)
+			      .Returns(info.ChapterTranslates.First().ChapterTranslateID)
 			      .Returns(BitConverter.GetBytes(info.TimecodeScale).Reverse().ToArray())
 			      .Returns(BitConverter.GetBytes(info.Duration.Value).Reverse().ToArray())
 			      .Returns(BitConverter.GetBytes(differenceInNs).Reverse().ToArray())
@@ -192,6 +194,9 @@ namespace Grains.Tests.Unit.Codecs
 		public void ShouldBeAbleToCreateInfo()
 		{
 			var info = new AutoFaker<Info>()
+			          .RuleFor(
+				           r => r.ChapterTranslates,
+				           r => new AutoFaker<ChapterTranslate>().Generate(1))
 			          .RuleFor(r => r.TimecodeScale, f => 1_000_000U)
 			          .RuleFor(r => r.DateUTC, new DateTime(2020, 4, 20))
 			          .Generate();

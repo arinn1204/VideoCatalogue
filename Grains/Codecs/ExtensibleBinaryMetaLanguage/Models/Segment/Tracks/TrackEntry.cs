@@ -61,7 +61,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public uint SeekPreRoll { get; set; }
 
 		[EbmlElement("TrackTranslate")]
-		public TrackTranslate? TrackTranslate { get; set; }
+		public IEnumerable<TrackTranslate>? TrackTranslates { get; set; }
 
 		[EbmlElement("Video")]
 		public Video? VideoSettings { get; set; }
@@ -72,7 +72,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		[EbmlElement("TrackOperation")]
 		public TrackOperation? TrackOperation { get; set; }
 
-		[EbmlElement("ContentEncodings")]
-		public IEnumerable<ContentEncoding>? ContentEncodingSettings { get; set; }
+		public ContentEncodingContainer ContentEncodings { get; set; }
 	}
 }

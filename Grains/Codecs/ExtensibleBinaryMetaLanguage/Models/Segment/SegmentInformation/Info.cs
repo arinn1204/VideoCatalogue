@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Generic;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation
@@ -32,6 +33,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 		public string? Title { get; set; }
 		public string MuxingApp { get; set; }
 		public string WritingApp { get; set; }
-		public ChapterTranslate? ChapterTranslate { get; set; }
+		public IEnumerable<ChapterTranslate>? ChapterTranslates { get; set; }
 	}
 }

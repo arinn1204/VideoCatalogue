@@ -31,14 +31,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 		public byte[] ReadBytes(Stream stream, int bytesToRead)
 		{
-			if (bytesToRead == 0)
-			{
-				return new byte[]
-				       {
-					       0
-				       };
-			}
-
 			var bytes = new byte[bytesToRead];
 			stream.Read(bytes, 0, bytesToRead);
 			return bytes;

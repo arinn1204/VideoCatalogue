@@ -28,18 +28,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 			var enumerableOfUnderlying =
 				typeof(IEnumerable<>).MakeGenericType(conversionType);
 
-			if (propertyToSet.PropertyType
-			                 .GetInterfaces()
-			                 .Any(a => a == enumerableOfUnderlying))
-			{
-				return ConvertToConcreteType(
-					propertyToSet,
-					enumerableOfUnderlying,
-					conversionType,
-					values);
-			}
-
-			return null;
+			return ConvertToConcreteType(
+				propertyToSet,
+				enumerableOfUnderlying,
+				conversionType,
+				values);
 		}
 
 		private static object ConvertToConcreteType(

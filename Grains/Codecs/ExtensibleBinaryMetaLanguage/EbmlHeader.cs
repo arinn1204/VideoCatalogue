@@ -3,6 +3,7 @@ using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Models.AlignedModels;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage

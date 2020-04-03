@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {

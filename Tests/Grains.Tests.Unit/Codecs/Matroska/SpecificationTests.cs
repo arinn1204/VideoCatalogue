@@ -6,7 +6,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Matroska.Models;
 using Grains.Tests.Unit.TestUtilities;
 using Moq;

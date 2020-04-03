@@ -9,6 +9,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Moq;
 using Xunit;
 

@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Matroska.Models;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage

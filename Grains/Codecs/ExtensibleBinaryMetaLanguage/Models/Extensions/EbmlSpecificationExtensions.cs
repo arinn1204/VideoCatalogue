@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using MoreLinq;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions

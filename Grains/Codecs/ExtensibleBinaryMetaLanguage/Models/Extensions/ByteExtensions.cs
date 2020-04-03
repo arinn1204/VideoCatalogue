@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Models.AlignedModels;
 using MoreLinq.Extensions;
 

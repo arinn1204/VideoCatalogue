@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification
 {
 	[XmlRoot("element")]
 	public class EbmlElement

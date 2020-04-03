@@ -7,8 +7,8 @@ using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs

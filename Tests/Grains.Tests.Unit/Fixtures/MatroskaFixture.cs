@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 
 namespace Grains.Tests.Unit.Fixtures
 {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 
 namespace Grains.Tests.Unit.TestUtilities
 {

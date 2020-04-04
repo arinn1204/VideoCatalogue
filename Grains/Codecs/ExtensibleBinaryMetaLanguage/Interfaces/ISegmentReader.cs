@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces

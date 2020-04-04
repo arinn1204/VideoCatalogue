@@ -2,12 +2,12 @@
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment
 {
 	[EbmlMaster]
 	public class Segment
 	{
-		public SeekHead SeekHead { get; set; }
+		public SeekHead.SeekHead SeekHead { get; set; }
 
 		[EbmlElement("Tracks")]
 		public Track TrackInformation { get; set; }

@@ -51,4 +51,10 @@
         <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackReader.cs"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Segment\Chapters"/>
+        <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Segment\Clusters"/>
+        <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Segment\Tags"/>
+    </ItemGroup>
+
 </Project>

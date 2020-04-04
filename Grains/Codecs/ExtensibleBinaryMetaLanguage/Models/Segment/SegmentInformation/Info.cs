@@ -33,6 +33,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 		public string? Title { get; set; }
 		public string MuxingApp { get; set; }
 		public string WritingApp { get; set; }
+
+		[EbmlElement("ChapterTranslate")]
 		public IEnumerable<ChapterTranslate>? ChapterTranslates { get; set; }
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Matroska.Interfaces;
@@ -66,15 +68,32 @@ namespace Grains.Codecs.Matroska
 			return header.DocType == "matroska";
 		}
 
-		public MatroskaData GetFileInformation(Stream stream, out MatroskaError error)
+		public IEnumerable<EbmlDocument> GetFileInformation(Stream stream, out MatroskaError? error)
 		{
-			error = null;
+			error = default;
+			var documents = new List<EbmlDocument>();
+
+			try
+			{
+				documents.AddRange(GetDocuments(stream));
+			}
+			catch (Exception e)
+			{
+				error = new MatroskaError?(e.Message);
+			}
+
+			return documents;
+		}
+
+#endregion
+
+		private IEnumerable<EbmlDocument> GetDocuments(Stream stream)
+		{
 			var id = _ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value);
 
 			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
-				error = new MatroskaError($"{id} is not a valid ebml ID.");
-				return default;
+				yield break;
 			}
 
 			var ebmlHeader = _ebmlHeader.GetHeaderInformation(stream, _matroskaSpecification.Value);
@@ -84,8 +103,9 @@ namespace Grains.Codecs.Matroska
 				var errorDescription = ebmlHeader.Version != 1
 					? $"Ebml version of '{ebmlHeader.Version}' is not supported."
 					: $"Ebml doctype of '{ebmlHeader.DocType}' is not supported.";
-				error = new MatroskaError(errorDescription);
-				return default;
+				//error = new MatroskaError(errorDescription);
+
+				throw new MatroskaException(errorDescription);
 			}
 
 			var segments = Enumerable.Empty<Segment>();
@@ -103,13 +123,11 @@ namespace Grains.Codecs.Matroska
 				segments = segments.Append(segment);
 			}
 
-			return new MatroskaData
-			       {
-				       Header = ebmlHeader,
-				       Segment = segments.FirstOrDefault()
-			       };
+			yield return new EbmlDocument
+			             {
+				             EbmlHeader = ebmlHeader,
+				             Segment = segments.FirstOrDefault()
+			             };
 		}
-
-#endregion
 	}
 }

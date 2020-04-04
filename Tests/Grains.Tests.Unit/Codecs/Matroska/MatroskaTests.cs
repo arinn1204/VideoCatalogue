@@ -10,7 +10,6 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Matroska.Interfaces;
-using Grains.Codecs.Matroska.Models;
 using Moq;
 using Xunit;
 using SUT = Grains.Codecs.Matroska;
@@ -217,19 +216,21 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 
 			error.Should().BeNull();
 
-			fileInformation.Should()
-			               .BeEquivalentTo(
-				                new MatroskaData
-				                {
-					                Header = new EbmlHeaderData
-					                         {
-						                         Version = 1,
-						                         DocType = "matroska"
-					                         },
-					                Segment = expectedSegmentInformation
-				                });
+			fileInformation
+			   .Single()
+			   .Should()
+			   .BeEquivalentTo(
+					new EbmlDocument
+					{
+						EbmlHeader = new EbmlHeaderData
+						             {
+							             Version = 1,
+							             DocType = "matroska"
+						             },
+						Segment = expectedSegmentInformation
+					});
 
-			fileInformation.Segment.Should().Be(expectedSegmentInformation);
+			fileInformation.Single().Segment.Should().Be(expectedSegmentInformation);
 		}
 
 		[Fact]

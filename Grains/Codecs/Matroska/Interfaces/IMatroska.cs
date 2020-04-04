@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.Matroska.Models;
 
 namespace Grains.Codecs.Matroska.Interfaces
@@ -6,6 +8,6 @@ namespace Grains.Codecs.Matroska.Interfaces
 	public interface IMatroska
 	{
 		bool IsMatroska(Stream stream);
-		MatroskaData GetFileInformation(Stream stream, out MatroskaError error);
+		IEnumerable<EbmlDocument> GetFileInformation(Stream stream, out MatroskaError? error);
 	}
 }

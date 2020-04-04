@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
+﻿using System.Collections.Generic;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 {
@@ -7,5 +8,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 	{
 		[EbmlElement("Targets")]
 		public Target Target { get; set; }
+
+		[EbmlElement("SimpleTag")]
+		public IEnumerable<SimpleTag> SimpleTags { get; set; }
 	}
 }

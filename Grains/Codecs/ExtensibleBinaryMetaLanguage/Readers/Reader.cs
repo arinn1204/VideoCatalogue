@@ -7,7 +7,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 	{
 #region IReader Members
 
-		public long GetSize(Stream stream)
+		public virtual long GetSize(Stream stream)
 		{
 			var firstByte = (byte) stream.ReadByte();
 			var width = GetWidth(firstByte);
@@ -28,7 +28,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			return result;
 		}
 
-		public byte[] ReadBytes(Stream stream, int bytesToRead)
+		public virtual byte[] ReadBytes(Stream stream, int bytesToRead)
 		{
 			var bytes = new byte[bytesToRead];
 			stream.Read(bytes, 0, bytesToRead);

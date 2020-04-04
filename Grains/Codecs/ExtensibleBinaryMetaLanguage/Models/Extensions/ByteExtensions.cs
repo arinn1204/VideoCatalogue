@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
@@ -11,6 +12,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 	{
 		public static object GetValue(this byte[] value, EbmlElement element)
 		{
+			value ??= Array.Empty<byte>();
 			return element.Type switch
 			       {
 				       "utf-8"    => value.ConvertToString(),
@@ -23,8 +25,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 			       };
 		}
 
-		public static ulong ConvertToUlong(this byte[] bytes)
+		public static ulong ConvertToUlong(this IEnumerable<byte> bytes)
 		{
+			bytes ??= Enumerable.Empty<byte>();
 			var paddedBytes = bytes.PadStart(8).ToArray();
 			var word = new Float64
 			           {
@@ -40,14 +43,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 			return word.UnsignedData;
 		}
 
-		public static DateTime ConvertToDateTime(this byte[] bytes)
+		private static DateTime ConvertToDateTime(this IEnumerable<byte> bytes)
 		{
 			var valueInNanoseconds = bytes.ConvertToUlong();
 			var valueInMilliseconds = (double) valueInNanoseconds / 1_000_000;
 			return new DateTime(2001, 1, 1).AddMilliseconds(valueInMilliseconds);
 		}
 
-		public static float ConvertToFloat(this byte[] bytes)
+		private static float ConvertToFloat(this IEnumerable<byte> bytes)
 		{
 			var paddedBytes = bytes.PadStart(4).ToArray();
 			var word = new Float32
@@ -60,8 +63,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 			return word.Data;
 		}
 
-		public static uint ConvertToUint(this byte[] bytes)
+		public static uint ConvertToUint(this IEnumerable<byte> bytes)
 		{
+			bytes ??= Enumerable.Empty<byte>();
 			var paddedBytes = bytes.PadStart(4).ToArray();
 			var word = new Float32
 			           {
@@ -70,18 +74,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 				           B2 = paddedBytes[2],
 				           B1 = paddedBytes[3]
 			           };
-			return word.UnsignedData;
-		}
-
-		public static ushort ConvertToUshort(this byte[] bytes)
-		{
-			var paddedBytes = bytes.PadStart(2).ToArray();
-			var word = new Short
-			           {
-				           B2 = paddedBytes[0],
-				           B1 = paddedBytes[1]
-			           };
-
 			return word.UnsignedData;
 		}
 

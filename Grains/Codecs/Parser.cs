@@ -22,17 +22,10 @@ namespace Grains.Codecs
 		{
 			error = null;
 			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-			var fileInformation = default(FileInformation);
+			var matroskaInfo = _matroska.GetFileInformation(stream, out var matroskaError);
 
-			if (_matroska.IsMatroska(stream))
-			{
-				stream.Position = 0;
-				var matroskaInfo = _matroska.GetFileInformation(stream, out var matroskaError);
-
-				fileInformation = _mapper.Map<FileInformation>(matroskaInfo);
-				error = _mapper.Map<FileError>(matroskaError);
-			}
-
+			var fileInformation = _mapper.Map<FileInformation>(matroskaInfo);
+			error = _mapper.Map<FileError>(matroskaError);
 
 			return fileInformation;
 		}

@@ -5,7 +5,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments
 	[EbmlMaster]
 	public class AttachedFile
 	{
-		public string FileDescription { get; set; }
+		public string? FileDescription { get; set; }
 		public string FileName { get; set; }
 		public string FileMimeType { get; set; }
 

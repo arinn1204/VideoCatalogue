@@ -8,10 +8,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues
 	{
 		public uint CueTrack { get; set; }
 		public uint CueClusterPosition { get; set; }
-		public uint CueRelativePosition { get; set; }
-		public uint CueDuration { get; set; }
-		public uint CueBlockNumber { get; set; }
-		public uint CueCodecState { get; set; }
-		public IEnumerable<CueReference> CueReference { get; set; }
+		public uint? CueRelativePosition { get; set; }
+		public uint? CueDuration { get; set; }
+		public uint? CueBlockNumber { get; set; }
+		public uint? CueCodecState { get; set; }
+		public IEnumerable<CueReference>? CueReference { get; set; }
 	}
 }

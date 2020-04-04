@@ -1,54 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
+using Grains.Tests.Unit.Fixtures;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
 {
-	public class EbmlReaderTests
+	public class EbmlReaderTests : IClassFixture<MatroskaFixture>
 	{
 #region Setup/Teardown
 
-		public EbmlReaderTests()
+		public EbmlReaderTests(MatroskaFixture fixture)
 		{
-			_specification = new EbmlSpecification
-			                 {
-				                 Elements = new List<EbmlElement>
-				                            {
-					                            new EbmlElement
-					                            {
-						                            Name = "EBML",
-						                            IdString = "0x1A45DFA3"
-					                            },
-					                            new EbmlElement
-					                            {
-						                            Name = "EBMLVersion",
-						                            IdString = "0x4286"
-					                            },
-					                            new EbmlElement
-					                            {
-						                            Name = "Void",
-						                            IdString = "0xEC"
-					                            },
-					                            new EbmlElement
-					                            {
-						                            Name = "CRC-32",
-						                            IdString = "0xBF"
-					                            }
-				                            }
-			                 };
-
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IReader>(() => _fixture.Create<Reader>());
+			_specification = fixture.Specification;
 		}
 
 #endregion

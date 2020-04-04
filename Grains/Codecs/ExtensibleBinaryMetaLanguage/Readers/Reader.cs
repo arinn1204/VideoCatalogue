@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 {
 	public class Reader : IReader
 	{
@@ -36,7 +36,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 		}
 
 #endregion
-
 
 		private long ReadBytes(Stream stream, int bytesToRead, long seed)
 		{

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces
 {
 	public interface IReader
 	{

@@ -52,7 +52,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Segment\Chapters"/>
         <Folder Include="Codecs\ExtensibleBinaryMetaLanguage\Models\Segment\Clusters"/>
     </ItemGroup>
 

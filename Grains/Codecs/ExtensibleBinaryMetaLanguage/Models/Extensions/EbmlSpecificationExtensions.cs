@@ -1,56 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
-using MoreLinq;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 {
 	public static class EbmlSpecificationExtensions
 	{
 		public static IEnumerable<uint> GetSkippableElements(this EbmlSpecification @this)
-			=> @this.Elements.Where(
+			=> @this.Elements
+			        .Where(
 				         w =>
+					         (w.Type == "binary" && !IsWhitelisted(w.Name)) |
 					         (w.Name == "Void") |
 					         (w.Name == "CRC-32") |
-					         w.Name.Contains("Private") |
-					         (w.Name == "Block") |
-					         (w.Name == "SimpleBlock") |
-					         (w.Name == "BlockAdditional") |
-					         (w.Name == "CodecState") |
-					         (w.Name == "SignaturePublicKey") |
-					         (w.Name == "BlockVirtual") |
-					         (w.Name == "EncryptedBlock") |
-					         (w.Name == "ContentEncKeyID") |
-					         (w.Name == "ContentCompSettings") |
-					         (w.Name == "ContentSigKeyID") |
-					         (w.Name == "FileData") |
-					         (w.Name == "FileReferral") |
-					         (w.Name == "ChapProcessPrivate") |
-					         (w.Name == "ChapProcessData") |
-					         (w.Name == "TagBinary") |
-					         (w.Name == "Cluster") |
-					         (w.Name == "Cueing Data") |
-					         (w.Name == "Attachments") |
-					         (w.Name == "Tags"))
+					         (w.Name == "Cluster"))
 			        .Select(s => s.Id);
 
-		public static IReadOnlyDictionary<uint, EbmlElement> GetInfoElements(
-			this EbmlSpecification @this)
-			=> GetElements(@this, "Info");
-
-		public static IReadOnlyDictionary<uint, EbmlElement> GetTrackElements(
-			this EbmlSpecification @this)
-			=> GetElements(@this, "Tracks");
-
-		private static IReadOnlyDictionary<uint, EbmlElement> GetElements(
-			EbmlSpecification specification,
+		private static bool IsWhitelisted(
 			string elementName,
-			int level = 1)
+			StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
 		{
-			return specification.Elements
-			                    .SkipUntil(t => t.Name == elementName)
-			                    .TakeWhile(t => t.Level != level)
-			                    .ToDictionary(k => k.Id);
+			var whiteListedElements = new[]
+			                          {
+				                          "ChapterTranslateID",
+				                          "SeekID"
+			                          };
+
+			return elementName.EndsWith("UID", stringComparison) ||
+			       elementName.EndsWith("Family", stringComparison) ||
+			       whiteListedElements.Any(a => a.Equals(elementName, stringComparison));
 		}
 	}
 }

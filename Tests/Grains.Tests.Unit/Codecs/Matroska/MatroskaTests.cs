@@ -99,7 +99,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
 			fileInformation.Should()
-			               .BeNull();
+			               .BeEmpty();
 			segmentInformation.Verify(
 				v => v.GetSegmentInformation(
 					It.IsAny<Stream>(),
@@ -248,10 +248,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
 			fileInformation.Should()
-			               .BeNull();
+			               .BeEmpty();
 
-			error.Description.Should()
-			     .Be($"{id} is not a valid ebml ID.");
+			error
+			   .Description
+			   .Should()
+			   .Be($"{id} is not a valid ebml ID.");
 		}
 	}
 }

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
@@ -79,7 +78,7 @@ namespace Grains.Codecs.Matroska
 			}
 			catch (Exception e)
 			{
-				error = new MatroskaError?(e.Message);
+				error = new MatroskaError(e.Message);
 			}
 
 			return documents;
@@ -93,7 +92,7 @@ namespace Grains.Codecs.Matroska
 
 			if (id != _ebmlAndSegmentId.Value.ebml)
 			{
-				yield break;
+				throw new MatroskaException($"{id} is not a valid ebml ID.");
 			}
 
 			var ebmlHeader = _ebmlHeader.GetHeaderInformation(stream, _matroskaSpecification.Value);
@@ -108,25 +107,18 @@ namespace Grains.Codecs.Matroska
 				throw new MatroskaException(errorDescription);
 			}
 
-			var segments = Enumerable.Empty<Segment>();
+			var segmentId = _reader.ReadBytes(stream, 4);
+			var segmentSize = _reader.GetSize(stream);
 
-			while (_ebmlHeader.GetMasterIds(stream, _matroskaSpecification.Value) ==
-			       _ebmlAndSegmentId.Value.segment)
-			{
-				var segmentSize = _reader.GetSize(stream);
-
-				var segment = _segmentReader.GetSegmentInformation(
-					stream,
-					_matroskaSpecification.Value,
-					segmentSize);
-
-				segments = segments.Append(segment);
-			}
+			var segment = _segmentReader.GetSegmentInformation(
+				stream,
+				_matroskaSpecification.Value,
+				segmentSize);
 
 			yield return new EbmlDocument
 			             {
 				             EbmlHeader = ebmlHeader,
-				             Segment = segments.FirstOrDefault()
+				             Segment = segment
 			             };
 		}
 	}

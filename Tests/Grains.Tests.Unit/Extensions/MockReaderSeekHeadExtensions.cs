@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Moq;
 
 namespace Grains.Tests.Unit.Extensions
 {
 	public static class MockReaderSeekHeadExtensions
 	{
-		public static Mock<IEbmlReader> SetupSeekhead(
-			this Mock<IEbmlReader> reader,
+		public static Mock<EbmlReader> SetupSeekhead(
+			this Mock<EbmlReader> reader,
 			Stream stream,
 			List<Seek> seeks)
 		{
@@ -22,9 +22,9 @@ namespace Grains.Tests.Unit.Extensions
 		}
 
 		private static void SetupSeekHeadReturnValues(
-			Mock<IEbmlReader> reader,
+			Mock<EbmlReader> reader,
 			Stream stream,
-			List<Seek> seeks)
+			IReadOnlyList<Seek> seeks)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 10))
 			      .Returns(seeks[0].SeekId)
@@ -35,7 +35,7 @@ namespace Grains.Tests.Unit.Extensions
 			      .Returns(BitConverter.GetBytes(seeks[2].SeekPosition).Reverse().ToArray());
 		}
 
-		private static void SetupSeekHeadReturnIds(Mock<IEbmlReader> reader, Stream stream)
+		private static void SetupSeekHeadReturnIds(Mock<EbmlReader> reader, Stream stream)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
 			      .Returns("114D9B74".ToBytes().ToArray()) //seekhead

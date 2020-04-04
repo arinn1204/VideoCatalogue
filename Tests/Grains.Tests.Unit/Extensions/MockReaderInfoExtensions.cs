@@ -3,15 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Moq;
 
 namespace Grains.Tests.Unit.Extensions
 {
 	public static class MockReaderInfoExtensions
 	{
-		public static Mock<IEbmlReader> SetupInfo(
-			this Mock<IEbmlReader> @this,
+		public static Mock<EbmlReader> SetupInfo(
+			this Mock<EbmlReader> @this,
 			Stream stream,
 			Info info)
 		{
@@ -21,7 +21,7 @@ namespace Grains.Tests.Unit.Extensions
 		}
 
 
-		private static void SetupInfoIds(Mock<IEbmlReader> reader, Stream stream)
+		private static void SetupInfoIds(Mock<EbmlReader> reader, Stream stream)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
 			      .Returns("1549A966".ToBytes().ToArray()) //Info
@@ -45,7 +45,7 @@ namespace Grains.Tests.Unit.Extensions
 		}
 
 		private static void SetupInfoReturnValues(
-			Mock<IEbmlReader> reader,
+			Mock<EbmlReader> reader,
 			Stream stream,
 			Info info)
 		{

@@ -13,11 +13,11 @@ using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
 {
-	public class EbmlReaderTests : IClassFixture<MatroskaFixture>
+	public class ReaderTests : IClassFixture<MatroskaFixture>
 	{
 #region Setup/Teardown
 
-		public EbmlReaderTests(MatroskaFixture fixture)
+		public ReaderTests(MatroskaFixture fixture)
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());

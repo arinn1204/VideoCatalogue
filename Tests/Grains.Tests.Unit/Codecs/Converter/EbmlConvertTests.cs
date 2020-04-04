@@ -3,7 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Exceptions;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Tests.Unit.Codecs.Converter.Models;

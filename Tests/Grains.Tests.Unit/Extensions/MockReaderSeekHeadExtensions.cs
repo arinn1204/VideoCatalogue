@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SeekHead;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
 using Moq;
 

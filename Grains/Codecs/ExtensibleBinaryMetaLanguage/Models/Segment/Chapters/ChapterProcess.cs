@@ -11,5 +11,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 
 		[EbmlElement("ChapProcessCommand")]
 		public IEnumerable<ChapterProcessCommand>? ChapterProcessCommands { get; set; }
+
+		[EbmlElement("ChapProcessPrivate")]
+		public byte[]? ChapterProcessPrivateCodecData { get; set; }
 	}
 }

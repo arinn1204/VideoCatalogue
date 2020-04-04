@@ -3,8 +3,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
-	public class Reader
-		: IReader
+	public class Reader : IReader
 	{
 #region IReader Members
 

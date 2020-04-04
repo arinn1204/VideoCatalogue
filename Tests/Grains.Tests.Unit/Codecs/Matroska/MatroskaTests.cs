@@ -9,92 +9,120 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
 using Grains.Codecs.Matroska.Interfaces;
+using Grains.Tests.Unit.Extensions;
+using Grains.Tests.Unit.Fixtures;
 using Moq;
 using Xunit;
 using SUT = Grains.Codecs.Matroska;
 
 namespace Grains.Tests.Unit.Codecs.Matroska
 {
-	public class MatroskaTests
+	public class MatroskaTests : IClassFixture<MatroskaFixture>
 	{
 #region Setup/Teardown
 
-		public MatroskaTests()
+		public MatroskaTests(MatroskaFixture fixture)
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IMatroska>(() => _fixture.Create<SUT.Matroska>());
 
-			var element =
-				new EbmlElement
-				{
-					Name = "EBML",
-					IdString = "0x1",
-					Level = 0
-				};
-			var segmentElement =
-				new EbmlElement
-				{
-					Name = "Segment",
-					IdString = "0x2",
-					Level = 0
-				};
-			_requiredSpecification = new EbmlSpecification
-			                         {
-				                         Elements = new List<EbmlElement>
-				                                    {
-					                                    element,
-					                                    segmentElement
-				                                    }
-			                         };
-
 			_fixture.Freeze<Mock<ISpecification>>()
 			        .Setup(s => s.GetSpecification())
-			        .ReturnsAsync(_requiredSpecification);
+			        .ReturnsAsync(fixture.Specification);
+
+			_specification = fixture.Specification;
+
+
+			var reader = _fixture.Freeze<Mock<IEbmlReader>>();
+			reader
+			   .Setup(
+					s => s.GetElement<EbmlHeader>(
+						It.IsAny<Stream>(),
+						It.IsAny<long>(),
+						It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
+						It.IsAny<IList<uint>>()))
+			   .Returns(
+					new EbmlHeader
+					{
+						DocType = "matroska",
+						EbmlVersion = 1
+					});
+
+			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 4))
+			      .Returns(
+				       _specification.Elements
+				                     .First(f => f.Name == "EBML")
+				                     .IdString
+				                     .ToBytes()
+				                     .ToArray())
+			      .Returns(
+				       _specification.Elements
+				                     .First(f => f.Name == "Segment")
+				                     .IdString
+				                     .ToBytes()
+				                     .ToArray());
+			;
 		}
 
 #endregion
 
 		private readonly Fixture _fixture;
-		private readonly EbmlSpecification _requiredSpecification;
+		private readonly EbmlSpecification _specification;
 
 		[Theory]
-		[InlineData(2, "matroska", "Ebml version of '2' is not supported.")]
-		[InlineData(1, "not matroska", "Ebml doctype of 'not matroska' is not supported.")]
+		[InlineData(2U, "matroska", "Ebml version of '2' is not supported.")]
+		[InlineData(1U, "not matroska", "Ebml doctype of 'not matroska' is not supported.")]
 		public void ShouldReturnEbmlVersionAndDoctypeIfArentSupported(
-			int version,
+			uint ebmlVersion,
 			string doctype,
 			string expectedError)
 		{
-			using var stream = new MemoryStream();
-
-			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
-			ebml
+			var reader = _fixture.Freeze<Mock<IEbmlReader>>();
+			reader
 			   .Setup(
-					s => s.GetHeaderInformation(
+					s => s.GetElement<EbmlHeader>(
 						It.IsAny<Stream>(),
-						It.IsAny<EbmlSpecification>()))
+						It.IsAny<long>(),
+						It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
+						It.IsAny<IList<uint>>()))
 			   .Returns(
-					new EbmlHeaderData
+					new EbmlHeader
 					{
 						DocType = doctype,
-						Version = (uint) version
+						EbmlVersion = ebmlVersion
 					});
 
-			ebml.Setup(
-				     s => s.GetMasterIds(
-					     It.IsAny<Stream>(),
-					     It.IsAny<EbmlSpecification>()))
-			    .Returns(_requiredSpecification.Elements.First().Id);
+			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), 4))
+			      .Returns(
+				       _specification.Elements
+				                     .First(f => f.Name == "EBML")
+				                     .IdString
+				                     .ToBytes()
+				                     .ToArray());
 
+			var stream = new MemoryStream(
+				new byte[]
+				{
+					1
+				},
+				0,
+				1);
 			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
 			segmentInformation.Setup(
 				                   s => s.GetSegmentInformation(
 					                   It.IsAny<Stream>(),
 					                   It.IsAny<EbmlSpecification>(),
 					                   It.IsAny<long>()))
-			                  .Returns(new Segment());
+			                  .Returns(
+				                   () =>
+				                   {
+					                   stream.Position++;
+					                   return new Segment();
+				                   });
+
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
@@ -107,102 +135,107 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					It.IsAny<long>()),
 				Times.Never);
 
-			error.Description.Should()
-			     .Be(expectedError);
+			error
+			   .Errors
+			   .First()
+			   .Should()
+			   .Be(expectedError);
 		}
 
 		[Fact]
-		public void ShouldReturnIsMatroskaWhenParsingStreamBelongingToMatroskaContainer()
+		public void DocumentShouldHaveNullSegmentIfIdDoesNotFollowEbmlHeader()
 		{
-			var id = _requiredSpecification.Elements.First()
-			                               .Id;
-			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
-			ebml.Setup(
-				     s => s.GetMasterIds(
-					     It.IsAny<Stream>(),
-					     It.IsAny<EbmlSpecification>()))
-			    .Returns(id);
+			var stream = new MemoryStream(
+				new byte[]
+				{
+					1
+				},
+				0,
+				1);
 
-			using var stream = new MemoryStream();
-
-			_fixture.Freeze<Mock<IEbmlHeader>>()
-			        .Setup(
-				         s => s.GetHeaderInformation(
-					         It.IsAny<Stream>(),
-					         It.IsAny<EbmlSpecification>()))
+			_fixture.Freeze<Mock<IEbmlReader>>()
+			        .Setup(s => s.ReadBytes(It.IsAny<Stream>(), 4))
 			        .Returns(
-				         new EbmlHeaderData
+				         () =>
 				         {
-					         DocType = "matroska"
+					         stream.Position++;
+					         return "1A45DFA3".ToBytes().ToArray();
 				         });
-
 			var matroska = _fixture.Create<IMatroska>();
-			var isMatroska = matroska.IsMatroska(stream);
+			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
-			isMatroska.Should()
-			          .BeTrue();
-		}
-
-		[Fact]
-		public void ShouldReturnIsNotMatroskaWhenGivenAnEbmlFileThatIsNotMatroska()
-		{
-			using var stream = new MemoryStream();
-			_fixture.Freeze<Mock<IEbmlHeader>>()
-			        .Setup(
-				         s => s.GetHeaderInformation(
-					         It.IsAny<Stream>(),
-					         It.IsAny<EbmlSpecification>()))
-			        .Returns(
-				         new EbmlHeaderData
-				         {
-					         DocType = "not matroska"
-				         });
-
-			var matroska = _fixture.Create<IMatroska>();
-			var isMatroska = matroska.IsMatroska(stream);
-
-			isMatroska.Should()
-			          .BeFalse();
-		}
-
-		[Fact]
-		public void ShouldReturnIsNotMatroskaWhenGivenAnEmptyStream()
-		{
-			using var stream = new MemoryStream();
-			var matroska = _fixture.Create<IMatroska>();
-			var isMatroska = matroska.IsMatroska(stream);
-
-			isMatroska.Should()
-			          .BeFalse();
-		}
-
-		[Fact]
-		public void ShouldReturnRetrievedFileInformation()
-		{
-			using var stream = new MemoryStream();
-
-			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
-			ebml
-			   .Setup(
-					s => s.GetHeaderInformation(
-						It.IsAny<Stream>(),
-						It.IsAny<EbmlSpecification>()))
-			   .Returns(
-					new EbmlHeaderData
+			fileInformation
+			   .Single()
+			   .Should()
+			   .BeEquivalentTo(
+					new EbmlDocument
 					{
-						DocType = "matroska",
-						Version = 1u
+						EbmlHeader = new EbmlHeader
+						             {
+							             DocType = "matroska",
+							             EbmlVersion = 1
+						             }
 					});
 
-			var count = 0;
-			ebml.Setup(
-				     s => s.GetMasterIds(
-					     It.IsAny<Stream>(),
-					     It.IsAny<EbmlSpecification>()))
-			    .Returns(
-				     () => _requiredSpecification.Elements.Skip(count++).FirstOrDefault()?.Id ?? 0);
+			error.Should().BeNull();
+		}
 
-			var expectedSegmentInformation = new AutoFaker<Segment>().Generate();
+
+		[Fact]
+		public void ShouldReturnFirstDocumentAndErrorForSecondDocumentWhenItOccurs()
+		{
+			var reader = _fixture.Freeze<Mock<IEbmlReader>>();
+
+			var stream = new MemoryStream(
+				new byte[]
+				{
+					1,
+					2,
+					3
+				},
+				0,
+				3);
+			reader
+			   .Setup(
+					s => s.GetElement<EbmlHeader>(
+						It.IsAny<Stream>(),
+						It.IsAny<long>(),
+						It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
+						It.IsAny<IList<uint>>()))
+			   .Returns(
+					() =>
+					{
+						stream.Position++;
+						return new EbmlHeader
+						       {
+							       DocType = "matroska",
+							       EbmlVersion = 1
+						       };
+					});
+
+			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 4))
+			      .Returns(
+				       _specification.Elements
+				                     .First(f => f.Name == "EBML")
+				                     .IdString
+				                     .ToBytes()
+				                     .ToArray())
+			      .Returns(
+				       _specification.Elements
+				                     .First(f => f.Name == "Segment")
+				                     .IdString
+				                     .ToBytes()
+				                     .ToArray())
+			      .Returns(
+				       _specification.Elements
+				                     .First(f => f.Name == "Info")
+				                     .IdString
+				                     .ToBytes()
+				                     .ToArray());
+
+			var expectedSegmentInformation = new AutoFaker<Segment>()
+			                                .UseSeed(1)
+			                                .Generate();
 
 			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
 			segmentInformation.Setup(
@@ -210,7 +243,64 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                   It.IsAny<Stream>(),
 					                   It.IsAny<EbmlSpecification>(),
 					                   It.IsAny<long>()))
-			                  .Returns(expectedSegmentInformation);
+			                  .Returns(
+				                   () =>
+				                   {
+					                   stream.Position++;
+					                   return expectedSegmentInformation;
+				                   });
+
+			var matroska = _fixture.Create<IMatroska>();
+			var fileInformation = matroska.GetFileInformation(stream, out var error);
+
+			fileInformation
+			   .Single()
+			   .Should()
+			   .BeEquivalentTo(
+					new EbmlDocument
+					{
+						EbmlHeader = new EbmlHeader
+						             {
+							             DocType = "matroska",
+							             EbmlVersion = 1
+						             },
+						Segment = expectedSegmentInformation
+					});
+
+			error
+			   .Errors
+			   .First()
+			   .Should()
+			   .Be(
+					$"{_specification.Elements.First(f => f.Name == "Info").Id} is not a valid ebml ID.");
+		}
+
+		[Fact]
+		public void ShouldReturnRetrievedFileInformation()
+		{
+			var stream = new MemoryStream(
+				new byte[]
+				{
+					1
+				},
+				0,
+				1);
+			var expectedSegmentInformation = new AutoFaker<Segment>()
+			                                .UseSeed(1)
+			                                .Generate();
+
+			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
+			segmentInformation.Setup(
+				                   s => s.GetSegmentInformation(
+					                   It.IsAny<Stream>(),
+					                   It.IsAny<EbmlSpecification>(),
+					                   It.IsAny<long>()))
+			                  .Returns(
+				                   () =>
+				                   {
+					                   stream.Position++;
+					                   return expectedSegmentInformation;
+				                   });
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
@@ -222,9 +312,9 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			   .BeEquivalentTo(
 					new EbmlDocument
 					{
-						EbmlHeader = new EbmlHeaderData
+						EbmlHeader = new EbmlHeader
 						             {
-							             Version = 1,
+							             EbmlVersion = 1,
 							             DocType = "matroska"
 						             },
 						Segment = expectedSegmentInformation
@@ -236,14 +326,25 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		[Fact]
 		public void ShouldReturnRetrievedIdWhenNotEbml()
 		{
-			var id = _requiredSpecification.Elements.First().Id + 5u;
-			var ebml = _fixture.Freeze<Mock<IEbmlHeader>>();
-			ebml.Setup(
-				     s => s.GetMasterIds(
-					     It.IsAny<Stream>(),
-					     It.IsAny<EbmlSpecification>()))
-			    .Returns(id);
-			using var stream = new MemoryStream();
+			var id = _specification.Elements.First().Id + 5u;
+
+			var stream = new MemoryStream(
+				new byte[]
+				{
+					1
+				},
+				0,
+				1);
+
+			_fixture.Freeze<Mock<IEbmlReader>>()
+			        .Setup(s => s.ReadBytes(It.IsAny<Stream>(), 4))
+			        .Returns(
+				         () =>
+				         {
+					         stream.Position++;
+					         return "1A45DFA8".ToBytes().ToArray();
+				         });
+
 			var matroska = _fixture.Create<IMatroska>();
 			var fileInformation = matroska.GetFileInformation(stream, out var error);
 
@@ -251,7 +352,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 			               .BeEmpty();
 
 			error
-			   .Description
+			   .Errors
+			   .First()
 			   .Should()
 			   .Be($"{id} is not a valid ebml ID.");
 		}

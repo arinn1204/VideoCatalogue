@@ -13,26 +13,67 @@ namespace Grains.Tests.Unit.Extensions
 		public static Mock<EbmlReader> SetupSeekhead(
 			this Mock<EbmlReader> reader,
 			Stream stream,
-			List<Seek> seeks)
+			SeekHead seekhead)
 		{
 			SetupSeekHeadReturnIds(reader, stream);
-			SetupSeekHeadReturnValues(reader, stream, seeks);
+			SetupSeekHeadReturnValues(reader, stream, seekhead.Seeks);
+			SetupSeekHeadSizes(reader, stream);
 
 			return reader;
+		}
+
+		private static void SetupSeekHeadSizes(
+			Mock<EbmlReader> reader,
+			Stream stream)
+		{
+			var sizes = new Queue<int>(
+				new[]
+				{
+					2,
+					10,
+					10
+				});
+			var sizeCounter = 0;
+
+			reader.Setup(s => s.GetSize(stream))
+			      .Returns<Stream>(
+				       s =>
+				       {
+					       var itemToReturn = s.Position == 0
+						       ? 25
+						       : sizes.Dequeue();
+
+					       if (itemToReturn != 25)
+					       {
+						       sizes.Enqueue(itemToReturn);
+					       }
+
+					       s.Position += sizeCounter++ == 9
+						       ? 40
+						       : 1;
+
+					       return itemToReturn;
+				       });
 		}
 
 		private static void SetupSeekHeadReturnValues(
 			Mock<EbmlReader> reader,
 			Stream stream,
-			IReadOnlyList<Seek> seeks)
+			IEnumerable<Seek> seeks)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 10))
-			      .Returns(seeks[0].SeekId)
-			      .Returns(BitConverter.GetBytes(seeks[0].SeekPosition).Reverse().ToArray())
-			      .Returns(seeks[1].SeekId)
-			      .Returns(BitConverter.GetBytes(seeks[1].SeekPosition).Reverse().ToArray())
-			      .Returns(seeks[2].SeekId)
-			      .Returns(BitConverter.GetBytes(seeks[2].SeekPosition).Reverse().ToArray());
+			      .Returns(seeks.First().SeekId)
+			      .Returns(BitConverter.GetBytes(seeks.First().SeekPosition).Reverse().ToArray())
+			      .Returns(seeks.Skip(1).First().SeekId)
+			      .Returns(
+				       BitConverter.GetBytes(seeks.Skip(1).First().SeekPosition)
+				                   .Reverse()
+				                   .ToArray())
+			      .Returns(seeks.Skip(2).First().SeekId)
+			      .Returns(
+				       BitConverter.GetBytes(seeks.Skip(2).First().SeekPosition)
+				                   .Reverse()
+				                   .ToArray());
 		}
 
 		private static void SetupSeekHeadReturnIds(Mock<EbmlReader> reader, Stream stream)

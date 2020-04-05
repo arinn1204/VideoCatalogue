@@ -17,7 +17,37 @@ namespace Grains.Tests.Unit.Extensions
 		{
 			SetupInfoReturnValues(@this, stream, info);
 			SetupInfoIds(@this, stream);
+			SetupInfoSize(@this, stream, info);
 			return @this;
+		}
+
+		private static void SetupInfoSize(Mock<EbmlReader> reader, Stream stream, Info info)
+		{
+			var infoSize = info.GetType()
+			                   .GetProperties()
+			                   .Length +
+			               typeof(ChapterTranslate)
+				              .GetProperties()
+				              .Length;
+
+			var sizeCounter = 0;
+			reader.Setup(s => s.GetSize(stream))
+			      .Returns<Stream>(
+				       s =>
+				       {
+					       s.Position += sizeCounter++ == infoSize
+						       ? infoSize
+						       : 1;
+
+					       var returnValue = sizeCounter switch
+					                         {
+						                         1 => infoSize,
+						                         9 => 3,
+						                         _ => 5
+					                         };
+
+					       return returnValue;
+				       });
 		}
 
 

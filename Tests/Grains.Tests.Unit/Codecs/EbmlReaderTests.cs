@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using AutoBogus;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
@@ -26,6 +28,53 @@ namespace Grains.Tests.Unit.Codecs
 #endregion
 
 		private readonly EbmlSpecification _specification;
+
+		[Fact]
+		public void ShouldBeAbleToCreateASeekHead()
+		{
+			var seekHead = new AutoFaker<SeekHead>()
+			   .Generate();
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			reader.SetupSeekhead(stream, seekHead);
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				25,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.SeekHeads.Should().AllBeEquivalentTo(seekHead);
+		}
+
+		[Fact]
+		public void ShouldBeAbleToCreateInfo()
+		{
+			var info = new AutoFaker<Info>()
+			          .RuleFor(
+				           r => r.ChapterTranslates,
+				           r => new AutoFaker<ChapterTranslate>().Generate(1))
+			          .RuleFor(r => r.TimecodeScale, f => 1_000_000U)
+			          .RuleFor(r => r.DateUTC, new DateTime(2020, 4, 20))
+			          .Generate();
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			reader.SetupInfo(stream, info);
+			var infoSize = info.GetType()
+			                   .GetProperties()
+			                   .Length +
+			               typeof(ChapterTranslate)
+				              .GetProperties()
+				              .Length;
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				infoSize + 10,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.SegmentInformations.Should().AllBeEquivalentTo(info);
+		}
 
 		[Fact]
 		public void ShouldKeepReadingUntilReceivingAnAcceptableId()

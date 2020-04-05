@@ -32,6 +32,40 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 
 #endregion
 
+		private (string Name, object Value) ProcessElement(
+			Stream stream,
+			EbmlElement element,
+			IReadOnlyDictionary<uint, EbmlElement> trackSpecs,
+			IList<uint> skippedElements)
+		{
+			var size = GetSize(stream);
+			if (element.Type != "master")
+			{
+				var data = ReadBytes(stream, (int) size);
+				return GetValue(element, data);
+			}
+
+			var values = GetChildren(
+					stream,
+					size,
+					trackSpecs,
+					skippedElements)
+			   .ToArray();
+
+			var masterElement = EbmlConvert.DeserializeTo(element.Name, values);
+
+			return (element.Name, masterElement);
+		}
+
+		private (string name, object value) GetValue(
+			EbmlElement element,
+			byte[] data)
+		{
+			var value = data.GetValue(element);
+			return (element.Name, value);
+		}
+
+
 		private IEnumerable<(string Name, object value)> GetChildren(
 			Stream stream,
 			long elementSize,
@@ -70,39 +104,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 				data = Array.Empty<byte>();
 				yield return value;
 			}
-		}
-
-		private (string Name, object Value) ProcessElement(
-			Stream stream,
-			EbmlElement element,
-			IReadOnlyDictionary<uint, EbmlElement> trackSpecs,
-			IList<uint> skippedElements)
-		{
-			var size = GetSize(stream);
-			if (element.Type != "master")
-			{
-				var data = ReadBytes(stream, (int) size);
-				return GetValue(element, data);
-			}
-
-			var values = GetChildren(
-					stream,
-					size,
-					trackSpecs,
-					skippedElements)
-			   .ToArray();
-
-			var masterElement = EbmlConvert.DeserializeTo(element.Name, values);
-
-			return (element.Name, masterElement);
-		}
-
-		private (string name, object value) GetValue(
-			EbmlElement element,
-			byte[] data)
-		{
-			var value = data.GetValue(element);
-			return (element.Name, value);
 		}
 	}
 }

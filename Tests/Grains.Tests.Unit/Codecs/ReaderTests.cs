@@ -5,29 +5,25 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
-using Grains.Tests.Unit.Fixtures;
 using Xunit;
 
 namespace Grains.Tests.Unit.Codecs
 {
-	public class ReaderTests : IClassFixture<MatroskaFixture>
+	public class ReaderTests
 	{
 #region Setup/Teardown
 
-		public ReaderTests(MatroskaFixture fixture)
+		public ReaderTests()
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
 			_fixture.Register<IReader>(() => _fixture.Create<Reader>());
-			_specification = fixture.Specification;
 		}
 
 #endregion
 
-		private readonly EbmlSpecification _specification;
 		private readonly Fixture _fixture;
 
 		[Theory]
@@ -51,7 +47,8 @@ namespace Grains.Tests.Unit.Codecs
 				            4 => 31,
 				            3 => 63,
 				            2 => 127,
-				            1 => 255
+				            1 => 255,
+				            _ => -1
 			            };
 			using var stream = new MemoryStream();
 			using var writer = new BinaryWriter(stream);

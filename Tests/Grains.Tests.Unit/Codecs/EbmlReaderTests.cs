@@ -10,6 +10,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Grains.Tests.Unit.Extensions;
@@ -93,6 +94,72 @@ namespace Grains.Tests.Unit.Codecs
 				_specification.GetSkippableElements().ToList());
 
 			result.SeekHeads.Should().AllBeEquivalentTo(seekHead);
+		}
+
+		[Fact]
+		public void ShouldBeAbleToCreateATrack()
+		{
+			var projection = new AutoFaker<Projection>()
+			                .RuleFor(r => r.PrivateDataForProjection, null as byte[])
+			                .Generate();
+			var video = new AutoFaker<Video>()
+			           .RuleFor(r => r.ColourSpace, r => null as byte[])
+			           .RuleFor(r => r.VideoProjectionDetails, projection)
+			           .Generate();
+
+			var contentCompression = new AutoFaker<ContentCompression>()
+			                        .RuleFor(r => r.CompressionSettings, r => null as byte[])
+			                        .Generate();
+
+			var encryption = new AutoFaker<ContentEncryption>()
+			                .RuleFor(r => r.EncryptionKeyId, null as byte[])
+			                .RuleFor(r => r.ContentSignature, null as byte[])
+			                .RuleFor(r => r.PrivateKeyId, null as byte[])
+			                .Generate();
+
+			var contentEncoding = new AutoFaker<ContentEncoding>()
+			                     .RuleFor(r => r.CompressionSettings, contentCompression)
+			                     .RuleFor(r => r.EncryptionSettings, encryption)
+			                     .Generate(1);
+
+			var contentEncodings = new AutoFaker<ContentEncodingContainer>()
+			                      .RuleFor(r => r.ContentEncodingSettings, contentEncoding)
+			                      .Generate();
+
+			var trackTranslate = new AutoFaker<TrackTranslate>()
+			   .Generate(1);
+
+			var trackPlane = new AutoFaker<TrackPlane>().Generate(1);
+			var trackCombinePlane = new AutoFaker<TrackCombinePlanes>()
+			                       .RuleFor(r => r.TrackPlanes, trackPlane)
+			                       .Generate();
+
+			var trackOperation = new AutoFaker<TrackOperation>()
+			                    .RuleFor(r => r.VideoTracksToCombine, trackCombinePlane)
+			                    .Generate();
+
+			var trackEntry = new AutoFaker<TrackEntry>()
+			                .RuleFor(r => r.CodecPrivateData, null as byte[])
+			                .RuleFor(r => r.VideoSettings, video)
+			                .RuleFor(r => r.TrackTranslates, trackTranslate)
+			                .RuleFor(r => r.ContentEncodings, contentEncodings)
+			                .RuleFor(r => r.TrackOperation, trackOperation)
+			                .Generate(1);
+
+			var track = new AutoFaker<Track>()
+			           .RuleFor(r => r.TrackEntries, trackEntry)
+			           .Generate();
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			var size = reader.SetupTrack(stream, track);
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				size,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.Tracks.Single().Should().BeEquivalentTo(track);
 		}
 
 		[Fact]

@@ -52,7 +52,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public uint CodecWillTryDamagedData { get; set; }
 
 		[EbmlElement("TrackOverlay")]
-		public uint? OverlayTrack { get; set; }
+		public IEnumerable<uint>? OverlayTracks { get; set; }
 
 		[EbmlElement("CodecDelay")]
 		public uint? CodecBuiltInDelayNanoseconds { get; set; }

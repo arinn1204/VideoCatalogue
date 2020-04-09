@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
+﻿using System.Collections.Generic;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 {
@@ -6,6 +7,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class TrackJoinBlocks
 	{
 		[EbmlElement("TrackJoinUID")]
-		public uint TrackJoinUid { get; set; }
+		public IEnumerable<uint> TrackJoinUids { get; set; }
 	}
 }

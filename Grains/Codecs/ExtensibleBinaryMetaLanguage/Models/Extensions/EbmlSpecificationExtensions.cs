@@ -13,8 +13,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 				         w =>
 					         (w.Type == "binary" && !IsWhitelisted(w.Name)) |
 					         (w.Name == "Void") |
-					         (w.Name == "CRC-32") |
-					         (w.Name == "Cluster"))
+					         (w.Name == "CRC-32"))
 			        .Select(s => s.Id);
 
 		private static bool IsWhitelisted(

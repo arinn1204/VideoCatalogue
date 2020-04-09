@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AutoBogus;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
@@ -29,6 +31,52 @@ namespace Grains.Tests.Unit.Codecs
 
 		private readonly EbmlSpecification _specification;
 
+
+		[Fact]
+		public void ShouldBeAbleToCreateACluster()
+		{
+			var expectedCluster = new AutoFaker<SegmentCluster>()
+			                     .RuleFor(
+				                      r => r.BlockGroups,
+				                      r => new AutoFaker<BlockGroup>()
+				                          .RuleFor(r => r.Block, null as byte[])
+				                          .RuleFor(r => r.CodecState, null as byte[])
+				                          .RuleFor(
+					                           r => r.BlockAddition,
+					                           r => new AutoFaker<BlockAddition>().RuleFor(
+						                           r => r.BlockMores,
+						                           r => new AutoFaker<BlockMore>()
+						                               .RuleFor(
+							                                r => r.BlockAdditional,
+							                                null as byte[])
+						                               .Generate(1)))
+				                          .Generate(1))
+			                     .RuleFor(
+				                      r => r.SilentTrack,
+				                      r => new SilentTrack
+				                           {
+					                           SilentTrackNumbers = new[]
+					                                                {
+						                                                r.Random.UInt()
+					                                                }
+				                           })
+			                     .RuleFor(r => r.SimpleBlocks, null as IEnumerable<byte[]>)
+			                     .Generate();
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			var size = reader.SetupCluster(stream, expectedCluster);
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				size,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			var cluster = result.Clusters.Single();
+
+			cluster.Should().BeEquivalentTo(expectedCluster, opts => opts.WithAutoConversion());
+		}
+
 		[Fact]
 		public void ShouldBeAbleToCreateASeekHead()
 		{
@@ -46,6 +94,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			result.SeekHeads.Should().AllBeEquivalentTo(seekHead);
 		}
+
 
 		[Fact]
 		public void ShouldBeAbleToCreateInfo()

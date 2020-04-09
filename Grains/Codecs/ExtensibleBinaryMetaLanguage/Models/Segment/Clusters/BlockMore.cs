@@ -6,7 +6,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 	public class BlockMore
 	{
 		[EbmlElement("BlockAddID")]
-		public uint BlockAddId { get; set; }
+		public uint BlockAdditionalId { get; set; }
 
 		public byte[] BlockAdditional { get; set; }
 	}

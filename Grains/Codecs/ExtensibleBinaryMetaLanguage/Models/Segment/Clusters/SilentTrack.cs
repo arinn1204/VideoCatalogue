@@ -3,7 +3,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 {
-	[EbmlMaster]
+	[EbmlMaster("SilentTracks")]
 	public class SilentTrack
 	{
 		[EbmlElement("SilentTrackNumber")]

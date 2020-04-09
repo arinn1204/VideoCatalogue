@@ -6,6 +6,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 	[EbmlMaster("Cluster")]
 	public class SegmentCluster
 	{
+		[EbmlElement("Timecode")]
 		public uint Timestamp { get; set; }
 
 		[EbmlElement("SilentTracks")]

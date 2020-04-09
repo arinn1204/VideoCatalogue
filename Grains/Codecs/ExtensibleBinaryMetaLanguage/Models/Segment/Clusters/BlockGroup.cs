@@ -8,7 +8,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 	{
 		public byte[] Block { get; set; }
 
-		[EbmlElement("BlockAddition")]
+		[EbmlElement("BlockAdditions")]
 		public BlockAddition? BlockAddition { get; set; }
 
 		public uint? BlockDuration { get; set; }

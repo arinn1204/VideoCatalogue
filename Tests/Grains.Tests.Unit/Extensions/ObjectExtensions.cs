@@ -17,7 +17,8 @@ namespace Grains.Tests.Unit.Extensions
 					var value = property.GetValue(@this);
 					count += value.GetSize() + 1;
 				}
-				else if (property.PropertyType.IsGenericType &&
+				else if (property.PropertyType.IsInterface &&
+				         property.PropertyType.GetInterfaces().Any(a => a == typeof(IEnumerable)) &&
 				         property.PropertyType.GetGenericArguments().First().Assembly ==
 				         typeof(Parser).Assembly)
 				{

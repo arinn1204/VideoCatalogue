@@ -6,6 +6,7 @@ using AutoBogus;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
@@ -30,7 +31,6 @@ namespace Grains.Tests.Unit.Codecs
 #endregion
 
 		private readonly EbmlSpecification _specification;
-
 
 		[Fact]
 		public void ShouldBeAbleToCreateACluster()
@@ -74,7 +74,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			var cluster = result.Clusters.Single();
 
-			cluster.Should().BeEquivalentTo(expectedCluster, opts => opts.WithAutoConversion());
+			cluster.Should().BeEquivalentTo(expectedCluster);
 		}
 
 		[Fact]
@@ -93,6 +93,28 @@ namespace Grains.Tests.Unit.Codecs
 				_specification.GetSkippableElements().ToList());
 
 			result.SeekHeads.Should().AllBeEquivalentTo(seekHead);
+		}
+
+		[Fact]
+		public void ShouldBeAbleToCreateAttachment()
+		{
+			var expectedAttachment = new AutoFaker<SegmentAttachments>()
+			                        .RuleFor(
+				                         r => r.AttachedFiles,
+				                         r => new AutoFaker<AttachedFile>()
+				                             .RuleFor(r => r.Data, r => null)
+				                             .Generate(1))
+			                        .Generate();
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			var size = reader.SetupAttachment(stream, expectedAttachment);
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				size,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.Attachment.Should().BeEquivalentTo(expectedAttachment);
 		}
 
 

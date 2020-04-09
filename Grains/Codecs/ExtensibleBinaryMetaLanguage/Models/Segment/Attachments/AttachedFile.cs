@@ -5,11 +5,19 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments
 	[EbmlMaster]
 	public class AttachedFile
 	{
-		public string? FileDescription { get; set; }
-		public string FileName { get; set; }
-		public string FileMimeType { get; set; }
+		[EbmlElement("FileDescription")]
+		public string? Description { get; set; }
 
-		[EbmlElement("FileUid")]
-		public uint FileUid { get; set; }
+		[EbmlElement("FileName")]
+		public string Name { get; set; }
+
+		[EbmlElement("FileMimeType")]
+		public string MimeType { get; set; }
+
+		[EbmlElement("FileUID")]
+		public uint Uid { get; set; }
+
+		[EbmlElement("FileData")]
+		public byte[] Data { get; set; }
 	}
 }

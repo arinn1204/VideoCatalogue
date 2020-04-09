@@ -34,5 +34,8 @@ namespace Grains.Codecs.Models.AlignedModels
 
 		[FieldOffset(0)]
 		public ulong UnsignedData;
+
+		[FieldOffset(0)]
+		public long SignedData;
 	}
 }

@@ -147,7 +147,7 @@ namespace Grains.Tests.Unit.Codecs.Converter
 			result.Should()
 			      .Throw<EbmlConverterException>()
 			      .WithMessage(
-				       "Ambiguous match. Element name of 'Duplicate' associated with 'IsEnabled' and property name 'Duplicate'.");
+				       "Ambiguous match. Element name of 'Duplicate' associated with 'IsEnabled' and property name 'Duplicate' in 'BadDummyEbmlConverterElementAndPropertyNameMatch'.");
 		}
 
 		[Fact]
@@ -171,7 +171,7 @@ namespace Grains.Tests.Unit.Codecs.Converter
 
 			result.Should()
 			      .Throw<EbmlConverterException>()
-			      .WithMessage("There is no element with the name 'DoesNotExist'.");
+			      .WithMessage("There is no element with the name 'DoesNotExist' in 'Info'.");
 		}
 	}
 }

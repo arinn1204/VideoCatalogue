@@ -23,7 +23,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 				var propertyToSet = DeterminePropertyToSet(
 					propertyByAttribute,
 					propertyByName,
-					name);
+					name,
+					typeof(TTarget).Name);
 
 				var valueToSet = propertyToSet.PropertyType != typeof(string) &&
 				                 propertyToSet.PropertyType
@@ -47,7 +48,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 		private static PropertyInfo DeterminePropertyToSet(
 			PropertyInfo propertyByAttribute,
 			PropertyInfo propertyByName,
-			string name)
+			string name,
+			string containingObjectName)
 		{
 			var propertyToSet = (propertyByAttribute == null, propertyByName == null,
 			                     propertyByAttribute?.Name == propertyByName?.Name) switch
@@ -56,9 +58,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 				                    (false, true, _)     => propertyByAttribute,
 				                    (false, false, true) => propertyByName,
 				                    (false, false, false) => throw new EbmlConverterException(
-					                    $"Ambiguous match. Element name of '{name}' associated with '{propertyByAttribute?.Name}' and property name '{name}'."),
+					                    $"Ambiguous match. Element name of '{name}' associated with '{propertyByAttribute?.Name}' and property name '{name}' in '{containingObjectName}'."),
 				                    (true, true, _) => throw new EbmlConverterException(
-					                    $"There is no element with the name '{name}'.")
+					                    $"There is no element with the name '{name}' in '{containingObjectName}'.")
 			                    };
 			return propertyToSet;
 		}

@@ -21,6 +21,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 				       "date"     => value.ConvertToDateTime(),
 				       "uinteger" => value.ConvertToUint(),
 				       "binary"   => value,
+				       "integer"  => value.ConvertToInt(),
 				       _          => value.ConvertToUlong()
 			       };
 		}
@@ -41,6 +42,20 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 				           B1 = paddedBytes[7]
 			           };
 			return word.UnsignedData;
+		}
+
+		private static int ConvertToInt(this IEnumerable<byte> bytes)
+		{
+			bytes ??= Enumerable.Empty<byte>();
+			var paddedBytes = bytes.PadStart(4).ToArray();
+			var word = new Float32
+			           {
+				           B4 = paddedBytes[0],
+				           B3 = paddedBytes[1],
+				           B2 = paddedBytes[2],
+				           B1 = paddedBytes[3]
+			           };
+			return word.SignedData;
 		}
 
 		private static DateTime ConvertToDateTime(this IEnumerable<byte> bytes)

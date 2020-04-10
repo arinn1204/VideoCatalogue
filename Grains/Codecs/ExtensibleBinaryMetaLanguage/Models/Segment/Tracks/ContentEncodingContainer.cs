@@ -6,7 +6,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	[EbmlMaster("ContentEncodings")]
 	public class ContentEncodingContainer
 	{
-		[EbmlElement("ContentEncodings")]
+		[EbmlElement("ContentEncoding")]
 		public IEnumerable<ContentEncoding>? ContentEncodingSettings { get; set; }
 	}
 }

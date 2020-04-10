@@ -8,6 +8,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public float SamplingFrequency { get; set; }
 		public float? OutputSamplingFrequency { get; set; }
 		public uint Channels { get; set; }
-		public uint BitDepth { get; set; }
+		public uint? BitDepth { get; set; }
 	}
 }

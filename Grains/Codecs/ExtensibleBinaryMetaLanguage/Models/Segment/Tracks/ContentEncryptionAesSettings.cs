@@ -2,7 +2,7 @@
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 {
-	[EbmlMaster]
+	[EbmlMaster("ContentEncAESSettings")]
 	public class ContentEncryptionAesSettings
 	{
 		[EbmlElement("AESSettingsCipherMode")]

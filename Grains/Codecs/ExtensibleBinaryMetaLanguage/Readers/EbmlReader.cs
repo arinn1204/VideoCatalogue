@@ -95,6 +95,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 				}
 
 				var element = trackedElements[id];
+				if (element.Name == "AESSettingsCipherMode")
+				{
+				}
+
 				var value = ProcessElement(
 					stream,
 					element,

@@ -23,6 +23,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 			var whiteListedElements = new[]
 			                          {
 				                          "ChapterTranslateID",
+				                          "TrackTranslateTrackID",
 				                          "SeekID"
 			                          };
 

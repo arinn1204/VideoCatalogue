@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Moq;
+using Moq.Language;
 
 namespace Grains.Tests.Unit.Extensions
 {
@@ -29,13 +31,36 @@ namespace Grains.Tests.Unit.Extensions
 				       {
 					       var returnValue = sizeCounter++ switch
 					                         {
-						                         0 => trackSize,
-						                         1 => 2, //track entry
-						                         _ => 5
+						                         0  => trackSize,
+						                         1  => trackSize - 1,  // track entry
+						                         18 => 1,              // CodecPrivate
+						                         26 => 5,              // Track Translate
+						                         32 => 14 + 24 + 10,   // Video
+						                         47 => 1,              // ColourSpace
+						                         48 => 24,             // Colour
+						                         62 => 10,             // Mastering Metadata
+						                         73 => 6,              // VideoProjection
+						                         75 => 1,              // ProjectionPrivate
+						                         79 => 4,              // Audio
+						                         84 => 3 + 4,          // TrackOperation
+						                         85 => 3,              // TrackCombinePlanes
+						                         86 => 2,              // TrackPlane
+						                         89 => 3,              // TrackJoinBlocks
+						                         93 => 3 + 3 + 11 + 1, // ContentEncodingContainer
+						                         94 => 3 + 3 + 11,     // ContentEncoding
+						                         98 => 3,              // ContentCompression
+						                         100 =>
+						                         1,         // ContentCompressionSettings
+						                         101 => 11, // ContentEncryption
+						                         103 => 1,  // ContentEncryptionKeyID
+						                         104 => 1,  // ContentAES Settings
+						                         106 => 1,  // ContentSignature
+						                         107 => 1,  // ContentSignatureKeyID
+						                         _   => 5
 					                         };
 
-					       s.Position = sizeCounter == 3
-						       ? int.MaxValue
+					       s.Position = sizeCounter > trackSize
+						       ? short.MaxValue
 						       : s.Position + 1;
 
 					       return returnValue;
@@ -47,8 +72,258 @@ namespace Grains.Tests.Unit.Extensions
 		private static void SetupTrackValues(Mock<EbmlReader> reader, Stream stream, Track track)
 		{
 			var entry = track.TrackEntries.Single();
-			reader.SetupSequence(s => s.ReadBytes(stream, 5))
-			      .Returns(BitConverter.GetBytes(entry.TrackNumber).Reverse().ToArray());
+			var sequence = SetupEntry(reader, stream, entry);
+			SetupVideo(entry, sequence);
+			SetupAudio(entry, sequence);
+			SetupOperation(entry, sequence);
+			SetupContentEncoding(entry, sequence);
+		}
+
+		private static void SetupContentEncoding(
+			TrackEntry entry,
+			ISetupSequentialResult<byte[]> sequence)
+		{
+			var contentEncoding = entry.ContentEncodings.ContentEncodingSettings.Single();
+
+			sequence.Returns(
+				         BitConverter.GetBytes(contentEncoding.ContentEncodingOrder)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(contentEncoding.ContentEncodingScope)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(contentEncoding.ContentEncodingType)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(
+					                      contentEncoding.CompressionSettings.CompressionAlgorithm)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(
+					                      contentEncoding
+						                     .EncryptionSettings.EncryptionAlgorith.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(
+					                      contentEncoding
+						                     .EncryptionSettings.EncryptionSettings.CipherMode)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(
+					                      contentEncoding
+						                     .EncryptionSettings.SignatureAlgorithm.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(
+					                      contentEncoding
+						                     .EncryptionSettings.SignatureHashAlgorithm.Value)
+				                     .Reverse()
+				                     .ToArray());
+		}
+
+		private static ISetupSequentialResult<byte[]> SetupEntry(
+			Mock<EbmlReader> reader,
+			Stream stream,
+			TrackEntry entry)
+		{
+			var sequence = reader.SetupSequence(s => s.ReadBytes(stream, 5));
+			sequence
+			   .Returns(BitConverter.GetBytes(entry.TrackNumber).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.TrackUid).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.TrackType).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.FlagEnabled).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.FlagDefault).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.FlagForced).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.FlagLacing).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.MinCache).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.MaxCache.Value).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.DefaultDuration.Value).Reverse().ToArray())
+			   .Returns(
+					BitConverter.GetBytes(entry.DefaultDecodedFieldDuration.Value)
+					            .Reverse()
+					            .ToArray())
+			   .Returns(BitConverter.GetBytes(entry.MaxBlockAdditionId).Reverse().ToArray())
+			   .Returns(Encoding.UTF8.GetBytes(entry.Name))
+			   .Returns(Encoding.UTF8.GetBytes(entry.Language))
+			   .Returns(Encoding.UTF8.GetBytes(entry.LanguageOverride))
+			   .Returns(Encoding.UTF8.GetBytes(entry.CodecId))
+			   .Returns(Encoding.UTF8.GetBytes(entry.CodecName))
+			   .Returns(BitConverter.GetBytes(entry.CodecWillTryDamagedData).Reverse().ToArray());
+			foreach (var overlay in entry.OverlayTracks)
+			{
+				sequence.Returns(BitConverter.GetBytes(overlay).Reverse().ToArray());
+			}
+
+			sequence
+			   .Returns(
+					BitConverter.GetBytes(entry.CodecBuiltInDelayNanoseconds.Value)
+					            .Reverse()
+					            .ToArray())
+			   .Returns(BitConverter.GetBytes(entry.SeekPreRoll).Reverse().ToArray());
+
+			var translate = entry.TrackTranslates.Single();
+			foreach (var translateUid in translate.TrackTranslateEditionUids)
+			{
+				sequence.Returns(BitConverter.GetBytes(translateUid).Reverse().ToArray());
+			}
+
+			sequence.Returns(
+				BitConverter.GetBytes(translate.TrackTranslateCodec).Reverse().ToArray());
+			sequence.Returns(translate.TrackTranslateTrackId);
+			return sequence;
+		}
+
+		private static void SetupOperation(
+			TrackEntry entry,
+			ISetupSequentialResult<byte[]> sequence)
+		{
+			var trackOperation = entry.TrackOperation;
+			var trackPlane = trackOperation.VideoTracksToCombine.TrackPlanes.Single();
+
+			sequence.Returns(BitConverter.GetBytes(trackPlane.TrackPlaneUid).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(trackPlane.TrackPlaneType).Reverse().ToArray());
+
+			foreach (var uid in trackOperation.TrackJoinBlocks.TrackJoinUids)
+			{
+				sequence.Returns(BitConverter.GetBytes(uid).Reverse().ToArray());
+			}
+		}
+
+		private static void SetupAudio(TrackEntry entry, ISetupSequentialResult<byte[]> sequence)
+		{
+			var audio = entry.AudioSettings;
+
+			sequence.Returns(BitConverter.GetBytes(audio.SamplingFrequency).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(audio.OutputSamplingFrequency.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(BitConverter.GetBytes(audio.Channels).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(audio.BitDepth.Value).Reverse().ToArray());
+		}
+
+		private static void SetupVideo(TrackEntry entry, ISetupSequentialResult<byte[]> sequence)
+		{
+			var video = entry.VideoSettings;
+			sequence.Returns(BitConverter.GetBytes(video.FlagInterlaced).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.FieldOrder).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(video.Stereo3DVideoMode.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.AlphaVideoMode.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.PixelWidth).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.PixelHeight).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.PixelCropBottom.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.PixelCropTop.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.PixelCropLeft.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.PixelCropRight.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.DisplayWidth.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.DisplayHeight.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(video.DisplayUnit.Value).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(video.AspectRatioType.Value).Reverse().ToArray());
+
+			var colour = video.ColourSettings;
+
+			sequence.Returns(
+				         BitConverter.GetBytes(colour.MatrixCoefficients.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(colour.BitsPerChannel.Value).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.ChromaSubSamplingHorizontal.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.ChromaSubSamplingVertical.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.CbSubSamplingHorizontal.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.CbSubSamplingVertical.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.ChromaSitingHorizontal.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.ChromaSitingVertical.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(BitConverter.GetBytes(colour.ColourRange.Value).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.TransferCharacteristics.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(BitConverter.GetBytes(colour.Primaries.Value).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.MaximumContentLightLevel.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(colour.MaximumFrameAverageLightLevel.Value)
+				                     .Reverse()
+				                     .ToArray());
+
+			var masteringMetadata = colour.MasteringMetadata;
+
+			sequence.Returns(
+				         BitConverter.GetBytes(masteringMetadata.RedChromaticityX.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.RedChromaticityY.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.GreenChromaticityX.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.GreenChromaticityY.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.BlueChromaticityX.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.BlueChromaticityY.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.WhitePointChromaticityX.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.WhitePointChromaticityY.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.MaximumLuminance.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(masteringMetadata.MinimumLuminance.Value)
+				                     .Reverse()
+				                     .ToArray());
+
+			var projection = video.VideoProjectionDetails;
+			sequence.Returns(BitConverter.GetBytes(projection.ProjectionType).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(projection.ProjectionPoseYaw).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(projection.ProjectionPosePitch).Reverse().ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(projection.ProjectionPoseRoll).Reverse().ToArray());
 		}
 
 		private static void SetupTrackIds(Mock<EbmlReader> reader, Stream stream)
@@ -78,10 +353,14 @@ namespace Grains.Tests.Unit.Extensions
 			      .Returns("258688".ToBytes().ToArray())
 			      .Returns("AA".ToBytes().ToArray())
 			      .Returns("6FAB".ToBytes().ToArray())
+			      .Returns("6FAB".ToBytes().ToArray())
+			      .Returns("6FAB".ToBytes().ToArray())
 			      .Returns("56AA".ToBytes().ToArray())
 			      .Returns("56BB".ToBytes().ToArray())
 			       /* ---------------------- 3 - TRACK TRANSLATE ---------------------- */
 			      .Returns("6624".ToBytes().ToArray())
+			      .Returns("66FC".ToBytes().ToArray())
+			      .Returns("66FC".ToBytes().ToArray())
 			      .Returns("66FC".ToBytes().ToArray())
 			      .Returns("66BF".ToBytes().ToArray())
 			      .Returns("66A5".ToBytes().ToArray())
@@ -108,7 +387,6 @@ namespace Grains.Tests.Unit.Extensions
 			      .Returns("55B2".ToBytes().ToArray())
 			      .Returns("55B3".ToBytes().ToArray())
 			      .Returns("55B4".ToBytes().ToArray())
-			      .Returns("55B5".ToBytes().ToArray())
 			      .Returns("55B5".ToBytes().ToArray())
 			      .Returns("55B6".ToBytes().ToArray())
 			      .Returns("55B7".ToBytes().ToArray())
@@ -153,6 +431,8 @@ namespace Grains.Tests.Unit.Extensions
 			      .Returns("E6".ToBytes().ToArray())
 			       /* ---------------------- 4 - TRACK JOIN BLOCKS ---------------------- */
 			      .Returns("E9".ToBytes().ToArray())
+			      .Returns("ED".ToBytes().ToArray())
+			      .Returns("ED".ToBytes().ToArray())
 			      .Returns("ED".ToBytes().ToArray())
 			       /* ---------------------- 3 - CONTENT ENCODINGS ---------------------- */
 			      .Returns("6D80".ToBytes().ToArray())

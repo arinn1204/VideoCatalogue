@@ -10,7 +10,7 @@ namespace Grains.Tests.Unit.Extensions
 {
 	public static class MockReaderSeekHeadExtensions
 	{
-		public static Mock<EbmlReader> SetupSeekhead(
+		public static int SetupSeekhead(
 			this Mock<EbmlReader> reader,
 			Stream stream,
 			SeekHead seekhead)
@@ -19,7 +19,7 @@ namespace Grains.Tests.Unit.Extensions
 			SetupSeekHeadReturnValues(reader, stream, seekhead.Seeks);
 			SetupSeekHeadSizes(reader, stream);
 
-			return reader;
+			return seekhead.GetSize();
 		}
 
 		private static void SetupSeekHeadSizes(

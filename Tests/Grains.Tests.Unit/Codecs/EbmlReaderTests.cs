@@ -8,6 +8,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
@@ -79,17 +80,40 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
+		public void ShouldBeAbleToCreateACue()
+		{
+			var cueReference = new AutoFaker<CueReference>().Generate(1);
+			var cueTrackPosition = new AutoFaker<CueTrackPosition>().Generate(1);
+			var cuePoint = new AutoFaker<CuePoint>().Generate(1);
+
+			var cue = new AutoFaker<SegmentCues>()
+			   .RuleFor(r => r.CuePoints, cuePoint);
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+
+			var size = reader.SetupCues(stream, cue);
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				size,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.Should().BeEquivalentTo(cue);
+		}
+
+		[Fact]
 		public void ShouldBeAbleToCreateASeekHead()
 		{
 			var seekHead = new AutoFaker<SeekHead>()
 			   .Generate();
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
-			reader.SetupSeekhead(stream, seekHead);
+			var size = reader.SetupSeekhead(stream, seekHead);
 
 			var result = reader.Object.GetElement<Segment>(
 				stream,
-				25,
+				size,
 				_specification.Elements.ToDictionary(k => k.Id),
 				_specification.GetSkippableElements().ToList());
 

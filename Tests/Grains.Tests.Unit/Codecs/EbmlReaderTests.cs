@@ -82,12 +82,21 @@ namespace Grains.Tests.Unit.Codecs
 		[Fact]
 		public void ShouldBeAbleToCreateACue()
 		{
-			var cueReference = new AutoFaker<CueReference>().Generate(1);
-			var cueTrackPosition = new AutoFaker<CueTrackPosition>().Generate(1);
-			var cuePoint = new AutoFaker<CuePoint>().Generate(1);
+			var cueReference = new AutoFaker<CueReference>()
+			   .Generate(1);
+
+			var cueTrackPosition = new AutoFaker<CueTrackPosition>()
+			                      .RuleFor(r => r.CueReference, cueReference)
+			                      .Generate(1);
+
+			var cuePoint = new AutoFaker<CuePoint>()
+			              .RuleFor(r => r.CueTrackPositions, cueTrackPosition)
+			              .Generate(1);
 
 			var cue = new AutoFaker<SegmentCues>()
-			   .RuleFor(r => r.CuePoints, cuePoint);
+			         .RuleFor(r => r.CuePoints, cuePoint)
+			         .Generate();
+
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
 
@@ -99,7 +108,10 @@ namespace Grains.Tests.Unit.Codecs
 				_specification.Elements.ToDictionary(k => k.Id),
 				_specification.GetSkippableElements().ToList());
 
-			result.Should().BeEquivalentTo(cue);
+			result
+			   .Cues
+			   .Should()
+			   .BeEquivalentTo(cue);
 		}
 
 		[Fact]

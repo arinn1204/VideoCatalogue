@@ -448,5 +448,44 @@ namespace Grains.Tests.Unit.Codecs
 			reader.Verify(v => v.GetSize(stream), Times.Once);
 			reader.Verify(v => v.ReadBytes(stream, 1), Times.Once);
 		}
+
+		[Fact]
+		public void WillDiscardReadIfNotBelongingToAnId()
+		{
+			var stream = new MemoryStream();
+			var reader = new EbmlReader();
+
+			stream.Write(
+				new byte[]
+				{
+					255,
+					255,
+					255,
+					255,
+					255
+				}); // size = 5
+			stream.Write(
+				BitConverter.GetBytes(_skippedElements.First())
+				            .Where(w => w != 0)
+				            .Reverse()
+				            .ToArray()); // 0xEC 1
+			stream.Write(
+				new byte[]
+				{
+					133
+				}); // should give a size of 5 after reading the first byte = 6
+			stream.Flush();
+			stream.Position = 0;
+
+			var result = reader.GetElement<Info>(
+				stream,
+				12,
+				_elements,
+				_skippedElements);
+
+			stream.Position.Should().Be(12);
+
+			result.Should().BeEquivalentTo(new Info());
+		}
 	}
 }

@@ -120,6 +120,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 					continue;
 				}
 
+				stream.Seek(readIds[0].Key.Length - data.Count(), SeekOrigin.Current);
 				readElement = readIds[0].Value;
 				break;
 			}

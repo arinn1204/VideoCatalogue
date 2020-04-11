@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Grains.Codecs;
 using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;
@@ -24,7 +25,8 @@ namespace Grains.Tests.Integration.Features.Actions
 		{
 			var sample = _codecParserData.Container.ToUpperInvariant() switch
 			             {
-				             "MKV" => "small.mkv"
+				             "MKV" => "small.mkv",
+				             _     => throw new Exception("Unknown file type.")
 			             };
 
 			var file = Path.Combine("TestData", "CodecParser", sample);

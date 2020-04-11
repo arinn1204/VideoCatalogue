@@ -3,6 +3,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 {
+	[EbmlMaster]
 	public class ChapterAtom
 	{
 		[EbmlElement("ChapterAtom")]

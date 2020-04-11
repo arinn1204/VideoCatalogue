@@ -7,6 +7,7 @@ using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
@@ -33,6 +34,62 @@ namespace Grains.Tests.Unit.Codecs
 #endregion
 
 		private readonly EbmlSpecification _specification;
+
+		[Fact]
+		public void ShouldBeAbleToCreateAChapter()
+		{
+			var chapterProcessCommand = new AutoFaker<ChapterProcessCommand>()
+			                           .RuleFor(r => r.ChapterProcessData, null as byte[])
+			                           .Generate(1);
+
+			var chapterProcess = new AutoFaker<ChapterProcess>()
+			                    .RuleFor(r => r.ChapterProcessCommands, chapterProcessCommand)
+			                    .RuleFor(r => r.ChapterProcessPrivateCodecData, null as byte[])
+			                    .Generate(1);
+
+			var chapterDisplay = new AutoFaker<ChapterDisplay>()
+			   .Generate(1);
+
+			var secondAtom = new AutoFaker<ChapterAtom>()
+			                .RuleFor(r => r.ChapterDisplays, r => default)
+			                .RuleFor(r => r.ChapterProcesses, r => default)
+			                .RuleFor(r => r.ChapterTrack, r => default)
+			                .RuleFor(r => r.ChapterUid, r => default)
+			                .RuleFor(r => r.ChapterAtomChild, r => default)
+			                .RuleFor(r => r.ChapterFlagEnabled, r => default)
+			                .RuleFor(r => r.ChapterPhysicalEquivalent, r => default)
+			                .RuleFor(r => r.ChapterSegmentUid, r => default)
+			                .RuleFor(r => r.ChapterStringUid, r => default)
+			                .RuleFor(r => r.ChapterSegmentEditionUid, r => default)
+			                .Generate();
+
+			var chapterAtom = new AutoFaker<ChapterAtom>()
+			                 .RuleFor(r => r.ChapterAtomChild, secondAtom)
+			                 .RuleFor(r => r.ChapterDisplays, chapterDisplay)
+			                 .RuleFor(r => r.ChapterProcesses, chapterProcess)
+			                 .Generate(1);
+
+			var editionEntry = new AutoFaker<EditionEntry>()
+			                  .RuleFor(r => r.ChapterAtoms, chapterAtom)
+			                  .Generate(1);
+
+			var chapter = new AutoFaker<SegmentChapter>()
+			             .RuleFor(r => r.EditionEntries, editionEntry)
+			             .Generate();
+
+
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			var size = reader.SetupChapters(stream, chapter);
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				size,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.Chapter.Should().BeEquivalentTo(chapter);
+		}
 
 		[Fact]
 		public void ShouldBeAbleToCreateACluster()

@@ -95,7 +95,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 				}
 
 				var element = trackedElements[id];
-
 				var value = ProcessElement(
 					stream,
 					element,

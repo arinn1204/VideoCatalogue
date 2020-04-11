@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#nullable enable
+using System;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 using Grains.Codecs;
@@ -15,7 +17,7 @@ namespace Grains.Tests.Unit.Extensions
 				if (property.PropertyType.Assembly == typeof(Parser).Assembly)
 				{
 					var value = property.GetValue(@this);
-					count += value.GetSize() + 1;
+					count += value?.GetSize() + 1 ?? 1;
 				}
 				else if (property.PropertyType.IsInterface &&
 				         property.PropertyType.GetInterfaces().Any(a => a == typeof(IEnumerable)) &&
@@ -41,7 +43,7 @@ namespace Grains.Tests.Unit.Extensions
 		private static int GetCountOfEnumerable(object @this, PropertyInfo property, int count)
 		{
 			var underlyingType = property.PropertyType.GetGenericArguments().First();
-			var enumerable = property.GetValue(@this);
+			var enumerable = property.GetValue(@this) ?? GetEmptyEnumerable(underlyingType);
 			var numberInEnumerable =
 				enumerable == null
 					? 0
@@ -67,7 +69,7 @@ namespace Grains.Tests.Unit.Extensions
 			int count)
 		{
 			var underlyingType = property.PropertyType.GetGenericArguments().First();
-			var enumerable = property.GetValue(@this);
+			var enumerable = property.GetValue(@this) ?? GetEmptyEnumerable(underlyingType);
 			var numberInEnumerable =
 				typeof(Enumerable).GetMethods()
 				                  .Single(
@@ -85,7 +87,7 @@ namespace Grains.Tests.Unit.Extensions
 			var firstOfEnumerable = typeof(Enumerable)
 			                       .GetMethods()
 			                       .Single(
-				                        s => s.Name == "First" &&
+				                        s => s.Name == "FirstOrDefault" &&
 				                             s.IsGenericMethod &&
 				                             s.GetParameters().Length == 1)
 			                      ?.MakeGenericMethod(underlyingType)
@@ -96,8 +98,14 @@ namespace Grains.Tests.Unit.Extensions
 					                        enumerable
 				                        });
 
-			count += (int) numberInEnumerable * firstOfEnumerable.GetSize() + 1;
+			count += (int) numberInEnumerable * (firstOfEnumerable?.GetSize() + 1 ?? 0);
 			return count;
 		}
+
+		private static object? GetEmptyEnumerable(Type underlyingType) => typeof(Enumerable)
+		                                                                 .GetMethod("Empty")
+		                                                                 .MakeGenericMethod(
+			                                                                  underlyingType)
+		                                                                 .Invoke(null, null);
 	}
 }

@@ -42,8 +42,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					s => s.GetElement<EbmlHeader>(
 						It.IsAny<Stream>(),
 						It.IsAny<long>(),
-						It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
-						It.IsAny<IList<uint>>()))
+						It.IsAny<Dictionary<byte[], EbmlElement>>(),
+						It.IsAny<List<uint>>()))
 			   .Returns(
 					new EbmlHeader
 					{
@@ -86,8 +86,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					s => s.GetElement<EbmlHeader>(
 						It.IsAny<Stream>(),
 						It.IsAny<long>(),
-						It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
-						It.IsAny<IList<uint>>()))
+						It.IsAny<Dictionary<byte[], EbmlElement>>(),
+						It.IsAny<List<uint>>()))
 			   .Returns(
 					new EbmlHeader
 					{
@@ -200,8 +200,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					s => s.GetElement<EbmlHeader>(
 						It.IsAny<Stream>(),
 						It.IsAny<long>(),
-						It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
-						It.IsAny<IList<uint>>()))
+						It.IsAny<Dictionary<byte[], EbmlElement>>(),
+						It.IsAny<List<uint>>()))
 			   .Returns(
 					() =>
 					{

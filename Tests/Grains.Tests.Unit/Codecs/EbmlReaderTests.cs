@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using AutoBogus;
 using FluentAssertions;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
@@ -29,12 +30,16 @@ namespace Grains.Tests.Unit.Codecs
 
 		public EbmlReaderTests(MatroskaFixture fixture)
 		{
-			_specification = fixture.Specification;
+			_elements =
+				fixture.Specification.Elements.ToDictionary(k => k.IdString.ConvertHexToString());
+
+			_skippedElements = fixture.Specification.GetSkippableElements().ToList();
 		}
 
 #endregion
 
-		private readonly EbmlSpecification _specification;
+		private readonly Dictionary<byte[], EbmlElement> _elements;
+		private readonly List<uint> _skippedElements;
 
 		[Fact]
 		public void ShouldBeAbleToCreateAChapter()
@@ -86,8 +91,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.Chapter.Should().BeEquivalentTo(chapter);
 		}
@@ -129,8 +134,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			var cluster = result.Clusters.Single();
 
@@ -163,8 +168,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result
 			   .Cues
@@ -184,8 +189,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.SeekHeads.Should().AllBeEquivalentTo(seekHead);
 		}
@@ -250,8 +255,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.Tracks.Single().Should().BeEquivalentTo(track);
 		}
@@ -259,12 +264,13 @@ namespace Grains.Tests.Unit.Codecs
 		[Fact]
 		public void ShouldBeAbleToCreateAttachment()
 		{
+			var attachedFile = new AutoFaker<AttachedFile>()
+			                  .RuleFor(r => r.Data, r => null)
+			                  .Generate(1);
 			var expectedAttachment = new AutoFaker<SegmentAttachments>()
 			                        .RuleFor(
 				                         r => r.AttachedFiles,
-				                         r => new AutoFaker<AttachedFile>()
-				                             .RuleFor(r => r.Data, r => null)
-				                             .Generate(1))
+				                         r => attachedFile)
 			                        .Generate();
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
@@ -272,8 +278,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.Attachment.Should().BeEquivalentTo(expectedAttachment);
 		}
@@ -302,8 +308,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				infoSize + 10,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.SegmentInformations.Should().AllBeEquivalentTo(info);
 		}
@@ -345,8 +351,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Segment>(
 				stream,
 				size,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.Tags.Single().Should().BeEquivalentTo(tag);
 		}
@@ -403,8 +409,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Seek>(
 				stream,
 				2,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.Should().BeEquivalentTo(seek);
 			reader.Verify(v => v.ReadBytes(stream, 1), Times.Exactly(4));
@@ -417,14 +423,11 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
-			var skippedId = _specification.Elements
-			                              .First(f => f.Name == "Void")
-			                              .IdString
-			                              .ToBytes()
-			                              .ToArray();
-
 			reader.Setup(s => s.ReadBytes(stream, 1))
-			      .Returns(skippedId);
+			      .Returns(
+				       BitConverter.GetBytes(_skippedElements.First())
+				                   .Where(w => w != 0)
+				                   .ToArray());
 
 			reader.Setup(s => s.GetSize(stream))
 			      .Returns<Stream>(
@@ -437,8 +440,8 @@ namespace Grains.Tests.Unit.Codecs
 			var result = reader.Object.GetElement<Info>(
 				stream,
 				1,
-				_specification.Elements.ToDictionary(k => k.Id),
-				_specification.GetSkippableElements().ToList());
+				_elements,
+				_skippedElements);
 
 			result.Should().BeEquivalentTo(new Info());
 

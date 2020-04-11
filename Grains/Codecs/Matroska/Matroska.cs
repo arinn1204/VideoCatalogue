@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
@@ -72,11 +73,11 @@ namespace Grains.Codecs.Matroska
 		{
 			var elements =
 				_matroskaSpecification.Value.Elements.TakeUntil(t => t.Name == "Segment")
-				                      .ToDictionary(k => k.Id);
-			var segmentIdDefinition = elements.First(f => f.Value.Name == "Segment").Value.Id;
+				                      .ToDictionary(k => k.IdString.ConvertHexToString());
+			var (segmentSequence, segment) = elements.First(f => f.Value.Name == "Segment");
 			var ebmlIdDefinition = elements.First(f => f.Value.Name == "EBML").Value.Id;
 
-			elements.Remove(segmentIdDefinition);
+			elements.Remove(segmentSequence);
 			while (stream.Position < stream.Length)
 			{
 				var id = _reader.ReadBytes(stream, 4).ConvertToUlong();
@@ -86,14 +87,14 @@ namespace Grains.Codecs.Matroska
 					throw new MatroskaException($"{id} is not a valid ebml ID.");
 				}
 
-				yield return GetDocument(stream, segmentIdDefinition, elements);
+				yield return GetDocument(stream, segment.Id, elements);
 			}
 		}
 
 		private EbmlDocument GetDocument(
 			Stream stream,
 			uint segmentIdDefinition,
-			IReadOnlyDictionary<uint, EbmlElement> ebmlTrackedElements)
+			Dictionary<byte[], EbmlElement> ebmlTrackedElements)
 		{
 			var ebmlHeader = GetEbmlHeader(
 				stream,
@@ -111,8 +112,8 @@ namespace Grains.Codecs.Matroska
 
 		private EbmlHeader GetEbmlHeader(
 			Stream stream,
-			IReadOnlyDictionary<uint, EbmlElement> ebmlTrackedElements,
-			IList<uint> skippedElementIds)
+			Dictionary<byte[], EbmlElement> ebmlTrackedElements,
+			List<uint> skippedElementIds)
 		{
 			var size = _reader.GetSize(stream);
 			var ebmlHeader = _reader.GetElement<EbmlHeader>(

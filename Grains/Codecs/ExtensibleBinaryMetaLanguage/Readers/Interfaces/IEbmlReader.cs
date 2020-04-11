@@ -9,8 +9,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces
 		T GetElement<T>(
 			Stream stream,
 			long elementSize,
-			IReadOnlyDictionary<uint, EbmlElement> trackedElements,
-			IList<uint> skippedElementIds)
+			Dictionary<byte[], EbmlElement> elements,
+			List<uint> skippedElementIds)
 			where T : class, new();
 	}
 }

@@ -42,8 +42,8 @@ namespace Grains.Tests.Unit.Codecs
 				       s => s.GetElement<Segment>(
 					       It.IsAny<Stream>(),
 					       It.IsAny<long>(),
-					       It.IsAny<IReadOnlyDictionary<uint, EbmlElement>>(),
-					       It.IsAny<IList<uint>>()))
+					       It.IsAny<Dictionary<byte[], EbmlElement>>(),
+					       It.IsAny<List<uint>>()))
 			      .Returns(expectedSegment);
 
 			var segmentReader = _fixture.Create<ISegmentReader>();

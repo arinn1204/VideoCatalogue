@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
@@ -25,7 +26,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			long segmentSize)
 		{
 			var trackedElements = ebmlSpecification.Elements
-			                                       .ToDictionary(k => k.Id);
+			                                       .ToDictionary(
+				                                        k => k.IdString.ConvertHexToString());
 			var skippedElements = ebmlSpecification
 			                     .GetSkippableElements()
 			                     .ToList(); // list as it should be a short list of skipped ids, this makes it inconsequential to enumerate

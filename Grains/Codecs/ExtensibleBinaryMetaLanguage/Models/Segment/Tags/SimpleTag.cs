@@ -6,7 +6,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 	[EbmlMaster]
 	public class SimpleTag
 	{
+		[EbmlElement("SimpleTag")]
 		public SimpleTag? SimpleTagChild { get; set; }
+
 		public string TagName { get; set; }
 		public string TagLanguage { get; set; }
 

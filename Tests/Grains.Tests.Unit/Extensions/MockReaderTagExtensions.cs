@@ -24,7 +24,26 @@ namespace Grains.Tests.Unit.Extensions
 		{
 			var size = tag.GetSize();
 			var sizeCounter = 0;
-			reader.Setup(s => s.GetSize(stream));
+			reader.Setup(s => s.GetSize(stream))
+			      .Returns<Stream>(
+				       s =>
+				       {
+					       var returnValue = sizeCounter switch
+					                         {
+						                         0  => size + 1, // Tags
+						                         1  => size,     // Tag
+						                         2  => 14,       //Targets
+						                         17 => 15,
+						                         24 => 7,
+						                         _  => 5
+					                         };
+
+					       s.Position = sizeCounter++ == size
+						       ? short.MaxValue
+						       : s.Position + 1;
+
+					       return returnValue;
+				       });
 
 			return size;
 		}
@@ -65,14 +84,16 @@ namespace Grains.Tests.Unit.Extensions
 			var topSimpleTag = tag.SimpleTags.Single();
 			var nestedSimpleTag = topSimpleTag.SimpleTagChild;
 
-			sequence.Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagLanguage))
+			sequence.Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagName))
+			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagLanguage))
 			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagLanguageIETF))
-			        .Returns(BitConverter.GetBytes(topSimpleTag.TagDefault))
+			        .Returns(BitConverter.GetBytes(topSimpleTag.TagDefault).Reverse().ToArray())
 			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagValue));
 
-			sequence.Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagLanguage))
+			sequence.Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagName))
+			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagLanguage))
 			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagLanguageIETF))
-			        .Returns(BitConverter.GetBytes(nestedSimpleTag.TagDefault))
+			        .Returns(BitConverter.GetBytes(nestedSimpleTag.TagDefault).Reverse().ToArray())
 			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagValue));
 		}
 
@@ -80,7 +101,7 @@ namespace Grains.Tests.Unit.Extensions
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
 			       /*----------------- TAGS -----------------*/
-			      .Returns("1254C3".ToBytes().ToArray())
+			      .Returns("1254C367".ToBytes().ToArray())
 			       /*----------------- TAG -----------------*/
 			      .Returns("7373".ToBytes().ToArray())
 			       /*----------------- TARGETS -----------------*/

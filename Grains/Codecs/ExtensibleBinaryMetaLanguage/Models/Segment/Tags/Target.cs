@@ -3,7 +3,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 {
-	[EbmlMaster]
+	[EbmlMaster("Targets")]
 	public class Target
 	{
 		public uint? TargetTypeValue { get; set; }

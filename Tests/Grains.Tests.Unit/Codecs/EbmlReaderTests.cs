@@ -12,6 +12,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
@@ -305,6 +306,49 @@ namespace Grains.Tests.Unit.Codecs
 				_specification.GetSkippableElements().ToList());
 
 			result.SegmentInformations.Should().AllBeEquivalentTo(info);
+		}
+
+		[Fact]
+		public void ShouldBeAbleToCreateTags()
+		{
+			var bottomSimpleTag = new AutoFaker<SimpleTag>()
+			                     .RuleFor(r => r.SimpleTagChild, r => default)
+			                     .RuleFor(r => r.TagBinary, null as byte[])
+			                     .Generate();
+
+			var topSimpleTag = new AutoFaker<SimpleTag>()
+			                  .RuleFor(r => r.SimpleTagChild, r => bottomSimpleTag)
+			                  .RuleFor(r => r.TagBinary, null as byte[])
+			                  .Generate();
+
+			var target = new AutoFaker<Target>().Generate();
+
+			var tag = new SegmentTag
+			          {
+				          Tags = new[]
+				                 {
+					                 new Tag
+					                 {
+						                 Target = target,
+						                 SimpleTags = new[]
+						                              {
+							                              topSimpleTag
+						                              }
+					                 }
+				                 }
+			          };
+
+			var stream = new MemoryStream();
+			var reader = new Mock<EbmlReader>();
+			var size = reader.SetupTags(stream, tag);
+
+			var result = reader.Object.GetElement<Segment>(
+				stream,
+				size,
+				_specification.Elements.ToDictionary(k => k.Id),
+				_specification.GetSkippableElements().ToList());
+
+			result.Tags.Single().Should().BeEquivalentTo(tag);
 		}
 
 		[Fact]

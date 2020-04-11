@@ -98,13 +98,13 @@ namespace Grains.Tests.Unit.Extensions
 					                        enumerable
 				                        });
 
-			count += (int) numberInEnumerable * (firstOfEnumerable?.GetSize() + 1 ?? 0);
+			count += (int) (numberInEnumerable ?? 0) * (firstOfEnumerable?.GetSize() + 1 ?? 0);
 			return count;
 		}
 
 		private static object? GetEmptyEnumerable(Type underlyingType) => typeof(Enumerable)
 		                                                                 .GetMethod("Empty")
-		                                                                 .MakeGenericMethod(
+		                                                                ?.MakeGenericMethod(
 			                                                                  underlyingType)
 		                                                                 .Invoke(null, null);
 	}

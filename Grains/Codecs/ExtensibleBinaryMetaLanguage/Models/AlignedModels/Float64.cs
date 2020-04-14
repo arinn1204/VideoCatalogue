@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Grains.Codecs.Models.AlignedModels
+namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.AlignedModels
 {
 	[StructLayout(LayoutKind.Explicit, Pack = 2)]
 	public struct Float64

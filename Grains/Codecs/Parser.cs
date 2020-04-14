@@ -20,18 +20,12 @@ namespace Grains.Codecs
 
 		public FileInformation GetInformation(string path, out FileError error)
 		{
-			error = null;
 			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 			var matroskaInfo = _matroska.GetFileInformation(stream, out var matroskaError);
-
 			var fileInformation = _mapper.Map<FileInformation>(matroskaInfo);
 			error = _mapper.Map<FileError>(matroskaError);
 
 			return fileInformation;
 		}
-	}
-
-	public class FileError
-	{
 	}
 }

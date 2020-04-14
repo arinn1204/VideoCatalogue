@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.AlignedModels;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
-using Grains.Codecs.Models.AlignedModels;
 using MoreLinq.Extensions;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions

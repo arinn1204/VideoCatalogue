@@ -292,8 +292,6 @@ namespace Grains.Tests.Unit.Codecs
 			          .RuleFor(
 				           r => r.ChapterTranslates,
 				           r => new AutoFaker<ChapterTranslate>().Generate(1))
-			          .RuleFor(r => r.TimecodeScale, f => 1_000_000U)
-			          .RuleFor(r => r.DateUTC, new DateTime(2020, 4, 20))
 			          .Generate();
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();

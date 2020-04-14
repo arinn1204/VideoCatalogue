@@ -79,14 +79,6 @@ namespace Grains.Tests.Unit.Extensions
 			Stream stream,
 			Info info)
 		{
-			var dateDifference = info.DateUTC.Value -
-			                     new DateTime(
-				                     2001,
-				                     1,
-				                     1);
-
-			var differenceInMilliseconds = dateDifference.TotalMilliseconds;
-			var differenceInNs = (ulong) differenceInMilliseconds * 1_000_000;
 			reader.SetupSequence(s => s.ReadBytes(stream, It.Is<int>(count => count > 1)))
 			      .Returns(info.SegmentUID)
 			      .Returns(Encoding.UTF8.GetBytes(info.SegmentFilename))
@@ -111,7 +103,7 @@ namespace Grains.Tests.Unit.Extensions
 			      .Returns(info.ChapterTranslates.First().ChapterTranslateID)
 			      .Returns(BitConverter.GetBytes(info.TimecodeScale).Reverse().ToArray())
 			      .Returns(BitConverter.GetBytes(info.Duration.Value).Reverse().ToArray())
-			      .Returns(BitConverter.GetBytes(differenceInNs).Reverse().ToArray())
+			      .Returns(BitConverter.GetBytes(info.DateUTC.Value).Reverse().ToArray())
 			      .Returns(Encoding.UTF8.GetBytes(info.Title))
 			      .Returns(Encoding.UTF8.GetBytes(info.MuxingApp))
 			      .Returns(Encoding.UTF8.GetBytes(info.WritingApp));

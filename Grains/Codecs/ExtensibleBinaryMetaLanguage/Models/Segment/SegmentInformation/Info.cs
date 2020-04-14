@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System;
 using System.Collections.Generic;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
@@ -28,7 +27,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 		public float? Duration { get; set; }
 
 		[EbmlElement("DateUTC")]
-		public DateTime? DateUTC { get; set; }
+		public ulong? DateUTC { get; set; }
 
 		public string? Title { get; set; }
 		public string MuxingApp { get; set; }

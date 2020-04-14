@@ -10,6 +10,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.2" />
+    <PackageReference Include="System.Interactive" Version="4.1.1"/>
   </ItemGroup>
 
 </Project>

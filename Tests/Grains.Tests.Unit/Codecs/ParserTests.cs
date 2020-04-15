@@ -36,9 +36,15 @@ namespace Grains.Tests.Unit.Codecs
 		private const string FileName = "appsettings.json";
 		private readonly Fixture _fixture;
 
-		private static EbmlDocument BuildDocument(out byte[] uid)
+		private static EbmlDocument BuildDocument(
+			out byte[] uid,
+			string audioLanguageOverride = null,
+			string subtitleLanguageOverride = null)
 		{
-			var expectedSegment = BuildSegment(out uid);
+			var expectedSegment = BuildSegment(
+				out uid,
+				audioLanguageOverride,
+				subtitleLanguageOverride);
 			var expectedHeader = BuildHeader();
 			var document = new EbmlDocument
 			               {
@@ -63,7 +69,10 @@ namespace Grains.Tests.Unit.Codecs
 			return expectedHeader;
 		}
 
-		private static Segment BuildSegment(out byte[] uid)
+		private static Segment BuildSegment(
+			out byte[] uid,
+			string audioLanguageOverride,
+			string subtitleLanguageOverride)
 		{
 			var tracks = new Track
 			             {
@@ -91,7 +100,8 @@ namespace Grains.Tests.Unit.Codecs
 							                                            SamplingFrequency = 48000
 						                                            },
 						                            Language = "en",
-						                            Name = "Main Audio"
+						                            Name = "Main Audio",
+						                            LanguageOverride = audioLanguageOverride
 					                            },
 					                            new TrackEntry
 					                            {
@@ -114,7 +124,8 @@ namespace Grains.Tests.Unit.Codecs
 					                            {
 						                            CodecId = "S_VOBSOB",
 						                            Language = "en",
-						                            Name = "Subtitle"
+						                            Name = "Subtitle",
+						                            LanguageOverride = subtitleLanguageOverride
 					                            }
 				                            }
 			             };
@@ -241,6 +252,38 @@ namespace Grains.Tests.Unit.Codecs
 						                   }
 					                   }
 				       });
+		}
+
+		[Fact]
+		public void ShouldOverrideAudioLanguageWhenOverrideSet()
+		{
+			var expectedDocument = BuildDocument(out var uid, "CH");
+
+			var matroska = _fixture.Freeze<Mock<IMatroska>>();
+			var receivedError = null as MatroskaError;
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
+			        .Returns<Stream, MatroskaError>(
+				         (stream, error) => Enumerable.Empty<EbmlDocument>()
+				                                      .Append(expectedDocument));
+			var parser = _fixture.Create<IParser>();
+			var result = parser.GetInformation(FileName, out var fileError);
+			result.Audios.First(f => f.Name == "Main Audio").Language.Should().Be("CH");
+		}
+
+		[Fact]
+		public void ShouldOverrideSubtitleLanguageWhenOverrideSet()
+		{
+			var expectedDocument = BuildDocument(out var uid, null, "CH");
+
+			var matroska = _fixture.Freeze<Mock<IMatroska>>();
+			var receivedError = null as MatroskaError;
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
+			        .Returns<Stream, MatroskaError>(
+				         (stream, error) => Enumerable.Empty<EbmlDocument>()
+				                                      .Append(expectedDocument));
+			var parser = _fixture.Create<IParser>();
+			var result = parser.GetInformation(FileName, out var fileError);
+			result.Subtitles.First(f => f.Name == "Subtitle").Language.Should().Be("CH");
 		}
 	}
 }

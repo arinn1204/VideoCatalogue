@@ -2,6 +2,13 @@
 {
 	public enum Codec
 	{
-		H264 = 0
+		H264,
+		H265,
+		X264,
+		X265,
+		HEVC,
+		AC3,
+		AAC,
+		FLAC
 	}
 }

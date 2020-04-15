@@ -30,6 +30,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				                                        k => k.IdString.ConvertHexToString());
 			var skippedElements = ebmlSpecification
 			                     .GetSkippableElements()
+			                     .Concat(
+				                      ebmlSpecification
+					                     .Elements.Where(
+						                      w => w.Name == "Cluster" ||
+						                           w.Name == "Cues" ||
+						                           w.Name == "Chapters" ||
+						                           w.Name == "Tags")
+					                     .Select(s => s.Id))
 			                     .ToList(); // list as it should be a short list of skipped ids, this makes it inconsequential to enumerate
 
 			return _reader.GetElement<Segment>(

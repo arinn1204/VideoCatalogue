@@ -1,8 +1,7 @@
 ﻿namespace GrainsInterfaces.Models.CodecParser
 {
-	public enum Container
+	public enum TimeCodeScale
 	{
-		Unknown,
-		Matroska
+		Millisecond = 1_000_000
 	}
 }

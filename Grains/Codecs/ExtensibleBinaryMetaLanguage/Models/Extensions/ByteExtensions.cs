@@ -18,7 +18,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 				       "utf-8"    => value.ConvertToString(),
 				       "string"   => value.ConvertToString(Encoding.ASCII),
 				       "float"    => value.ConvertToFloat(),
-				       "date"     => value.ConvertToUlong(),
+				       "date"     => (double) value.ConvertToUlong(),
 				       "uinteger" => value.ConvertToUint(),
 				       "binary"   => value,
 				       "integer"  => value.ConvertToInt(),

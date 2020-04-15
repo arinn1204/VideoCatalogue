@@ -36,8 +36,34 @@ namespace Grains.Tests.Unit.Codecs
 		private const string FileName = "appsettings.json";
 		private readonly Fixture _fixture;
 
-		[Fact]
-		public void ShouldMapMatroskaResponseIntoAFileInformationWithoutOverrides()
+		private static EbmlDocument BuildDocument(out byte[] uid)
+		{
+			var expectedSegment = BuildSegment(out uid);
+			var expectedHeader = BuildHeader();
+			var document = new EbmlDocument
+			               {
+				               Segment = expectedSegment,
+				               EbmlHeader = expectedHeader
+			               };
+			return document;
+		}
+
+		private static EbmlHeader BuildHeader()
+		{
+			var expectedHeader = new EbmlHeader
+			                     {
+				                     DocType = "matroska",
+				                     DocTypeVersion = 3,
+				                     DocTypeReadVersion = 1,
+				                     EbmlVersion = 1,
+				                     EbmlReadVersion = 1,
+				                     EbmlMaxIdLength = 4,
+				                     EbmlMaxSizeLength = 8
+			                     };
+			return expectedHeader;
+		}
+
+		private static Segment BuildSegment(out byte[] uid)
 		{
 			var tracks = new Track
 			             {
@@ -93,6 +119,7 @@ namespace Grains.Tests.Unit.Codecs
 				                            }
 			             };
 
+			uid = Guid.NewGuid().ToByteArray();
 			var expectedSegment = new Segment
 			                      {
 				                      Tracks = new[]
@@ -116,24 +143,38 @@ namespace Grains.Tests.Unit.Codecs
 								                                                     1))
 							                                           .TotalMilliseconds *
 							                                            1000000,
-						                                            SegmentUID =
-							                                            Guid.NewGuid()
-							                                                .ToByteArray(),
+						                                            SegmentUID = uid,
 						                                            TimecodeScale = 1_000_000
 					                                            }
 				                                            }
 			                      };
+			return expectedSegment;
+		}
 
-			var expectedHeader = new EbmlHeader
-			                     {
-				                     DocType = "matroska",
-				                     DocTypeVersion = 3,
-				                     DocTypeReadVersion = 1,
-				                     EbmlVersion = 1,
-				                     EbmlReadVersion = 1,
-				                     EbmlMaxIdLength = 4,
-				                     EbmlMaxSizeLength = 8
-			                     };
+		[Fact]
+		public void ShouldAddTheNameOfStreamToTheFileError()
+		{
+			var expectedDocument = BuildDocument(out var uid);
+
+			var matroska = _fixture.Freeze<Mock<IMatroska>>();
+			var receivedError = new MatroskaError("An error occured.");
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
+			        .Returns<Stream, MatroskaError>(
+				         (stream, error) => Enumerable.Empty<EbmlDocument>()
+				                                      .Append(expectedDocument));
+			var parser = _fixture.Create<IParser>();
+			var result = parser.GetInformation(FileName, out var fileError);
+			fileError.Errors.Single().Should().Be("An error occured.");
+			fileError.StreamName.Should().Be(FileName);
+
+			result.SegmentId.Should()
+			      .Be(new Guid(uid));
+		}
+
+		[Fact]
+		public void ShouldMapMatroskaResponseIntoAFileInformationWithoutOverrides()
+		{
+			var expectedDocument = BuildDocument(out var uid);
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			var error = null as MatroskaError;
@@ -141,11 +182,7 @@ namespace Grains.Tests.Unit.Codecs
 			        .Returns(
 				         new[]
 				         {
-					         new EbmlDocument
-					         {
-						         Segment = expectedSegment,
-						         EbmlHeader = expectedHeader
-					         }
+					         expectedDocument
 				         });
 
 			var parser = _fixture.Create<IParser>();
@@ -168,8 +205,7 @@ namespace Grains.Tests.Unit.Codecs
 					       DateCreated = new DateTime(2020, 4, 4),
 					       PixelHeight = 1080,
 					       PixelWidth = 1920,
-					       SegmentId = new Guid(
-						       expectedSegment.SegmentInformations.First().SegmentUID),
+					       SegmentId = new Guid(uid),
 					       VideoCodec = Codec.HEVC,
 					       TimeCodeScale = TimeCodeScale.Millisecond,
 					       Audios = new[]

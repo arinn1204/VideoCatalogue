@@ -8,7 +8,7 @@ namespace Grains.Codecs.Models.Mappers
 	{
 		public FileErrorProfile()
 		{
-			CreateMap<FileError, MatroskaError>();
+			CreateMap<MatroskaError, FileError>();
 		}
 	}
 }

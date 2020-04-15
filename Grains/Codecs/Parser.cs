@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
 using Grains.Codecs.Matroska.Models;
@@ -27,9 +26,6 @@ namespace Grains.Codecs
 		{
 			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
 			var matroskaInfo = _matroska.GetFileInformation(stream, out var matroskaError);
-			var tracks = matroskaInfo
-			            .SelectMany(s => s.Segment.Tracks.SelectMany(s1 => s1.TrackEntries))
-			            .ToList();
 			var fileInformation = _mapper.Map<FileInformation>(matroskaInfo);
 			error = _mapper.Map<MatroskaError, FileError>(
 				matroskaError,

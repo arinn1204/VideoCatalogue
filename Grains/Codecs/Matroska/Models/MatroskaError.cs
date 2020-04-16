@@ -5,10 +5,9 @@ namespace Grains.Codecs.Matroska.Models
 {
 	public class MatroskaError
 	{
-		public MatroskaError(string description)
+		public MatroskaError()
 		{
 			Errors = Enumerable.Empty<string>();
-			Errors = Errors.Append(description);
 		}
 
 		public IEnumerable<string> Errors { get; private set; }

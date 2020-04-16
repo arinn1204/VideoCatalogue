@@ -168,7 +168,7 @@ namespace Grains.Tests.Unit.Codecs
 			var expectedDocument = BuildDocument(out var uid);
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var receivedError = new MatroskaError("An error occured.");
+			var receivedError = new MatroskaError().WithNewError("An error occured.");
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
 			        .Returns<Stream, MatroskaError>(
 				         (stream, error) => Enumerable.Empty<EbmlDocument>()

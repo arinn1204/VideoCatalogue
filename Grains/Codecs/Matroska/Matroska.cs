@@ -41,29 +41,18 @@ namespace Grains.Codecs.Matroska
 
 		public IEnumerable<EbmlDocument> GetFileInformation(Stream stream, out MatroskaError? error)
 		{
-			error = default;
-			var documents = new List<EbmlDocument>();
-			using var documentEnumerator = GetDocuments(stream).GetEnumerator();
-
-			while (true)
-			{
-				try
-				{
-					if (documentEnumerator.MoveNext())
-					{
-						documents.Add(documentEnumerator.Current);
-					}
-					else
-					{
-						break;
-					}
-				}
-				catch (Exception e)
-				{
-					error = error?.WithNewError(e.Message) ?? new MatroskaError(e.Message);
-				}
-			}
-
+			var matroskaError = null as MatroskaError;
+			var documents = GetDocuments(stream)
+			               .Catch<EbmlDocument, Exception>(
+				                exception =>
+				                {
+					                matroskaError =
+						                matroskaError?.WithNewError(exception.Message) ??
+						                new MatroskaError().WithNewError(exception.Message);
+					                return Enumerable.Empty<EbmlDocument>();
+				                })
+			               .ToList();
+			error = matroskaError;
 			return documents;
 		}
 

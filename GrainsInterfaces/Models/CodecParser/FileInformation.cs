@@ -11,7 +11,7 @@ namespace GrainsInterfaces.Models.CodecParser
 		public int ContainerVersion { get; set; }
 		public TimeCodeScale TimeCodeScale { get; set; }
 		public TimeSpan Duration { get; set; }
-		public DateTime? DateCreated { get; set; }
+		public DateTime DateCreated { get; set; }
 		public Guid SegmentId { get; set; }
 		public Codec VideoCodec { get; set; }
 		public int PixelHeight { get; set; }

@@ -3,13 +3,13 @@ using GrainsInterfaces.Models.CodecParser;
 
 namespace Grains.Codecs.Models.Extensions
 {
-	public static class UintExtensions
+	public static class TimeCodeScaleExtensions
 	{
-		public static TimeCodeScale ToTimeCodeScale(this uint scale)
+		public static double ToMilliseconds(this TimeCodeScale scale, double unitlessTime)
 		{
 			return scale switch
 			       {
-				       1_000_000 => TimeCodeScale.Millisecond,
+				       TimeCodeScale.Millisecond => unitlessTime,
 				       _ => throw new UnsupportedException(
 					       nameof(TimeCodeScale),
 					       scale.ToString())

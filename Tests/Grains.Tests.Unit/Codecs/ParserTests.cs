@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using AutoFixture;
@@ -180,6 +180,51 @@ namespace Grains.Tests.Unit.Codecs
 
 			result.SegmentId.Should()
 			      .Be(new Guid(uid));
+		}
+
+		[Fact]
+		public void ShouldHaveDefaultDateOfJanFirstTwoThousandOne()
+		{
+			var expectedDocument = BuildDocument(out _);
+			expectedDocument.Segment.SegmentInformations.First().DateUTC = null;
+
+			var matroska = _fixture.Freeze<Mock<IMatroska>>();
+			var receivedError = null as MatroskaError;
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
+			        .Returns<Stream, MatroskaError>(
+				         (stream, error) => Enumerable.Empty<EbmlDocument>()
+				                                      .Append(expectedDocument));
+			var parser = _fixture.Create<IParser>();
+			var result = parser.GetInformation(FileName, out _);
+			result
+			   .DateCreated
+			   .Should()
+			   .Be(
+					new DateTime(
+						2001,
+						1,
+						1,
+						0,
+						0,
+						0,
+						DateTimeKind.Utc));
+		}
+
+		[Fact]
+		public void ShouldHaveDurationOfZeroWhenNotRead()
+		{
+			var expectedDocument = BuildDocument(out _);
+			expectedDocument.Segment.SegmentInformations.First().Duration = null;
+
+			var matroska = _fixture.Freeze<Mock<IMatroska>>();
+			var receivedError = null as MatroskaError;
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
+			        .Returns<Stream, MatroskaError>(
+				         (stream, error) => Enumerable.Empty<EbmlDocument>()
+				                                      .Append(expectedDocument));
+			var parser = _fixture.Create<IParser>();
+			var result = parser.GetInformation(FileName, out _);
+			result.Duration.TotalMilliseconds.Should().Be(0);
 		}
 
 		[Fact]

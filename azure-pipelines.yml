@@ -51,16 +51,22 @@ stages:
   jobs:
   - job: IntegrationTests
     steps:
-    - task: AzurePowerShell@4
-      inputs:
-        azurePowerShellVersion: latestVersion
-        azureSubscription: $(azure_subscription)
-        scriptType: filePath
-        scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
-        scriptArguments:
-          -projectLocation $(Build.SourcesDirectory) `
-          -type Integration `
-          -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization) `
+      - task: UseDotNet@2
+        displayName: 'Use .NET Core sdk'
+        inputs:
+          packageType: sdk
+          version: 3.1.103
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+      - task: AzurePowerShell@4
+        inputs:
+          azurePowerShellVersion: latestVersion
+          azureSubscription: $(azure_subscription)
+          scriptType: filePath
+          scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
+          scriptArguments:
+            -projectLocation $(Build.SourcesDirectory) `
+            -type Integration `
+            -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization) `
           -dbCatalog '$(testCatalog)' `
           -dbUsername '$(db_username)' `
           -dbPassword '$(db_password)' `

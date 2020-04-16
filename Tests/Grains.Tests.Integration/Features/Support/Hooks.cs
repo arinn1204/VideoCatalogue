@@ -4,12 +4,42 @@ using Grains.VideoApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
+using WireMock.Logging;
+using WireMock.Server;
+using WireMock.Settings;
 
 namespace Grains.Tests.Integration.Features.Support
 {
 	[Binding]
 	public static class Hooks
 	{
+		[BeforeTestRun]
+		public static void BeforeTestRun(IObjectContainer container)
+		{
+			var wiremockSettings = new FluentMockServerSettings
+			                       {
+				                       Port = 8080,
+				                       StartAdminInterface = true,
+				                       Logger = new WireMockConsoleLogger()
+			                       };
+			var wiremock = WireMockServer.Start(wiremockSettings);
+
+			container.RegisterInstanceAs(wiremock);
+		}
+
+		[AfterTestRun]
+		public static void StopWiremockServer(WireMockServer wiremock)
+		{
+			wiremock.Stop();
+			wiremock.Dispose();
+		}
+
+		[BeforeScenario]
+		public static void ClearStubs(WireMockServer wiremock)
+		{
+			wiremock.Reset();
+		}
+
 		[BeforeScenario(Order = 0)]
 		public static void SetupMicrosoftDI(IObjectContainer container)
 		{

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
@@ -68,22 +67,17 @@ namespace Grains.Codecs.Models.Mappers
 		private TimeSpan GetDuration(IEnumerable<EbmlDocument> documents)
 		{
 			var info = GetInfo(documents);
-			var scale = info.TimecodeScale.ToTimeCodeScale();
 			var duration = info.Duration.HasValue
 				? info.Duration.Value
 				: 0.0;
+			var milliseconds = info.TimecodeScale.ToTimeCodeScale().ToMilliseconds(duration);
 
-			return scale switch
-			       {
-				       TimeCodeScale.Millisecond => new TimeSpan(
-					       0,
-					       0,
-					       0,
-					       0,
-					       (int) duration),
-
-				       _ => throw new UnsupportedException($"{scale} is not supported.")
-			       };
+			return new TimeSpan(
+				0,
+				0,
+				0,
+				0,
+				(int) milliseconds);
 		}
 
 		private DateTime GetDateTime(IEnumerable<EbmlDocument> documents)
@@ -98,12 +92,11 @@ namespace Grains.Codecs.Models.Mappers
 				0,
 				DateTimeKind.Utc);
 
-			var secondsInScale = info.DateUTC.HasValue
+			var nanoSeconds = info.DateUTC.HasValue
 				? info.DateUTC.Value
 				: 0.0;
 
-			var milliseconds = secondsInScale / (int) info.TimecodeScale.ToTimeCodeScale();
-
+			var milliseconds = nanoSeconds / (int) info.TimecodeScale.ToTimeCodeScale();
 			return baseDate.AddMilliseconds(milliseconds);
 		}
 
@@ -144,15 +137,7 @@ namespace Grains.Codecs.Models.Mappers
 		{
 			var containerName = documents.DistinctBy(d => d.EbmlHeader.DocType)
 			                             .Single();
-
-			return Enum.TryParse(
-				       containerName.EbmlHeader.DocType,
-				       true,
-				       out Container result) switch
-			       {
-				       true  => result,
-				       false => Container.Unknown
-			       };
+			return containerName.EbmlHeader.DocType.ToContainer();
 		}
 	}
 }

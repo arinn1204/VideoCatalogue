@@ -58,25 +58,25 @@ namespace Grains.Tests.Unit.Extensions
 			var target = tag.Target;
 
 			sequence.Returns(
-				         BitConverter.GetBytes(target.TargetTypeValue.Value).Reverse().ToArray())
-			        .Returns(Encoding.UTF8.GetBytes(target.TargetType));
+				         BitConverter.GetBytes(target.LogicalLevelValue.Value).Reverse().ToArray())
+			        .Returns(Encoding.UTF8.GetBytes(target.LogicalLevel));
 
-			foreach (var uid in target.TagTrackUids)
+			foreach (var uid in target.TrackUids)
 			{
 				sequence.Returns(BitConverter.GetBytes(uid).Reverse().ToArray());
 			}
 
-			foreach (var uid in target.TagEditionUids)
+			foreach (var uid in target.EditionUids)
 			{
 				sequence.Returns(BitConverter.GetBytes(uid).Reverse().ToArray());
 			}
 
-			foreach (var uid in target.TagChapterUids)
+			foreach (var uid in target.ChapterUids)
 			{
 				sequence.Returns(BitConverter.GetBytes(uid).Reverse().ToArray());
 			}
 
-			foreach (var uid in target.TagAttachmentUids)
+			foreach (var uid in target.AttachmentUids)
 			{
 				sequence.Returns(BitConverter.GetBytes(uid).Reverse().ToArray());
 			}
@@ -84,17 +84,19 @@ namespace Grains.Tests.Unit.Extensions
 			var topSimpleTag = tag.SimpleTags.Single();
 			var nestedSimpleTag = topSimpleTag.SimpleTagChild;
 
-			sequence.Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagName))
-			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagLanguage))
-			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagLanguageIETF))
-			        .Returns(BitConverter.GetBytes(topSimpleTag.TagDefault).Reverse().ToArray())
-			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.TagValue));
+			sequence.Returns(Encoding.UTF8.GetBytes(topSimpleTag.Name))
+			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.Language))
+			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.LanguageIETF))
+			        .Returns(
+				         BitConverter.GetBytes(topSimpleTag.DefaultLanguage).Reverse().ToArray())
+			        .Returns(Encoding.UTF8.GetBytes(topSimpleTag.ValueString));
 
-			sequence.Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagName))
-			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagLanguage))
-			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagLanguageIETF))
-			        .Returns(BitConverter.GetBytes(nestedSimpleTag.TagDefault).Reverse().ToArray())
-			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.TagValue));
+			sequence.Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.Name))
+			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.Language))
+			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.LanguageIETF))
+			        .Returns(
+				         BitConverter.GetBytes(nestedSimpleTag.DefaultLanguage).Reverse().ToArray())
+			        .Returns(Encoding.UTF8.GetBytes(nestedSimpleTag.ValueString));
 		}
 
 		private static void SetupTagReturnIds(Mock<EbmlReader> reader, Stream stream)

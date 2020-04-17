@@ -9,20 +9,25 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 		[EbmlElement("SimpleTag")]
 		public SimpleTag? SimpleTagChild { get; set; }
 
-		public string TagName { get; set; }
-		public string TagLanguage { get; set; }
+		[EbmlElement("TagName")]
+		public string Name { get; set; }
+
+		[EbmlElement("TagLanguage")]
+		public string Language { get; set; }
 
 		[SuppressMessage(
 			"ReSharper",
 			"InconsistentNaming",
 			Justification = "IETF is an acronym for Internet Engineering Task Force")]
-		public string? TagLanguageIETF { get; set; }
+		public string? LanguageIETF { get; set; }
 
-		public uint TagDefault { get; set; }
+		[EbmlElement("TagDefault")]
+		public uint DefaultLanguage { get; set; }
 
 		[EbmlElement("TagString")]
-		public string? TagValue { get; set; }
+		public string? ValueString { get; set; }
 
-		public byte[]? TagBinary { get; set; }
+		[EbmlElement("TagBinary")]
+		public byte[]? ValueBinary { get; set; }
 	}
 }

@@ -317,12 +317,12 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			var bottomSimpleTag = new AutoFaker<SimpleTag>()
 			                     .RuleFor(r => r.SimpleTagChild, r => default)
-			                     .RuleFor(r => r.TagBinary, null as byte[])
+			                     .RuleFor(r => r.ValueBinary, null as byte[])
 			                     .Generate();
 
 			var topSimpleTag = new AutoFaker<SimpleTag>()
 			                  .RuleFor(r => r.SimpleTagChild, r => bottomSimpleTag)
-			                  .RuleFor(r => r.TagBinary, null as byte[])
+			                  .RuleFor(r => r.ValueBinary, null as byte[])
 			                  .Generate();
 
 			var target = new AutoFaker<Target>().Generate();

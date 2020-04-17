@@ -6,19 +6,22 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 	[EbmlMaster("Targets")]
 	public class Target
 	{
-		public uint? TargetTypeValue { get; set; }
-		public string? TargetType { get; set; }
+		[EbmlElement("TargetTypeValue")]
+		public uint? LogicalLevelValue { get; set; }
+
+		[EbmlElement("TargetType")]
+		public string? LogicalLevel { get; set; }
 
 		[EbmlElement("TagTrackUID")]
-		public IEnumerable<uint>? TagTrackUids { get; set; }
+		public IEnumerable<uint>? TrackUids { get; set; }
 
 		[EbmlElement("TagEditionUID")]
-		public IEnumerable<uint>? TagEditionUids { get; set; }
+		public IEnumerable<uint>? EditionUids { get; set; }
 
 		[EbmlElement("TagChapterUID")]
-		public IEnumerable<uint>? TagChapterUids { get; set; }
+		public IEnumerable<uint>? ChapterUids { get; set; }
 
 		[EbmlElement("TagAttachmentUID")]
-		public IEnumerable<uint>? TagAttachmentUids { get; set; }
+		public IEnumerable<uint>? AttachmentUids { get; set; }
 	}
 }

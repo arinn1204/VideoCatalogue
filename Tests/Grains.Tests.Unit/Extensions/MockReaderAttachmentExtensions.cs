@@ -13,7 +13,7 @@ namespace Grains.Tests.Unit.Extensions
 		public static int SetupAttachment(
 			this Mock<EbmlReader> reader,
 			Stream stream,
-			SegmentAttachments attachment)
+			SegmentAttachment attachment)
 		{
 			SetupAttachmentIds(reader, stream);
 			SetupAttachmentValues(reader, stream, attachment);
@@ -23,7 +23,7 @@ namespace Grains.Tests.Unit.Extensions
 		private static int SetupAttachmentSize(
 			Mock<EbmlReader> reader,
 			Stream stream,
-			SegmentAttachments attachment)
+			SegmentAttachment attachment)
 		{
 			var attachmentSize = attachment.GetSize();
 			var sizeCounter = 0;
@@ -50,7 +50,7 @@ namespace Grains.Tests.Unit.Extensions
 		private static void SetupAttachmentValues(
 			Mock<EbmlReader> reader,
 			Stream stream,
-			SegmentAttachments attachment)
+			SegmentAttachment attachment)
 		{
 			var attachedFile = attachment.AttachedFiles.Single();
 			reader.SetupSequence(s => s.ReadBytes(stream, 5))

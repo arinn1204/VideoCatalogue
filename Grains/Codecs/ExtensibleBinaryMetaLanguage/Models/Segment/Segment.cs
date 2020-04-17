@@ -19,7 +19,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment
 		public IEnumerable<SegmentTag>? Tags { get; set; }
 
 		[EbmlElement("Attachments")]
-		public SegmentAttachments? Attachment { get; set; }
+		public SegmentAttachment? Attachment { get; set; }
 
 		[EbmlElement("Chapters")]
 		public SegmentChapter? Chapter { get; set; }

@@ -267,7 +267,7 @@ namespace Grains.Tests.Unit.Codecs
 			var attachedFile = new AutoFaker<AttachedFile>()
 			                  .RuleFor(r => r.Data, r => null)
 			                  .Generate(1);
-			var expectedAttachment = new AutoFaker<SegmentAttachments>()
+			var expectedAttachment = new AutoFaker<SegmentAttachment>()
 			                        .RuleFor(
 				                         r => r.AttachedFiles,
 				                         r => attachedFile)

@@ -15,31 +15,27 @@ namespace Grains.Tests.Integration.Features.Actions
 		private readonly IObjectContainer _container;
 		private readonly VideoRequest _request;
 		private readonly IVideoApi _videoApi;
+		private readonly WireMockServer _wiremock;
 
 		public VideoApiActions(
 			IVideoApi videoApi,
 			VideoRequest request,
-			IObjectContainer container)
+			IObjectContainer container,
+			WireMockServer wiremock)
 		{
 			_videoApi = videoApi;
 			_request = request;
 			_container = container;
+			_wiremock = wiremock;
 		}
 
 		[When(@"the client requests movie details")]
 		public async Task WhenTheClientRequestsMovieDetails()
 		{
 			var videoId = GetVideoId(_request.Title);
-			var wiremockServer = _container.Resolve<WireMockServer>();
-			wiremockServer.AddSearch(_request)
-			              .AddMovieDetail(_request.Title, videoId)
-			              .AddMovieCredit(_request.Title, videoId);
-
-			wiremockServer.LogEntriesChanged += (sender, args) =>
-			                                    {
-				                                    var wm = wiremockServer;
-				                                    var r = _request;
-			                                    };
+			_wiremock.AddSearch(_request)
+			         .AddMovieDetail(_request.Title, videoId)
+			         .AddMovieCredit(_request.Title, videoId);
 
 			var details = await _videoApi.GetVideoDetails(_request);
 			_container.RegisterInstanceAs(details);

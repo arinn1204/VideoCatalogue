@@ -9,9 +9,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 		[EbmlElement("EditionUID")]
 		public uint? EditionUid { get; set; }
 
-		public uint EditionFlagHidden { get; set; }
-		public uint EditionFlagDefault { get; set; }
-		public uint? EditionFlagOrdered { get; set; }
+		[EbmlElement("EditionFlagHidden")]
+		public uint FlagHidden { get; set; }
+
+		[EbmlElement("EditionFlagDefault")]
+		public uint FlagDefault { get; set; }
+
+		[EbmlElement("EditionFlagOrdered")]
+		public uint? FlagOrdered { get; set; }
 
 		[EbmlElement("ChapterAtom")]
 		public IEnumerable<ChapterAtom> ChapterAtoms { get; set; }

@@ -71,12 +71,10 @@ namespace Grains.Tests.Unit.Extensions
 			var sequence = reader.SetupSequence(s => s.ReadBytes(stream, DataValue));
 			sequence.Returns(
 				         BitConverter.GetBytes(editionEntry.EditionUid.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(editionEntry.FlagHidden).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(editionEntry.FlagDefault).Reverse().ToArray())
 			        .Returns(
-				         BitConverter.GetBytes(editionEntry.EditionFlagHidden).Reverse().ToArray())
-			        .Returns(
-				         BitConverter.GetBytes(editionEntry.EditionFlagDefault).Reverse().ToArray())
-			        .Returns(
-				         BitConverter.GetBytes(editionEntry.EditionFlagOrdered.Value)
+				         BitConverter.GetBytes(editionEntry.FlagOrdered.Value)
 				                     .Reverse()
 				                     .ToArray());
 
@@ -84,26 +82,26 @@ namespace Grains.Tests.Unit.Extensions
 
 			sequence.Returns(BitConverter.GetBytes(atom.ChapterUid).Reverse().ToArray())
 			        .Returns(Encoding.UTF8.GetBytes(atom.ChapterStringUid))
-			        .Returns(BitConverter.GetBytes(atom.ChapterTimeStart).Reverse().ToArray())
-			        .Returns(BitConverter.GetBytes(atom.ChapterTimeEnd.Value).Reverse().ToArray())
-			        .Returns(BitConverter.GetBytes(atom.ChapterFlagHidden).Reverse().ToArray());
+			        .Returns(BitConverter.GetBytes(atom.TimeStart).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(atom.TimeEnd.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(atom.FlagHidden).Reverse().ToArray());
 
 			var secondAtom = atom.ChapterAtomChild;
 
 			sequence
-			   .Returns(BitConverter.GetBytes(secondAtom.ChapterTimeStart).Reverse().ToArray())
-			   .Returns(BitConverter.GetBytes(secondAtom.ChapterTimeEnd.Value).Reverse().ToArray())
-			   .Returns(BitConverter.GetBytes(secondAtom.ChapterFlagHidden).Reverse().ToArray());
+			   .Returns(BitConverter.GetBytes(secondAtom.TimeStart).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(secondAtom.TimeEnd.Value).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(secondAtom.FlagHidden).Reverse().ToArray());
 
 			sequence
-			   .Returns(BitConverter.GetBytes(atom.ChapterFlagEnabled).Reverse().ToArray())
-			   .Returns(atom.ChapterSegmentUid)
+			   .Returns(BitConverter.GetBytes(atom.FlagEnabled).Reverse().ToArray())
+			   .Returns(atom.SegmentUid)
 			   .Returns(
-					BitConverter.GetBytes(atom.ChapterSegmentEditionUid.Value)
+					BitConverter.GetBytes(atom.SegmentEditionUid.Value)
 					            .Reverse()
 					            .ToArray())
 			   .Returns(
-					BitConverter.GetBytes(atom.ChapterPhysicalEquivalent.Value)
+					BitConverter.GetBytes(atom.PhysicalEquivalent.Value)
 					            .Reverse()
 					            .ToArray());
 
@@ -112,31 +110,29 @@ namespace Grains.Tests.Unit.Extensions
 				sequence.Returns(BitConverter.GetBytes(number).Reverse().ToArray());
 			}
 
-			var display = atom.ChapterDisplays.Single();
+			var display = atom.Displays.Single();
 
 			sequence.Returns(Encoding.UTF8.GetBytes(display.ChapterString));
 
-			foreach (var language in display.ChapterLanguages)
+			foreach (var language in display.Languages)
 			{
 				sequence.Returns(Encoding.UTF8.GetBytes(language));
 			}
 
-			sequence.Returns(Encoding.UTF8.GetBytes(display.ChapterLanguageIETF));
+			sequence.Returns(Encoding.UTF8.GetBytes(display.LanguageIETF));
 
-			foreach (var country in display.ChapterCountries)
+			foreach (var country in display.Countries)
 			{
 				sequence.Returns(Encoding.UTF8.GetBytes(country));
 			}
 
-			var process = atom.ChapterProcesses.Single();
+			var process = atom.Processes.Single();
 
-			sequence.Returns(
-				BitConverter.GetBytes(process.ChapterProcessCodecId).Reverse().ToArray());
+			sequence.Returns(BitConverter.GetBytes(process.ProcessCodecId).Reverse().ToArray());
 
-			var processCommand = process.ChapterProcessCommands.Single();
+			var processCommand = process.ProcessCommands.Single();
 
-			sequence.Returns(
-				BitConverter.GetBytes(processCommand.ChapterProcessTime).Reverse().ToArray());
+			sequence.Returns(BitConverter.GetBytes(processCommand.ProcessTime).Reverse().ToArray());
 		}
 
 		private static void SetupChapterIds(Mock<EbmlReader> reader, Stream stream)

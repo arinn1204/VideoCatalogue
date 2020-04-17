@@ -45,34 +45,34 @@ namespace Grains.Tests.Unit.Codecs
 		public void ShouldBeAbleToCreateAChapter()
 		{
 			var chapterProcessCommand = new AutoFaker<ChapterProcessCommand>()
-			                           .RuleFor(r => r.ChapterProcessData, null as byte[])
+			                           .RuleFor(r => r.ProcessData, null as byte[])
 			                           .Generate(1);
 
 			var chapterProcess = new AutoFaker<ChapterProcess>()
-			                    .RuleFor(r => r.ChapterProcessCommands, chapterProcessCommand)
-			                    .RuleFor(r => r.ChapterProcessPrivateCodecData, null as byte[])
+			                    .RuleFor(r => r.ProcessCommands, chapterProcessCommand)
+			                    .RuleFor(r => r.ProcessPrivateCodecData, null as byte[])
 			                    .Generate(1);
 
 			var chapterDisplay = new AutoFaker<ChapterDisplay>()
 			   .Generate(1);
 
 			var secondAtom = new AutoFaker<ChapterAtom>()
-			                .RuleFor(r => r.ChapterDisplays, r => default)
-			                .RuleFor(r => r.ChapterProcesses, r => default)
+			                .RuleFor(r => r.Displays, r => default)
+			                .RuleFor(r => r.Processes, r => default)
 			                .RuleFor(r => r.ChapterTrack, r => default)
 			                .RuleFor(r => r.ChapterUid, r => default)
 			                .RuleFor(r => r.ChapterAtomChild, r => default)
-			                .RuleFor(r => r.ChapterFlagEnabled, r => default)
-			                .RuleFor(r => r.ChapterPhysicalEquivalent, r => default)
-			                .RuleFor(r => r.ChapterSegmentUid, r => default)
+			                .RuleFor(r => r.FlagEnabled, r => default)
+			                .RuleFor(r => r.PhysicalEquivalent, r => default)
+			                .RuleFor(r => r.SegmentUid, r => default)
 			                .RuleFor(r => r.ChapterStringUid, r => default)
-			                .RuleFor(r => r.ChapterSegmentEditionUid, r => default)
+			                .RuleFor(r => r.SegmentEditionUid, r => default)
 			                .Generate();
 
 			var chapterAtom = new AutoFaker<ChapterAtom>()
 			                 .RuleFor(r => r.ChapterAtomChild, secondAtom)
-			                 .RuleFor(r => r.ChapterDisplays, chapterDisplay)
-			                 .RuleFor(r => r.ChapterProcesses, chapterProcess)
+			                 .RuleFor(r => r.Displays, chapterDisplay)
+			                 .RuleFor(r => r.Processes, chapterProcess)
 			                 .Generate(1);
 
 			var editionEntry = new AutoFaker<EditionEntry>()

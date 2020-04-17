@@ -7,12 +7,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 	public class ChapterProcess
 	{
 		[EbmlElement("ChapProcessCodecID")]
-		public uint ChapterProcessCodecId { get; set; }
+		public uint ProcessCodecId { get; set; }
 
 		[EbmlElement("ChapProcessCommand")]
-		public IEnumerable<ChapterProcessCommand>? ChapterProcessCommands { get; set; }
+		public IEnumerable<ChapterProcessCommand>? ProcessCommands { get; set; }
 
 		[EbmlElement("ChapProcessPrivate")]
-		public byte[]? ChapterProcessPrivateCodecData { get; set; }
+		public byte[]? ProcessPrivateCodecData { get; set; }
 	}
 }

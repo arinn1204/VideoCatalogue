@@ -6,9 +6,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 	public class ChapterProcessCommand
 	{
 		[EbmlElement("ChapProcessTime")]
-		public uint ChapterProcessTime { get; set; }
+		public uint ProcessTime { get; set; }
 
 		[EbmlElement("ChapProcessData")]
-		public byte[] ChapterProcessData { get; set; }
+		public byte[] ProcessData { get; set; }
 	}
 }

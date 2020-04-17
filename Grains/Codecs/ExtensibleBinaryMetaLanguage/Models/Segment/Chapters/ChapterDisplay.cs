@@ -11,16 +11,16 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 		public string ChapterString { get; set; }
 
 		[EbmlElement("ChapLanguage")]
-		public IEnumerable<string> ChapterLanguages { get; set; }
+		public IEnumerable<string> Languages { get; set; }
 
 		[SuppressMessage(
 			"ReSharper",
 			"InconsistentNaming",
 			Justification = "IETF is an acronym for Internet Engineering Task Force")]
 		[EbmlElement("ChapLanguageIETF")]
-		public string? ChapterLanguageIETF { get; set; }
+		public string? LanguageIETF { get; set; }
 
 		[EbmlElement("ChapCountry")]
-		public IEnumerable<string>? ChapterCountries { get; set; }
+		public IEnumerable<string>? Countries { get; set; }
 	}
 }

@@ -15,26 +15,33 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 		[EbmlElement("ChapterStringUID")]
 		public string? ChapterStringUid { get; set; }
 
-		public uint ChapterTimeStart { get; set; }
-		public uint? ChapterTimeEnd { get; set; }
-		public uint ChapterFlagHidden { get; set; }
-		public uint ChapterFlagEnabled { get; set; }
+		[EbmlElement("ChapterTimeStart")]
+		public uint TimeStart { get; set; }
+
+		[EbmlElement("ChapterTimeEnd")]
+		public uint? TimeEnd { get; set; }
+
+		[EbmlElement("ChapterFlagHidden")]
+		public uint FlagHidden { get; set; }
+
+		[EbmlElement("ChapterFlagEnabled")]
+		public uint FlagEnabled { get; set; }
 
 		[EbmlElement("ChapterSegmentUID")]
-		public byte[]? ChapterSegmentUid { get; set; }
+		public byte[]? SegmentUid { get; set; }
 
 		[EbmlElement("ChapterSegmentEditionUID")]
-		public uint? ChapterSegmentEditionUid { get; set; }
+		public uint? SegmentEditionUid { get; set; }
 
 		[EbmlElement("ChapterPhysicalEquiv")]
-		public uint? ChapterPhysicalEquivalent { get; set; }
+		public uint? PhysicalEquivalent { get; set; }
 
 		public ChapterTrack? ChapterTrack { get; set; }
 
 		[EbmlElement("ChapterDisplay")]
-		public IEnumerable<ChapterDisplay>? ChapterDisplays { get; set; }
+		public IEnumerable<ChapterDisplay>? Displays { get; set; }
 
 		[EbmlElement("ChapProcess")]
-		public IEnumerable<ChapterProcess>? ChapterProcesses { get; set; }
+		public IEnumerable<ChapterProcess>? Processes { get; set; }
 	}
 }

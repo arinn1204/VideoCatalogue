@@ -13,9 +13,10 @@ namespace Grains.Tests.Integration.Features.Builders
 			_codecParserData = codecParserData;
 		}
 
-		[Given(@"an (.*) file")]
-		public void GivenAnMKVFile(string containerType)
+		[Given(@"an (.*) file named (.*)")]
+		public void GivenAnMKVFile(string containerType, string fileName)
 		{
+			_codecParserData.FileName = fileName;
 			_codecParserData.Container = containerType;
 		}
 	}

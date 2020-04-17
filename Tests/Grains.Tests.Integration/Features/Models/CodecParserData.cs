@@ -1,5 +1,4 @@
-﻿using Grains.Codecs;
-using GrainsInterfaces.Models.CodecParser;
+﻿using GrainsInterfaces.Models.CodecParser;
 
 namespace Grains.Tests.Integration.Features.Models
 {
@@ -8,5 +7,6 @@ namespace Grains.Tests.Integration.Features.Models
 		public string Container { get; set; }
 		public FileInformation VideoInformation { get; set; }
 		public FileError ParserError { get; set; }
+		public string FileName { get; set; }
 	}
 }

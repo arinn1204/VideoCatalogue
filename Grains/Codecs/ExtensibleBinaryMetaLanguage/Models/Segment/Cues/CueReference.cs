@@ -6,6 +6,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues
 	public class CueReference
 	{
 		[EbmlElement("CueRefTime")]
-		public uint CueReferenceTime { get; set; }
+		public uint ReferenceTime { get; set; }
 	}
 }

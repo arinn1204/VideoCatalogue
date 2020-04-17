@@ -52,34 +52,33 @@ namespace Grains.Tests.Unit.Extensions
 		{
 			var sequence = reader.SetupSequence(s => s.ReadBytes(stream, DataValue));
 			var cuePoint = cues.CuePoints.Single();
-			sequence.Returns(BitConverter.GetBytes(cuePoint.CueTime).Reverse().ToArray);
+			sequence.Returns(BitConverter.GetBytes(cuePoint.Time).Reverse().ToArray);
 
-			var cueTrackPosition = cuePoint.CueTrackPositions.Single();
-			sequence.Returns(BitConverter.GetBytes(cueTrackPosition.CueTrack).Reverse().ToArray)
+			var cueTrackPosition = cuePoint.TrackPositions.Single();
+			sequence.Returns(BitConverter.GetBytes(cueTrackPosition.Track).Reverse().ToArray)
 			        .Returns(
-				         BitConverter.GetBytes(cueTrackPosition.CueClusterPosition)
+				         BitConverter.GetBytes(cueTrackPosition.ClusterPosition)
 				                     .Reverse()
 				                     .ToArray)
 			        .Returns(
-				         BitConverter.GetBytes(cueTrackPosition.CueRelativePosition.Value)
+				         BitConverter.GetBytes(cueTrackPosition.RelativePosition.Value)
 				                     .Reverse()
 				                     .ToArray)
 			        .Returns(
-				         BitConverter.GetBytes(cueTrackPosition.CueDuration.Value)
+				         BitConverter.GetBytes(cueTrackPosition.Duration.Value)
 				                     .Reverse()
 				                     .ToArray)
 			        .Returns(
-				         BitConverter.GetBytes(cueTrackPosition.CueBlockNumber.Value)
+				         BitConverter.GetBytes(cueTrackPosition.BlockNumber.Value)
 				                     .Reverse()
 				                     .ToArray)
 			        .Returns(
-				         BitConverter.GetBytes(cueTrackPosition.CueCodecState.Value)
+				         BitConverter.GetBytes(cueTrackPosition.CodecState.Value)
 				                     .Reverse()
 				                     .ToArray);
 
-			var cueReference = cueTrackPosition.CueReference.Single();
-			sequence.Returns(
-				BitConverter.GetBytes(cueReference.CueReferenceTime).Reverse().ToArray);
+			var cueReference = cueTrackPosition.Reference.Single();
+			sequence.Returns(BitConverter.GetBytes(cueReference.ReferenceTime).Reverse().ToArray);
 		}
 
 		private static void SetupCueIds(Mock<EbmlReader> reader, Stream stream)

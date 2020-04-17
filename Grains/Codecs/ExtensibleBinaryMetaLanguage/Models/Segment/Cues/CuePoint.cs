@@ -6,7 +6,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues
 	[EbmlMaster]
 	public class CuePoint
 	{
-		public uint CueTime { get; set; }
-		public IEnumerable<CueTrackPosition> CueTrackPositions { get; set; }
+		[EbmlElement("CueTime")]
+		public uint Time { get; set; }
+
+		[EbmlElement("CueTrackPositions")]
+		public IEnumerable<CueTrackPosition> TrackPositions { get; set; }
 	}
 }

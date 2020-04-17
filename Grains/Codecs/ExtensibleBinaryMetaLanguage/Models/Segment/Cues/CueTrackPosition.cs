@@ -6,12 +6,25 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues
 	[EbmlMaster("CueTrackPositions")]
 	public class CueTrackPosition
 	{
-		public uint CueTrack { get; set; }
-		public uint CueClusterPosition { get; set; }
-		public uint? CueRelativePosition { get; set; }
-		public uint? CueDuration { get; set; }
-		public uint? CueBlockNumber { get; set; }
-		public uint? CueCodecState { get; set; }
-		public IEnumerable<CueReference>? CueReference { get; set; }
+		[EbmlElement("CueTrack")]
+		public uint Track { get; set; }
+
+		[EbmlElement("CueClusterPosition")]
+		public uint ClusterPosition { get; set; }
+
+		[EbmlElement("CueRelativePosition")]
+		public uint? RelativePosition { get; set; }
+
+		[EbmlElement("CueDuration")]
+		public uint? Duration { get; set; }
+
+		[EbmlElement("CueBlockNumber")]
+		public uint? BlockNumber { get; set; }
+
+		[EbmlElement("CueCodecState")]
+		public uint? CodecState { get; set; }
+
+		[EbmlElement("CueReference")]
+		public IEnumerable<CueReference>? Reference { get; set; }
 	}
 }

@@ -149,11 +149,11 @@ namespace Grains.Tests.Unit.Codecs
 			   .Generate(1);
 
 			var cueTrackPosition = new AutoFaker<CueTrackPosition>()
-			                      .RuleFor(r => r.CueReference, cueReference)
+			                      .RuleFor(r => r.Reference, cueReference)
 			                      .Generate(1);
 
 			var cuePoint = new AutoFaker<CuePoint>()
-			              .RuleFor(r => r.CueTrackPositions, cueTrackPosition)
+			              .RuleFor(r => r.TrackPositions, cueTrackPosition)
 			              .Generate(1);
 
 			var cue = new AutoFaker<SegmentCues>()

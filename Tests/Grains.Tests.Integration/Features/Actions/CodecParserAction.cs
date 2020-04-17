@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Grains.Codecs;
 using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;
@@ -23,13 +22,7 @@ namespace Grains.Tests.Integration.Features.Actions
 		[When(@"the information about the file is requested")]
 		public void WhenTheInformationAboutTheFileIsRequested()
 		{
-			var sample = _codecParserData.Container.ToUpperInvariant() switch
-			             {
-				             "MKV" => "small.mkv",
-				             _     => throw new Exception("Unknown file type.")
-			             };
-
-			var file = Path.Combine("TestData", "CodecParser", sample);
+			var file = Path.Combine("TestData", "CodecParser", _codecParserData.FileName);
 			_codecParserData.VideoInformation = _parser.GetInformation(file, out var error);
 			_codecParserData.ParserError = error;
 		}

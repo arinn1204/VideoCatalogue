@@ -8,26 +8,31 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 	public class Info
 	{
 		[EbmlElement("SegmentUID")]
-		public byte[]? SegmentUID { get; set; }
+		public byte[]? SegmentUid { get; set; }
 
 		public string? SegmentFilename { get; set; }
 
 		[EbmlElement("PrevUID")]
-		public byte[]? PrevUID { get; set; }
+		public byte[]? PreviousSegmentUid { get; set; }
 
 		[EbmlElement("PrevFilename")]
-		public string? PrevFilename { get; set; }
+		public string? PreviousSegmentFilename { get; set; }
 
 		[EbmlElement("NextUID")]
-		public byte[]? NextUID { get; set; }
+		public byte[]? NextSegmentUid { get; set; }
 
-		public string? NextFilename { get; set; }
+		[EbmlElement("NextFilename")]
+		public string? NextSegmentFilename { get; set; }
+
 		public byte[]? SegmentFamily { get; set; }
 		public uint TimecodeScale { get; set; }
 		public float? Duration { get; set; }
 
+		/// <summary>
+		///     The time in nanoseconds (per scale) since January 1, 2001
+		/// </summary>
 		[EbmlElement("DateUTC")]
-		public ulong? DateUTC { get; set; }
+		public ulong? TimeSinceMatroskaEpoch { get; set; }
 
 		public string? Title { get; set; }
 		public string MuxingApp { get; set; }

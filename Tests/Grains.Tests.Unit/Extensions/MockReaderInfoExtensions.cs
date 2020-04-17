@@ -80,30 +80,31 @@ namespace Grains.Tests.Unit.Extensions
 			Info info)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, It.Is<int>(count => count > 1)))
-			      .Returns(info.SegmentUID)
+			      .Returns(info.SegmentUid)
 			      .Returns(Encoding.UTF8.GetBytes(info.SegmentFilename))
-			      .Returns(info.PrevUID)
-			      .Returns(Encoding.UTF8.GetBytes(info.PrevFilename))
-			      .Returns(info.NextUID)
-			      .Returns(Encoding.UTF8.GetBytes(info.NextFilename))
+			      .Returns(info.PreviousSegmentUid)
+			      .Returns(Encoding.UTF8.GetBytes(info.PreviousSegmentFilename))
+			      .Returns(info.NextSegmentUid)
+			      .Returns(Encoding.UTF8.GetBytes(info.NextSegmentFilename))
 			      .Returns(info.SegmentFamily)
 			      .Returns(
 				       BitConverter.GetBytes(
 					                    info.ChapterTranslates.First()
-					                        .ChapterTranslateEditionUID.HasValue
+					                        .EditionUid.HasValue
 						                    ? info.ChapterTranslates.First()
-						                          .ChapterTranslateEditionUID.Value
+						                          .EditionUid.Value
 						                    : 1)
 				                   .Reverse()
 				                   .ToArray())
 			      .Returns(
-				       BitConverter.GetBytes(info.ChapterTranslates.First().ChapterTranslateCodec)
+				       BitConverter.GetBytes(info.ChapterTranslates.First().Codec)
 				                   .Reverse()
 				                   .ToArray())
-			      .Returns(info.ChapterTranslates.First().ChapterTranslateID)
+			      .Returns(info.ChapterTranslates.First().ChapterTranslateId)
 			      .Returns(BitConverter.GetBytes(info.TimecodeScale).Reverse().ToArray())
 			      .Returns(BitConverter.GetBytes(info.Duration.Value).Reverse().ToArray())
-			      .Returns(BitConverter.GetBytes(info.DateUTC.Value).Reverse().ToArray())
+			      .Returns(
+				       BitConverter.GetBytes(info.TimeSinceMatroskaEpoch.Value).Reverse().ToArray())
 			      .Returns(Encoding.UTF8.GetBytes(info.Title))
 			      .Returns(Encoding.UTF8.GetBytes(info.MuxingApp))
 			      .Returns(Encoding.UTF8.GetBytes(info.WritingApp));

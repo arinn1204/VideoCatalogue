@@ -6,12 +6,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 	public class ChapterTranslate
 	{
 		[EbmlElement("ChapterTranslateEditionUID")]
-		public uint? ChapterTranslateEditionUID { get; set; }
+		public uint? EditionUid { get; set; }
 
 		[EbmlElement("ChapterTranslateCodec")]
-		public uint ChapterTranslateCodec { get; set; }
+		public uint Codec { get; set; }
 
 		[EbmlElement("ChapterTranslateID")]
-		public byte[] ChapterTranslateID { get; set; }
+		public byte[] ChapterTranslateId { get; set; }
 	}
 }

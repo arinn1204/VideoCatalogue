@@ -143,7 +143,7 @@ namespace Grains.Tests.Unit.Codecs
 					                                            {
 						                                            Duration = 7138000,
 						                                            Title = "This is a title.",
-						                                            DateUTC =
+						                                            TimeSinceMatroskaEpoch =
 							                                            (ulong) (new DateTime(
 								                                                     2020,
 								                                                     4,
@@ -154,7 +154,7 @@ namespace Grains.Tests.Unit.Codecs
 								                                                     1))
 							                                           .TotalMilliseconds *
 							                                            1000000,
-						                                            SegmentUID = uid,
+						                                            SegmentUid = uid,
 						                                            TimecodeScale = 1_000_000
 					                                            }
 				                                            }
@@ -186,7 +186,7 @@ namespace Grains.Tests.Unit.Codecs
 		public void ShouldHaveDefaultDateOfJanFirstTwoThousandOne()
 		{
 			var expectedDocument = BuildDocument(out _);
-			expectedDocument.Segment.SegmentInformations.First().DateUTC = null;
+			expectedDocument.Segment.SegmentInformations.First().TimeSinceMatroskaEpoch = null;
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))

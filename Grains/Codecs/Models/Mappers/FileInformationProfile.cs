@@ -41,8 +41,8 @@ namespace Grains.Codecs.Models.Mappers
 					src => src.MapFrom(
 						m => m.Segment
 						      .SegmentInformations
-						      .DistinctBy(d => new Guid(d.SegmentUID))
-						      .Select(s => new Guid(s.SegmentUID))
+						      .DistinctBy(d => new Guid(d.SegmentUid))
+						      .Select(s => new Guid(s.SegmentUid))
 						      .First()))
 			   .ForMember(
 					dest => dest.TimeCodeScale,
@@ -89,8 +89,8 @@ namespace Grains.Codecs.Models.Mappers
 				0,
 				DateTimeKind.Utc);
 
-			var nanoSeconds = info.DateUTC.HasValue
-				? info.DateUTC.Value
+			var nanoSeconds = info.TimeSinceMatroskaEpoch.HasValue
+				? info.TimeSinceMatroskaEpoch.Value
 				: 0.0;
 
 			var milliseconds = nanoSeconds / (int) info.TimecodeScale.ToTimeCodeScale();
@@ -102,7 +102,7 @@ namespace Grains.Codecs.Models.Mappers
 			return documents
 			      .Segment
 			      .SegmentInformations
-			      .DistinctBy(d => new Guid(d.SegmentUID))
+			      .DistinctBy(d => new Guid(d.SegmentUid))
 			      .First();
 		}
 

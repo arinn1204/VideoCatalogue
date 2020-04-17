@@ -19,6 +19,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 			"ReSharper",
 			"InconsistentNaming",
 			Justification = "IETF is an acronym for Internet Engineering Task Force")]
+		[EbmlElement("TagLanguageIETF")]
 		public string? LanguageIETF { get; set; }
 
 		[EbmlElement("TagDefault")]

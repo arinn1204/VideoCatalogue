@@ -12,6 +12,8 @@ namespace Grains.Tests.Unit.Extensions.Tests
 		[Theory]
 		[InlineData("A_AAC", Codec.AAC)]
 		[InlineData("V_MPEGH/ISO/HEVC", Codec.HEVC)]
+		[InlineData("V_MPEG4/ISO/AVC", Codec.Avc)]
+		[InlineData("A_VORBIS", Codec.Vorbis)]
 		public void ShouldConvertToCodec(string codecId, Codec expectedResult)
 		{
 			codecId.ToCodec()

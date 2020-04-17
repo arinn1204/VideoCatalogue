@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.Models.Extensions;
@@ -16,16 +15,14 @@ namespace Grains.Codecs.Models.Mappers
 	{
 		public FileInformationProfile()
 		{
-			CreateMap<IEnumerable<EbmlDocument>, FileInformation>()
+			CreateMap<EbmlDocument, FileInformation>()
 			   .ForMember(
 					dest => dest.Container,
 					src => src.MapFrom(m => GetContainerName(m)))
 			   .ForMember(
 					dest => dest.ContainerVersion,
 					src => src.MapFrom(
-						m => m.DistinctBy(d => d.EbmlHeader.DocTypeVersion)
-						      .Single()
-						      .EbmlHeader
+						m => m.EbmlHeader
 						      .DocTypeVersion))
 			   .ForMember(
 					dest => dest.Audios,
@@ -42,11 +39,11 @@ namespace Grains.Codecs.Models.Mappers
 			   .ForMember(
 					dest => dest.SegmentId,
 					src => src.MapFrom(
-						m => GetSegment(m)
-						    .SegmentInformations
-						    .DistinctBy(d => new Guid(d.SegmentUID))
-						    .Select(s => new Guid(s.SegmentUID))
-						    .First()))
+						m => m.Segment
+						      .SegmentInformations
+						      .DistinctBy(d => new Guid(d.SegmentUID))
+						      .Select(s => new Guid(s.SegmentUID))
+						      .First()))
 			   .ForMember(
 					dest => dest.TimeCodeScale,
 					src => src.MapFrom(m => GetInfo(m).TimecodeScale.ToTimeCodeScale()))
@@ -64,7 +61,7 @@ namespace Grains.Codecs.Models.Mappers
 					src => src.MapFrom(m => GetInfo(m).Title));
 		}
 
-		private TimeSpan GetDuration(IEnumerable<EbmlDocument> documents)
+		private TimeSpan GetDuration(EbmlDocument documents)
 		{
 			var info = GetInfo(documents);
 			var duration = info.Duration.HasValue
@@ -80,7 +77,7 @@ namespace Grains.Codecs.Models.Mappers
 				(int) milliseconds);
 		}
 
-		private DateTime GetDateTime(IEnumerable<EbmlDocument> documents)
+		private DateTime GetDateTime(EbmlDocument documents)
 		{
 			var info = GetInfo(documents);
 			var baseDate = new DateTime(
@@ -100,44 +97,35 @@ namespace Grains.Codecs.Models.Mappers
 			return baseDate.AddMilliseconds(milliseconds);
 		}
 
-		private Info GetInfo(IEnumerable<EbmlDocument> documents)
+		private Info GetInfo(EbmlDocument documents)
 		{
-			return GetSegment(documents)
+			return documents
+			      .Segment
 			      .SegmentInformations
 			      .DistinctBy(d => new Guid(d.SegmentUID))
 			      .First();
 		}
 
-		private Segment GetSegment(IEnumerable<EbmlDocument> documents)
-		{
-			return documents.DistinctBy(d => d.EbmlHeader)
-			                .Select(f => f.Segment)
-			                .First();
-		}
-
-		private TrackEntry GetVideoTrack(IEnumerable<EbmlDocument> documents)
+		private TrackEntry GetVideoTrack(EbmlDocument documents)
 			=> GetTracks(documents, "V").First();
 
-		private IEnumerable<TrackEntry> GetAudioTracks(IEnumerable<EbmlDocument> documents)
+		private IEnumerable<TrackEntry> GetAudioTracks(EbmlDocument documents)
 			=> GetTracks(documents, "A");
 
-		private IEnumerable<TrackEntry> GetSubtitles(IEnumerable<EbmlDocument> documents)
+		private IEnumerable<TrackEntry> GetSubtitles(EbmlDocument documents)
 			=> GetTracks(documents, "S");
 
 		private IEnumerable<TrackEntry> GetTracks(
-			IEnumerable<EbmlDocument> documents,
+			EbmlDocument documents,
 			string codecStartsWith)
 		{
-			return documents.SelectMany(
-				s => s.Segment.Tracks.SelectMany(s1 => s1.TrackEntries)
-				      .Where(w => w.CodecId.StartsWith(codecStartsWith)));
+			return documents.Segment
+			                .Tracks
+			                .SelectMany(s1 => s1.TrackEntries)
+			                .Where(w => w.CodecId.StartsWith(codecStartsWith));
 		}
 
-		private Container GetContainerName(IEnumerable<EbmlDocument> documents)
-		{
-			var containerName = documents.DistinctBy(d => d.EbmlHeader.DocType)
-			                             .Single();
-			return containerName.EbmlHeader.DocType.ToContainer();
-		}
+		private Container GetContainerName(EbmlDocument documents)
+			=> documents.EbmlHeader.DocType.ToContainer();
 	}
 }

@@ -39,26 +39,7 @@ namespace Grains.Codecs.Matroska
 
 #region IMatroska Members
 
-		public IEnumerable<EbmlDocument> GetFileInformation(Stream stream, out MatroskaError? error)
-		{
-			var matroskaError = null as MatroskaError;
-			var documents = GetDocuments(stream)
-			               .Catch<EbmlDocument, Exception>(
-				                exception =>
-				                {
-					                matroskaError =
-						                matroskaError?.WithNewError(exception.Message) ??
-						                new MatroskaError().WithNewError(exception.Message);
-					                return Enumerable.Empty<EbmlDocument>();
-				                })
-			               .ToList();
-			error = matroskaError;
-			return documents;
-		}
-
-#endregion
-
-		private IEnumerable<EbmlDocument> GetDocuments(Stream stream)
+		public IEnumerable<EbmlDocument> GetFileInformation(Stream stream)
 		{
 			var elements =
 				_matroskaSpecification.Value.Elements.TakeUntil(t => t.Name == "Segment")
@@ -79,6 +60,8 @@ namespace Grains.Codecs.Matroska
 				yield return GetDocument(stream, segment.Id, elements);
 			}
 		}
+
+#endregion
 
 		private EbmlDocument GetDocument(
 			Stream stream,

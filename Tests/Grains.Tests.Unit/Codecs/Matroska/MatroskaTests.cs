@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AutoBogus;
@@ -11,6 +12,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
 using Grains.Codecs.Matroska.Interfaces;
+using Grains.Codecs.Matroska.Models;
 using Grains.Tests.Unit.Extensions;
 using Grains.Tests.Unit.Fixtures;
 using Moq;
@@ -124,10 +126,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                   });
 
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream, out var error);
+			Action error = () => matroska.GetFileInformation(stream).ToList();
 
-			fileInformation.Should()
-			               .BeEmpty();
 			segmentInformation.Verify(
 				v => v.GetSegmentInformation(
 					It.IsAny<Stream>(),
@@ -136,10 +136,9 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				Times.Never);
 
 			error
-			   .Errors
-			   .First()
 			   .Should()
-			   .Be(expectedError);
+			   .Throw<MatroskaException>()
+			   .WithMessage(expectedError);
 		}
 
 		[Fact]
@@ -162,7 +161,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					         return "1A45DFA3".ToBytes().ToArray();
 				         });
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream, out var error);
+			var fileInformation = matroska.GetFileInformation(stream);
 
 			fileInformation
 			   .Single()
@@ -176,104 +175,8 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 							             EbmlVersion = 1
 						             }
 					});
-
-			error.Should().BeNull();
 		}
 
-
-		[Fact]
-		public void ShouldReturnFirstDocumentAndErrorForSecondDocumentWhenItOccurs()
-		{
-			var reader = _fixture.Freeze<Mock<IEbmlReader>>();
-
-			var stream = new MemoryStream(
-				new byte[]
-				{
-					1,
-					2,
-					3
-				},
-				0,
-				3);
-			reader
-			   .Setup(
-					s => s.GetElement<EbmlHeader>(
-						It.IsAny<Stream>(),
-						It.IsAny<long>(),
-						It.IsAny<Dictionary<byte[], EbmlElement>>(),
-						It.IsAny<List<uint>>()))
-			   .Returns(
-					() =>
-					{
-						stream.Position++;
-						return new EbmlHeader
-						       {
-							       DocType = "matroska",
-							       EbmlVersion = 1
-						       };
-					});
-
-			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 4))
-			      .Returns(
-				       _specification.Elements
-				                     .First(f => f.Name == "EBML")
-				                     .IdString
-				                     .ToBytes()
-				                     .ToArray())
-			      .Returns(
-				       _specification.Elements
-				                     .First(f => f.Name == "Segment")
-				                     .IdString
-				                     .ToBytes()
-				                     .ToArray())
-			      .Returns(
-				       _specification.Elements
-				                     .First(f => f.Name == "Info")
-				                     .IdString
-				                     .ToBytes()
-				                     .ToArray());
-
-			var expectedSegmentInformation = new AutoFaker<Segment>()
-			                                .UseSeed(1)
-			                                .Generate();
-
-			var segmentInformation = _fixture.Freeze<Mock<ISegmentReader>>();
-			segmentInformation.Setup(
-				                   s => s.GetSegmentInformation(
-					                   It.IsAny<Stream>(),
-					                   It.IsAny<EbmlSpecification>(),
-					                   It.IsAny<long>()))
-			                  .Returns(
-				                   () =>
-				                   {
-					                   stream.Position++;
-					                   return expectedSegmentInformation;
-				                   });
-
-			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream, out var error);
-
-			fileInformation
-			   .Single()
-			   .Should()
-			   .BeEquivalentTo(
-					new EbmlDocument
-					{
-						EbmlHeader = new EbmlHeader
-						             {
-							             DocType = "matroska",
-							             EbmlVersion = 1
-						             },
-						Segment = expectedSegmentInformation
-					});
-
-			error
-			   .Errors
-			   .First()
-			   .Should()
-			   .Be(
-					$"{_specification.Elements.First(f => f.Name == "Info").Id} is not a valid ebml ID.");
-		}
 
 		[Fact]
 		public void ShouldReturnRetrievedFileInformation()
@@ -302,9 +205,9 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					                   return expectedSegmentInformation;
 				                   });
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream, out var error);
-
-			error.Should().BeNull();
+			var fileInformation = matroska
+			                     .GetFileInformation(stream)
+			                     .ToList();
 
 			fileInformation
 			   .Single()
@@ -346,16 +249,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         });
 
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream, out var error);
-
-			fileInformation.Should()
-			               .BeEmpty();
+			Action error = () => matroska.GetFileInformation(stream).ToList();
 
 			error
-			   .Errors
-			   .First()
 			   .Should()
-			   .Be($"{id} is not a valid ebml ID.");
+			   .Throw<MatroskaException>()
+			   .WithMessage($"{id} is not a valid ebml ID.");
 		}
 	}
 }

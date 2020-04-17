@@ -10,7 +10,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.Matroska.Interfaces;
-using Grains.Codecs.Matroska.Models;
+using Grains.Helpers.Extensions;
 using Grains.Tests.Unit.Fixtures;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.Models.CodecParser;
@@ -168,11 +168,11 @@ namespace Grains.Tests.Unit.Codecs
 			var expectedDocument = BuildDocument(out var uid);
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var receivedError = new MatroskaError().WithNewError("An error occured.");
-			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
-			        .Returns<Stream, MatroskaError>(
-				         (stream, error) => Enumerable.Empty<EbmlDocument>()
-				                                      .Append(expectedDocument));
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
+			        .Returns<Stream>(
+				         stream => Enumerable.Empty<EbmlDocument>()
+				                             .Append(expectedDocument)
+				                             .Throw(new Exception("An error occured.")));
 			var parser = _fixture.Create<IParser>();
 			var result = parser.GetInformation(FileName, out var fileError);
 			fileError.Errors.Single().Should().Be("An error occured.");
@@ -189,11 +189,10 @@ namespace Grains.Tests.Unit.Codecs
 			expectedDocument.Segment.SegmentInformations.First().DateUTC = null;
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var receivedError = null as MatroskaError;
-			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
-			        .Returns<Stream, MatroskaError>(
-				         (stream, error) => Enumerable.Empty<EbmlDocument>()
-				                                      .Append(expectedDocument));
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
+			        .Returns<Stream>(
+				         stream => Enumerable.Empty<EbmlDocument>()
+				                             .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
 			var result = parser.GetInformation(FileName, out _);
 			result
@@ -217,11 +216,10 @@ namespace Grains.Tests.Unit.Codecs
 			expectedDocument.Segment.SegmentInformations.First().Duration = null;
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var receivedError = null as MatroskaError;
-			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
-			        .Returns<Stream, MatroskaError>(
-				         (stream, error) => Enumerable.Empty<EbmlDocument>()
-				                                      .Append(expectedDocument));
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
+			        .Returns<Stream>(
+				         stream => Enumerable.Empty<EbmlDocument>()
+				                             .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
 			var result = parser.GetInformation(FileName, out _);
 			result.Duration.TotalMilliseconds.Should().Be(0);
@@ -233,8 +231,7 @@ namespace Grains.Tests.Unit.Codecs
 			var expectedDocument = BuildDocument(out var uid);
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var error = null as MatroskaError;
-			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out error))
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
 			        .Returns(
 				         new[]
 				         {
@@ -302,32 +299,30 @@ namespace Grains.Tests.Unit.Codecs
 		[Fact]
 		public void ShouldOverrideAudioLanguageWhenOverrideSet()
 		{
-			var expectedDocument = BuildDocument(out var uid, "CH");
+			var expectedDocument = BuildDocument(out _, "CH");
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var receivedError = null as MatroskaError;
-			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
-			        .Returns<Stream, MatroskaError>(
-				         (stream, error) => Enumerable.Empty<EbmlDocument>()
-				                                      .Append(expectedDocument));
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
+			        .Returns<Stream>(
+				         stream => Enumerable.Empty<EbmlDocument>()
+				                             .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out var fileError);
+			var result = parser.GetInformation(FileName, out _);
 			result.Audios.First(f => f.Name == "Main Audio").Language.Should().Be("CH");
 		}
 
 		[Fact]
 		public void ShouldOverrideSubtitleLanguageWhenOverrideSet()
 		{
-			var expectedDocument = BuildDocument(out var uid, null, "CH");
+			var expectedDocument = BuildDocument(out _, null, "CH");
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
-			var receivedError = null as MatroskaError;
-			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>(), out receivedError))
-			        .Returns<Stream, MatroskaError>(
-				         (stream, error) => Enumerable.Empty<EbmlDocument>()
-				                                      .Append(expectedDocument));
+			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
+			        .Returns<Stream>(
+				         stream => Enumerable.Empty<EbmlDocument>()
+				                             .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out var fileError);
+			var result = parser.GetInformation(FileName, out _);
 			result.Subtitles.First(f => f.Name == "Subtitle").Language.Should().Be("CH");
 		}
 	}

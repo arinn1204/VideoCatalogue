@@ -1,7 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
-using Grains.Codecs.Matroska.Models;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.Models.CodecParser;
 
@@ -24,21 +25,23 @@ namespace Grains.Codecs
 
 		public FileInformation GetInformation(string path, out FileError error)
 		{
+			var fileError = null as FileError;
 			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-			var matroskaInfo = _matroska.GetFileInformation(stream, out var matroskaError);
-			var fileInformation = _mapper.Map<FileInformation>(matroskaInfo);
-			error = _mapper.Map<MatroskaError, FileError>(
-				matroskaError,
-				opts => opts.AfterMap(
-					(src, dest) =>
-					{
-						if (dest != null)
-						{
-							dest.StreamName = path;
-						}
-					}));
+			var fileInformations =
+				_matroska.GetFileInformation(stream)
+				         .Select(_mapper.Map<FileInformation>)
+				         .Catch<FileInformation, Exception>(
+					          exception =>
+					          {
+						          fileError ??= new FileError(path);
+						          fileError.Errors = fileError.Errors.Append(exception.Message);
 
-			return fileInformation;
+						          return Enumerable.Empty<FileInformation>();
+					          })
+				         .ToList();
+
+			error = fileError;
+			return fileInformations.FirstOrDefault();
 		}
 
 #endregion

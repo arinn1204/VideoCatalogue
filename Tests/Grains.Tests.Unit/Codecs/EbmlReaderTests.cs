@@ -207,12 +207,12 @@ namespace Grains.Tests.Unit.Codecs
 			           .Generate();
 
 			var contentCompression = new AutoFaker<ContentCompression>()
-			                        .RuleFor(r => r.CompressionSettings, r => null as byte[])
+			                        .RuleFor(r => r.Settings, r => null as byte[])
 			                        .Generate();
 
 			var encryption = new AutoFaker<ContentEncryption>()
 			                .RuleFor(r => r.EncryptionKeyId, null as byte[])
-			                .RuleFor(r => r.ContentSignature, null as byte[])
+			                .RuleFor(r => r.Signature, null as byte[])
 			                .RuleFor(r => r.PrivateKeyId, null as byte[])
 			                .Generate();
 
@@ -222,7 +222,7 @@ namespace Grains.Tests.Unit.Codecs
 			                     .Generate(1);
 
 			var contentEncodings = new AutoFaker<ContentEncodingContainer>()
-			                      .RuleFor(r => r.ContentEncodingSettings, contentEncoding)
+			                      .RuleFor(r => r.Settings, contentEncoding)
 			                      .Generate();
 
 			var trackTranslate = new AutoFaker<TrackTranslate>()
@@ -230,7 +230,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			var trackPlane = new AutoFaker<TrackPlane>().Generate(1);
 			var trackCombinePlane = new AutoFaker<TrackCombinePlanes>()
-			                       .RuleFor(r => r.TrackPlanes, trackPlane)
+			                       .RuleFor(r => r.Planes, trackPlane)
 			                       .Generate();
 
 			var trackOperation = new AutoFaker<TrackOperation>()
@@ -246,7 +246,7 @@ namespace Grains.Tests.Unit.Codecs
 			                .Generate(1);
 
 			var track = new AutoFaker<Track>()
-			           .RuleFor(r => r.TrackEntries, trackEntry)
+			           .RuleFor(r => r.Entries, trackEntry)
 			           .Generate();
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();

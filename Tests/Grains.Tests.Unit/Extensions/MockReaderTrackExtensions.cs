@@ -71,7 +71,7 @@ namespace Grains.Tests.Unit.Extensions
 
 		private static void SetupTrackValues(Mock<EbmlReader> reader, Stream stream, Track track)
 		{
-			var entry = track.TrackEntries.Single();
+			var entry = track.Entries.Single();
 			var sequence = SetupEntry(reader, stream, entry);
 			SetupVideo(entry, sequence);
 			SetupAudio(entry, sequence);
@@ -83,35 +83,34 @@ namespace Grains.Tests.Unit.Extensions
 			TrackEntry entry,
 			ISetupSequentialResult<byte[]> sequence)
 		{
-			var contentEncoding = entry.ContentEncodings.ContentEncodingSettings.Single();
+			var contentEncoding = entry.ContentEncodings.Settings.Single();
 
 			sequence.Returns(
-				         BitConverter.GetBytes(contentEncoding.ContentEncodingOrder)
+				         BitConverter.GetBytes(contentEncoding.Order)
 				                     .Reverse()
 				                     .ToArray())
 			        .Returns(
-				         BitConverter.GetBytes(contentEncoding.ContentEncodingScope)
+				         BitConverter.GetBytes(contentEncoding.Scope)
 				                     .Reverse()
 				                     .ToArray())
 			        .Returns(
-				         BitConverter.GetBytes(contentEncoding.ContentEncodingType)
+				         BitConverter.GetBytes(contentEncoding.Type)
 				                     .Reverse()
 				                     .ToArray())
 			        .Returns(
-				         BitConverter.GetBytes(
-					                      contentEncoding.CompressionSettings.CompressionAlgorithm)
-				                     .Reverse()
-				                     .ToArray())
-			        .Returns(
-				         BitConverter.GetBytes(
-					                      contentEncoding
-						                     .EncryptionSettings.EncryptionAlgorith.Value)
+				         BitConverter.GetBytes(contentEncoding.CompressionSettings.Algorithm)
 				                     .Reverse()
 				                     .ToArray())
 			        .Returns(
 				         BitConverter.GetBytes(
 					                      contentEncoding
-						                     .EncryptionSettings.EncryptionSettings.CipherMode)
+						                     .EncryptionSettings.Algorithm.Value)
+				                     .Reverse()
+				                     .ToArray())
+			        .Returns(
+				         BitConverter.GetBytes(
+					                      contentEncoding
+						                     .EncryptionSettings.Settings.CipherMode)
 				                     .Reverse()
 				                     .ToArray())
 			        .Returns(
@@ -135,9 +134,9 @@ namespace Grains.Tests.Unit.Extensions
 		{
 			var sequence = reader.SetupSequence(s => s.ReadBytes(stream, 5));
 			sequence
-			   .Returns(BitConverter.GetBytes(entry.TrackNumber).Reverse().ToArray())
-			   .Returns(BitConverter.GetBytes(entry.TrackUid).Reverse().ToArray())
-			   .Returns(BitConverter.GetBytes(entry.TrackType).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.Number).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.Uid).Reverse().ToArray())
+			   .Returns(BitConverter.GetBytes(entry.Type).Reverse().ToArray())
 			   .Returns(BitConverter.GetBytes(entry.FlagEnabled).Reverse().ToArray())
 			   .Returns(BitConverter.GetBytes(entry.FlagDefault).Reverse().ToArray())
 			   .Returns(BitConverter.GetBytes(entry.FlagForced).Reverse().ToArray())
@@ -169,14 +168,13 @@ namespace Grains.Tests.Unit.Extensions
 			   .Returns(BitConverter.GetBytes(entry.SeekPreRoll).Reverse().ToArray());
 
 			var translate = entry.TrackTranslates.Single();
-			foreach (var translateUid in translate.TrackTranslateEditionUids)
+			foreach (var translateUid in translate.EditionUids)
 			{
 				sequence.Returns(BitConverter.GetBytes(translateUid).Reverse().ToArray());
 			}
 
-			sequence.Returns(
-				BitConverter.GetBytes(translate.TrackTranslateCodec).Reverse().ToArray());
-			sequence.Returns(translate.TrackTranslateTrackId);
+			sequence.Returns(BitConverter.GetBytes(translate.Codec).Reverse().ToArray());
+			sequence.Returns(translate.TrackId);
 			return sequence;
 		}
 
@@ -185,12 +183,12 @@ namespace Grains.Tests.Unit.Extensions
 			ISetupSequentialResult<byte[]> sequence)
 		{
 			var trackOperation = entry.TrackOperation;
-			var trackPlane = trackOperation.VideoTracksToCombine.TrackPlanes.Single();
+			var trackPlane = trackOperation.VideoTracksToCombine.Planes.Single();
 
-			sequence.Returns(BitConverter.GetBytes(trackPlane.TrackPlaneUid).Reverse().ToArray())
-			        .Returns(BitConverter.GetBytes(trackPlane.TrackPlaneType).Reverse().ToArray());
+			sequence.Returns(BitConverter.GetBytes(trackPlane.Uid).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(trackPlane.Type).Reverse().ToArray());
 
-			foreach (var uid in trackOperation.TrackJoinBlocks.TrackJoinUids)
+			foreach (var uid in trackOperation.JoinBlocks.Uids)
 			{
 				sequence.Returns(BitConverter.GetBytes(uid).Reverse().ToArray());
 			}
@@ -258,7 +256,7 @@ namespace Grains.Tests.Unit.Extensions
 				         BitConverter.GetBytes(colour.ChromaSitingVertical.Value)
 				                     .Reverse()
 				                     .ToArray())
-			        .Returns(BitConverter.GetBytes(colour.ColourRange.Value).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(colour.Range.Value).Reverse().ToArray())
 			        .Returns(
 				         BitConverter.GetBytes(colour.TransferCharacteristics.Value)
 				                     .Reverse()
@@ -317,13 +315,10 @@ namespace Grains.Tests.Unit.Extensions
 				                     .ToArray());
 
 			var projection = video.VideoProjectionDetails;
-			sequence.Returns(BitConverter.GetBytes(projection.ProjectionType).Reverse().ToArray())
-			        .Returns(
-				         BitConverter.GetBytes(projection.ProjectionPoseYaw).Reverse().ToArray())
-			        .Returns(
-				         BitConverter.GetBytes(projection.ProjectionPosePitch).Reverse().ToArray())
-			        .Returns(
-				         BitConverter.GetBytes(projection.ProjectionPoseRoll).Reverse().ToArray());
+			sequence.Returns(BitConverter.GetBytes(projection.Type).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(projection.PoseYaw).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(projection.PosePitch).Reverse().ToArray())
+			        .Returns(BitConverter.GetBytes(projection.PoseRoll).Reverse().ToArray());
 		}
 
 		private static void SetupTrackIds(Mock<EbmlReader> reader, Stream stream)

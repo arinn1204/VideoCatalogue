@@ -7,6 +7,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class TrackCombinePlanes
 	{
 		[EbmlElement("TrackPlane")]
-		public IEnumerable<TrackPlane> TrackPlanes { get; set; }
+		public IEnumerable<TrackPlane> Planes { get; set; }
 	}
 }

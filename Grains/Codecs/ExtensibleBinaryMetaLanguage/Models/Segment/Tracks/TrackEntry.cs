@@ -7,34 +7,28 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	[EbmlMaster]
 	public class TrackEntry
 	{
-		public uint TrackNumber { get; set; }
+		[EbmlElement("TrackNumber")]
+		public uint Number { get; set; }
 
 		[EbmlElement("TrackUID")]
-		public uint TrackUid { get; set; }
+		public uint Uid { get; set; }
 
-		public uint TrackType { get; set; }
+		[EbmlElement("TrackType")]
+		public uint Type { get; set; }
 
 		public uint FlagEnabled { get; set; }
-
 		public uint FlagDefault { get; set; }
-
 		public uint FlagForced { get; set; }
-
 		public uint FlagLacing { get; set; }
-
 		public uint MinCache { get; set; }
-
 		public uint? MaxCache { get; set; }
-
 		public uint? DefaultDuration { get; set; }
-
 		public uint? DefaultDecodedFieldDuration { get; set; }
 
 		[EbmlElement("MaxBlockAdditionID")]
 		public uint MaxBlockAdditionId { get; set; }
 
 		public string? Name { get; set; }
-
 		public string? Language { get; set; }
 
 		[EbmlElement("LanguageIETF")]

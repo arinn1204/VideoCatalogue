@@ -7,6 +7,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class TrackJoinBlocks
 	{
 		[EbmlElement("TrackJoinUID")]
-		public IEnumerable<uint> TrackJoinUids { get; set; }
+		public IEnumerable<uint> Uids { get; set; }
 	}
 }

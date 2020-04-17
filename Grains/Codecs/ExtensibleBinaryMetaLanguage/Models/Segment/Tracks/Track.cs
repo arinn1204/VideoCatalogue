@@ -7,6 +7,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class Track
 	{
 		[EbmlElement("TrackEntry")]
-		public IEnumerable<TrackEntry> TrackEntries { get; set; }
+		public IEnumerable<TrackEntry> Entries { get; set; }
 	}
 }

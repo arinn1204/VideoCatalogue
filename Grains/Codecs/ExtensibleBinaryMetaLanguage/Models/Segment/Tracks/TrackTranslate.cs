@@ -7,12 +7,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class TrackTranslate
 	{
 		[EbmlElement("TrackTranslateEditionUID")]
-		public IEnumerable<uint>? TrackTranslateEditionUids { get; set; }
+		public IEnumerable<uint>? EditionUids { get; set; }
 
 		[EbmlElement("TrackTranslateCodec")]
-		public uint TrackTranslateCodec { get; set; }
+		public uint Codec { get; set; }
 
 		[EbmlElement("TrackTranslateTrackID")]
-		public byte[] TrackTranslateTrackId { get; set; }
+		public byte[] TrackId { get; set; }
 	}
 }

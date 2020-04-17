@@ -76,58 +76,58 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			var tracks = new Track
 			             {
-				             TrackEntries = new[]
-				                            {
-					                            new TrackEntry
-					                            {
-						                            Language = "en",
-						                            Name = "Video Name!",
-						                            CodecId = "V_MPEGH/ISO/HEVC",
-						                            VideoSettings = new Video
-						                                            {
-							                                            PixelHeight = 1080,
-							                                            PixelWidth = 1920
-						                                            },
-						                            TrackNumber = 1
-					                            },
+				             Entries = new[]
+				                       {
+					                       new TrackEntry
+					                       {
+						                       Language = "en",
+						                       Name = "Video Name!",
+						                       CodecId = "V_MPEGH/ISO/HEVC",
+						                       VideoSettings = new Video
+						                                       {
+							                                       PixelHeight = 1080,
+							                                       PixelWidth = 1920
+						                                       },
+						                       Number = 1
+					                       },
 
-					                            new TrackEntry
-					                            {
-						                            CodecId = "A_AAC",
-						                            AudioSettings = new Audio
-						                                            {
-							                                            Channels = 8,
-							                                            SamplingFrequency = 48000
-						                                            },
-						                            Language = "en",
-						                            Name = "Main Audio",
-						                            LanguageOverride = audioLanguageOverride
-					                            },
-					                            new TrackEntry
-					                            {
-						                            CodecId = "A_AAC",
-						                            AudioSettings = new Audio
-						                                            {
-							                                            Channels = 2,
-							                                            SamplingFrequency = 16000
-						                                            },
-						                            Language = "fr",
-						                            Name = "En Français"
-					                            },
-					                            new TrackEntry
-					                            {
-						                            CodecId = "S_VOBSOB",
-						                            Language = "fr",
-						                            Name = "En Français"
-					                            },
-					                            new TrackEntry
-					                            {
-						                            CodecId = "S_VOBSOB",
-						                            Language = "en",
-						                            Name = "Subtitle",
-						                            LanguageOverride = subtitleLanguageOverride
-					                            }
-				                            }
+					                       new TrackEntry
+					                       {
+						                       CodecId = "A_AAC",
+						                       AudioSettings = new Audio
+						                                       {
+							                                       Channels = 8,
+							                                       SamplingFrequency = 48000
+						                                       },
+						                       Language = "en",
+						                       Name = "Main Audio",
+						                       LanguageOverride = audioLanguageOverride
+					                       },
+					                       new TrackEntry
+					                       {
+						                       CodecId = "A_AAC",
+						                       AudioSettings = new Audio
+						                                       {
+							                                       Channels = 2,
+							                                       SamplingFrequency = 16000
+						                                       },
+						                       Language = "fr",
+						                       Name = "En Français"
+					                       },
+					                       new TrackEntry
+					                       {
+						                       CodecId = "S_VOBSOB",
+						                       Language = "fr",
+						                       Name = "En Français"
+					                       },
+					                       new TrackEntry
+					                       {
+						                       CodecId = "S_VOBSOB",
+						                       Language = "en",
+						                       Name = "Subtitle",
+						                       LanguageOverride = subtitleLanguageOverride
+					                       }
+				                       }
 			             };
 
 			uid = Guid.NewGuid().ToByteArray();

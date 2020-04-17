@@ -9,6 +9,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public TrackCombinePlanes? VideoTracksToCombine { get; set; }
 
 		[EbmlElement("TrackJoinBlocks")]
-		public TrackJoinBlocks? TrackJoinBlocks { get; set; }
+		public TrackJoinBlocks? JoinBlocks { get; set; }
 	}
 }

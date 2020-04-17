@@ -28,7 +28,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public uint? ChromaSitingVertical { get; set; }
 
 		[EbmlElement("Range")]
-		public uint? ColourRange { get; set; }
+		public uint? Range { get; set; }
 
 		[EbmlElement("Primaries")]
 		public uint? Primaries { get; set; }

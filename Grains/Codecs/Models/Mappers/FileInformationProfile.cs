@@ -121,7 +121,7 @@ namespace Grains.Codecs.Models.Mappers
 		{
 			return documents.Segment
 			                .Tracks
-			                .SelectMany(s1 => s1.TrackEntries)
+			                .SelectMany(s1 => s1.Entries)
 			                .Where(w => w.CodecId.StartsWith(codecStartsWith));
 		}
 

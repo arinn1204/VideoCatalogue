@@ -5,9 +5,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	[EbmlMaster]
 	public class ContentEncoding
 	{
-		public uint ContentEncodingOrder { get; set; }
-		public uint ContentEncodingScope { get; set; }
-		public uint ContentEncodingType { get; set; }
+		[EbmlElement("ContentEncodingOrder")]
+		public uint Order { get; set; }
+
+		[EbmlElement("ContentEncodingScope")]
+		public uint Scope { get; set; }
+
+		[EbmlElement("ContentEncodingType")]
+		public uint Type { get; set; }
 
 		[EbmlElement("ContentCompression")]
 		public ContentCompression? CompressionSettings { get; set; }

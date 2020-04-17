@@ -6,9 +6,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class ContentCompression
 	{
 		[EbmlElement("ContentCompAlgo")]
-		public uint CompressionAlgorithm { get; set; }
+		public uint Algorithm { get; set; }
 
 		[EbmlElement("ContentCompSettings")]
-		public byte[]? CompressionSettings { get; set; }
+		public byte[]? Settings { get; set; }
 	}
 }

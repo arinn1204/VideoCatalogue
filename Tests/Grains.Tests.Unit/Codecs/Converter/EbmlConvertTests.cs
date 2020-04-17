@@ -50,7 +50,7 @@ namespace Grains.Tests.Unit.Codecs.Converter
 			      .BeEquivalentTo(
 				       new Track
 				       {
-					       TrackEntries = Enumerable.Empty<TrackEntry>().Append(new TrackEntry())
+					       Entries = Enumerable.Empty<TrackEntry>().Append(new TrackEntry())
 				       });
 		}
 

@@ -6,16 +6,16 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	public class ContentEncryption
 	{
 		[EbmlElement("ContentEncAlgo")]
-		public uint? EncryptionAlgorith { get; set; }
+		public uint? Algorithm { get; set; }
 
 		[EbmlElement("ContentEncKeyID")]
 		public byte[]? EncryptionKeyId { get; set; }
 
 		[EbmlElement("ContentEncAESSettings")]
-		public ContentEncryptionAesSettings? EncryptionSettings { get; set; }
+		public ContentEncryptionAesSettings? Settings { get; set; }
 
 		[EbmlElement("ContentSignature")]
-		public byte[]? ContentSignature { get; set; }
+		public byte[]? Signature { get; set; }
 
 		[EbmlElement("ContentSigKeyID")]
 		public byte[]? PrivateKeyId { get; set; }

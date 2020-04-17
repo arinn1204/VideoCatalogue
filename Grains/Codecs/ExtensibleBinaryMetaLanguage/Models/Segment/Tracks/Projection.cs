@@ -5,10 +5,17 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	[EbmlMaster]
 	public class Projection
 	{
-		public uint ProjectionType { get; set; }
-		public float ProjectionPoseYaw { get; set; }
-		public float ProjectionPosePitch { get; set; }
-		public float ProjectionPoseRoll { get; set; }
+		[EbmlElement("ProjectionType")]
+		public uint Type { get; set; }
+
+		[EbmlElement("ProjectionPoseYaw")]
+		public float PoseYaw { get; set; }
+
+		[EbmlElement("ProjectionPosePitch")]
+		public float PosePitch { get; set; }
+
+		[EbmlElement("ProjectionPoseRoll")]
+		public float PoseRoll { get; set; }
 
 		[EbmlElement("ProjectionPrivate")]
 		public byte[]? PrivateDataForProjection { get; set; }

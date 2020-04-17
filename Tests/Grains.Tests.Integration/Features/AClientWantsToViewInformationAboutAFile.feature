@@ -1,7 +1,6 @@
 ﻿Feature: AClientWantsToViewInformationAboutAFile
 
 @Matroska
-@Ignore
 Scenario: A Client wants to view information about an MKV
 	Given an MKV file
 	When the information about the file is requested

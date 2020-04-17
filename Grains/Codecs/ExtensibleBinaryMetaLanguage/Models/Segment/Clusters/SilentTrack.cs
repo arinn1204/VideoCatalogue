@@ -7,6 +7,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 	public class SilentTrack
 	{
 		[EbmlElement("SilentTrackNumber")]
-		public IEnumerable<uint>? SilentTrackNumbers { get; set; }
+		public IEnumerable<uint>? TrackNumbers { get; set; }
 	}
 }

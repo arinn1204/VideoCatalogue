@@ -66,7 +66,7 @@ namespace Grains.Tests.Unit.Extensions
 			sequence
 			   .Returns(BitConverter.GetBytes(cluster.Timestamp).Reverse().ToArray());
 
-			foreach (var trackNumber in cluster.SilentTrack.SilentTrackNumbers)
+			foreach (var trackNumber in cluster.SilentTrack.TrackNumbers)
 			{
 				sequence.Returns(BitConverter.GetBytes(trackNumber).Reverse().ToArray);
 			}
@@ -77,12 +77,12 @@ namespace Grains.Tests.Unit.Extensions
 			var blockGroup = cluster.BlockGroups.Single();
 			var blockMore = blockGroup.BlockAddition.BlockMores.Single();
 			sequence.Returns(
-				() => BitConverter.GetBytes(blockMore.BlockAdditionalId).Reverse().ToArray());
+				() => BitConverter.GetBytes(blockMore.AdditionalId).Reverse().ToArray());
 
 
 			sequence.Returns(
 				         () =>
-					         BitConverter.GetBytes(blockGroup.BlockDuration.Value)
+					         BitConverter.GetBytes(blockGroup.Duration.Value)
 					                     .Reverse()
 					                     .ToArray())
 			        .Returns(

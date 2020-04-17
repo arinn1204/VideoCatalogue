@@ -112,7 +112,7 @@ namespace Grains.Tests.Unit.Codecs
 						                           r => r.BlockMores,
 						                           r => new AutoFaker<BlockMore>()
 						                               .RuleFor(
-							                                r => r.BlockAdditional,
+							                                r => r.AdditionalData,
 							                                null as byte[])
 						                               .Generate(1)))
 				                          .Generate(1))
@@ -120,10 +120,10 @@ namespace Grains.Tests.Unit.Codecs
 				                      r => r.SilentTrack,
 				                      r => new SilentTrack
 				                           {
-					                           SilentTrackNumbers = new[]
-					                                                {
-						                                                r.Random.UInt()
-					                                                }
+					                           TrackNumbers = new[]
+					                                          {
+						                                          r.Random.UInt()
+					                                          }
 				                           })
 			                     .RuleFor(r => r.SimpleBlocks, null as IEnumerable<byte[]>)
 			                     .Generate();

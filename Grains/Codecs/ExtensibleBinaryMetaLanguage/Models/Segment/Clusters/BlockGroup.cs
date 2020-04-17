@@ -11,7 +11,9 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 		[EbmlElement("BlockAdditions")]
 		public BlockAddition? BlockAddition { get; set; }
 
-		public uint? BlockDuration { get; set; }
+		[EbmlElement("BlockDuration")]
+		public uint? Duration { get; set; }
+
 		public uint ReferencePriority { get; set; }
 
 		[EbmlElement("ReferenceBlock")]

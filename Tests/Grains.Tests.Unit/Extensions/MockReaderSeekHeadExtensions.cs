@@ -62,16 +62,16 @@ namespace Grains.Tests.Unit.Extensions
 			IEnumerable<Seek> seeks)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 10))
-			      .Returns(seeks.First().SeekId)
-			      .Returns(BitConverter.GetBytes(seeks.First().SeekPosition).Reverse().ToArray())
-			      .Returns(seeks.Skip(1).First().SeekId)
+			      .Returns(seeks.First().ElementId)
+			      .Returns(BitConverter.GetBytes(seeks.First().Position).Reverse().ToArray())
+			      .Returns(seeks.Skip(1).First().ElementId)
 			      .Returns(
-				       BitConverter.GetBytes(seeks.Skip(1).First().SeekPosition)
+				       BitConverter.GetBytes(seeks.Skip(1).First().Position)
 				                   .Reverse()
 				                   .ToArray())
-			      .Returns(seeks.Skip(2).First().SeekId)
+			      .Returns(seeks.Skip(2).First().ElementId)
 			      .Returns(
-				       BitConverter.GetBytes(seeks.Skip(2).First().SeekPosition)
+				       BitConverter.GetBytes(seeks.Skip(2).First().Position)
 				                   .Reverse()
 				                   .ToArray());
 		}

@@ -91,25 +91,25 @@ namespace Grains.Tests.Unit.Codecs.Converter
 		{
 			var firstSeek = new Seek
 			                {
-				                SeekId = new byte[]
-				                         {
-					                         1,
-					                         2,
-					                         3
-				                         },
-				                SeekPosition = 12345
+				                ElementId = new byte[]
+				                            {
+					                            1,
+					                            2,
+					                            3
+				                            },
+				                Position = 12345
 			                };
 
 
 			var secondSeek = new Seek
 			                 {
-				                 SeekId = new byte[]
-				                          {
-					                          1,
-					                          2,
-					                          5
-				                          },
-				                 SeekPosition = 123453134
+				                 ElementId = new byte[]
+				                             {
+					                             1,
+					                             2,
+					                             5
+				                             },
+				                 Position = 123453134
 			                 };
 
 			var result = EbmlConvert.DeserializeTo<SeekHead>(

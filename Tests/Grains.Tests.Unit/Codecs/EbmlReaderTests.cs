@@ -360,13 +360,13 @@ namespace Grains.Tests.Unit.Codecs
 		{
 			var seek = new Seek
 			           {
-				           SeekId = new byte[]
-				                    {
-					                    1,
-					                    2,
-					                    3
-				                    },
-				           SeekPosition = 123432
+				           ElementId = new byte[]
+				                       {
+					                       1,
+					                       2,
+					                       3
+				                       },
+				           Position = 123432
 			           };
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
@@ -401,8 +401,8 @@ namespace Grains.Tests.Unit.Codecs
 				       });
 
 			reader.SetupSequence(s => s.ReadBytes(stream, 5))
-			      .Returns(seek.SeekId)
-			      .Returns(BitConverter.GetBytes(seek.SeekPosition).Reverse().ToArray());
+			      .Returns(seek.ElementId)
+			      .Returns(BitConverter.GetBytes(seek.Position).Reverse().ToArray());
 
 			var result = reader.Object.GetElement<Seek>(
 				stream,

@@ -5,9 +5,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInfo
 	[EbmlMaster]
 	public class Seek
 	{
-		public uint SeekPosition { get; set; }
+		[EbmlElement("SeekPosition")]
+		public uint Position { get; set; }
 
 		[EbmlElement("SeekID")]
-		public byte[] SeekId { get; set; }
+		public byte[] ElementId { get; set; }
 	}
 }

@@ -53,15 +53,18 @@
     <None Update="TestData\VideoSearcher\filesWithFeaturettes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\VideoSearcher\filesWithoutFeaturettes.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CodecParser\test1.mkv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\CodecParser\multipleAudioAndSubtitles.mkv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+      <None Update="TestData\VideoSearcher\filesWithoutFeaturettes.txt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestData\CodecParser\test1.mkv">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestData\CodecParser\multipleAudioAndSubtitles.mkv">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestData\VideoApi\theAvengers.searchResults.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
   </ItemGroup>
 
   <ItemGroup>

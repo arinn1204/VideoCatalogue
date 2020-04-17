@@ -1,0 +1,79 @@
+﻿{
+  "page": 1,
+  "total_results": 4,
+  "total_pages": 1,
+  "results": [
+    {
+      "popularity": 51.118,
+      "vote_count": 21999,
+      "video": false,
+      "poster_path": "/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+      "id": 24428,
+      "adult": false,
+      "backdrop_path": "/hFE7x236SqBtajMKDlTWa4ynoni.jpg",
+      "original_language": "en",
+      "original_title": "The Avengers",
+      "genre_ids": [
+        28,
+        12,
+        878
+      ],
+      "title": "The Avengers",
+      "vote_average": 7.7,
+      "overview": "When an unexpected enemy emerges and threatens global safety and security, Nick Fury, director of the international peacekeeping agency known as S.H.I.E.L.D., finds himself in need of a team to pull the world back from the brink of disaster. Spanning the globe, a daring recruitment effort begins!",
+      "release_date": "2012-04-25"
+    },
+    {
+      "popularity": 1.652,
+      "id": 448366,
+      "video": true,
+      "vote_count": 13,
+      "vote_average": 8.5,
+      "title": "Building the Dream: Assembling the Avengers",
+      "release_date": "2012-09-25",
+      "original_language": "en",
+      "original_title": "Building the Dream: Assembling the Avengers",
+      "genre_ids": [
+        99
+      ],
+      "backdrop_path": null,
+      "adult": false,
+      "overview": "This 90-minute feature will show how the films Iron Man, The Incredible Hulk, Iron Man 2, Thor, and Captain America: The First Avenger were conceived and led to the greatest super hero team ever assembled on screen The Avengers.",
+      "poster_path": "/2RDUQpzhJHVzObkL4ZxwJkbKYSz.jpg"
+    },
+    {
+      "popularity": 1.19,
+      "id": 448368,
+      "video": true,
+      "vote_count": 8,
+      "vote_average": 8.3,
+      "title": "The Avengers: A Visual Journey",
+      "release_date": "2012-09-25",
+      "original_language": "en",
+      "original_title": "The Avengers: A Visual Journey",
+      "genre_ids": [],
+      "backdrop_path": null,
+      "adult": false,
+      "overview": "Joss Whedon and others in interviews discussing the aims for this new franchise.",
+      "poster_path": "/2kBT7KONKQTIhkMc2ZtPU11E8Ky.jpg"
+    },
+    {
+      "popularity": 0.72,
+      "vote_count": 3,
+      "video": true,
+      "poster_path": null,
+      "id": 448364,
+      "adult": false,
+      "backdrop_path": null,
+      "original_language": "en",
+      "original_title": "The Avengers: Assembling the Ultimate Team",
+      "genre_ids": [
+        99
+      ],
+      "title": "The Avengers: Assembling the Ultimate Team",
+      "vote_average": 6.7,
+      "overview": "Joss Whedon and others in interviews discussing the aims for this new franchise.",
+      "release_date": "2012-09-25"
+    }
+  ]
+}

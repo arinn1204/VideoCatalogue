@@ -19,7 +19,6 @@ namespace Grains.Tests.Integration.Features.Support
 			var wiremockSettings = new FluentMockServerSettings
 			                       {
 				                       Port = 8080,
-				                       StartAdminInterface = true,
 				                       Logger = new WireMockConsoleLogger()
 			                       };
 			var wiremock = WireMockServer.Start(wiremockSettings);

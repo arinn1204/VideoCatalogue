@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Text;
 using FluentAssertions;
+using Grains.Tests.Integration.Extensions;
 using Grains.Tests.Integration.Features.Models.Resolvers;
 using GrainsInterfaces.Models.VideoApi;
 using Newtonsoft.Json;
@@ -22,7 +22,7 @@ namespace Grains.Tests.Integration.Features.Assertions
 		[Then(@"the client is given the information about (.*)")]
 		public void ThenTheClientIsGivenTheInformation(string title)
 		{
-			var baseFileName = GetFilename(title);
+			var baseFileName = title.ToFileBaseName();
 			var fileEncoding = Encoding.UTF8;
 
 			var videoDetails = GetDetails(baseFileName, fileEncoding);
@@ -46,7 +46,7 @@ namespace Grains.Tests.Integration.Features.Assertions
 
 		private Credit GetCredits(string baseFileName, Encoding encoding)
 		{
-			var filename = $"{BuildFilePath(baseFileName)}.credits.json";
+			var filename = $"{baseFileName.ToFilePath()}.credits.json";
 			var fileContents = File.ReadAllText(filename, encoding);
 			return
 				JsonConvert.DeserializeObject<Credit>(
@@ -59,7 +59,7 @@ namespace Grains.Tests.Integration.Features.Assertions
 
 		private VideoDetail GetDetails(string baseFileName, Encoding encoding)
 		{
-			var filename = $"{BuildFilePath(baseFileName)}.json";
+			var filename = $"{baseFileName.ToFilePath()}.json";
 			var fileContents = File.ReadAllText(filename, encoding);
 			var fileData = JsonConvert.DeserializeObject<VideoDetail>(
 				fileContents,
@@ -69,29 +69,6 @@ namespace Grains.Tests.Integration.Features.Assertions
 				});
 
 			return fileData;
-		}
-
-		private string BuildFilePath(string baseFileName)
-			=> Path.Combine("TestData", "VideoApi", baseFileName);
-
-		private string GetFilename(string title)
-		{
-			return string.Join(
-				string.Empty,
-				title.Split(' ')
-				     .Select(
-					      (word, index) =>
-					      {
-						      if (index == 0)
-						      {
-							      return word.ToLower();
-						      }
-
-						      var firstCharacter = char.ToUpper(word.First());
-						      var restOfWord = string.Join(string.Empty, word.Skip(1))
-						                             .ToLower();
-						      return $"{firstCharacter}{restOfWord}";
-					      }));
 		}
 	}
 }

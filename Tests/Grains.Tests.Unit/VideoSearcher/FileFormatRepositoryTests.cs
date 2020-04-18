@@ -4,7 +4,8 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.Tests.Unit.Fixtures;
-using Grains.VideoSearcher;
+using Grains.VideoSearcher.Models;
+using Grains.VideoSearcher.Repositories;
 using Xunit;
 
 namespace Grains.Tests.Unit.VideoSearcher

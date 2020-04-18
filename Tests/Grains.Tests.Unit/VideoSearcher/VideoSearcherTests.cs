@@ -9,6 +9,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.VideoSearcher.Interfaces;
+using Grains.VideoSearcher.Models;
 using GrainsInterfaces.Models.VideoSearcher;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -44,7 +45,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
@@ -56,7 +57,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		private readonly Fixture _fixture;
 		private IEnumerable<string> _patterns;
 
-		private VS.FileFormat BuildFileFormat(
+		private FileFormat BuildFileFormat(
 			IEnumerable<string> regex,
 			int titleGroup = 1,
 			int? yearGroup = 2,
@@ -64,7 +65,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			int? episodeGroup = null,
 			int containerGroup = 3)
 		{
-			return new VS.FileFormat
+			return new FileFormat
 			       {
 				       Patterns = regex.Select(s => new Regex(s)),
 				       TitleGroup = titleGroup,
@@ -91,7 +92,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
 			var directory = new Mock<IDirectory>();
@@ -159,7 +160,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
 			var directory = new Mock<IDirectory>();
@@ -227,7 +228,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
 			var directory = new Mock<IDirectory>();
@@ -361,7 +362,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(
 					                         BuildFileFormat(
 						                         new[]
@@ -444,7 +445,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
 			var directory = new Mock<IDirectory>();
@@ -532,7 +533,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
-				         AsyncEnumerable.Empty<VS.FileFormat>()
+				         AsyncEnumerable.Empty<FileFormat>()
 				                        .Append(
 					                         BuildFileFormat(
 						                         new[]

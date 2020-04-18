@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Grains.VideoSearcher.Models;
 
 namespace Grains.VideoSearcher.Interfaces
 {

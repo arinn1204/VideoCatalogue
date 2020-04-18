@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grains.Tests.Integration.Features.Models;
 using Grains.Tests.Integration.Features.Support;
-using Grains.VideoSearcher;
+using Grains.VideoSearcher.Repositories;
 using Microsoft.Extensions.Configuration;
 using TechTalk.SpecFlow;
 

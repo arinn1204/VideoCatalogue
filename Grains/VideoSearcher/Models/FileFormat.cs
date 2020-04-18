@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Grains.VideoSearcher
+namespace Grains.VideoSearcher.Models
 {
 	public class FileFormat
 	{

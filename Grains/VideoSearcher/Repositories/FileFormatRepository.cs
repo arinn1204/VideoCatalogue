@@ -4,10 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Grains.Helpers.Extensions;
 using Grains.VideoSearcher.Interfaces;
+using Grains.VideoSearcher.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace Grains.VideoSearcher
+namespace Grains.VideoSearcher.Repositories
 {
 	public class FileFormatRepository : IFileFormatRepository
 	{

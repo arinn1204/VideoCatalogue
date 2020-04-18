@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Grains.VideoSearcher.Models;
+using GrainsInterfaces.FileFormat.Models;
 
-namespace Grains.VideoSearcher.Interfaces
+namespace GrainsInterfaces.FileFormat
 {
 	public interface IFileFormatRepository
 	{
-		IAsyncEnumerable<FileFormat> GetAcceptableFileFormats();
+		IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats();
 		IAsyncEnumerable<string> GetAllowedFileTypes();
 		IAsyncEnumerable<string> GetFilteredKeywords();
 	}

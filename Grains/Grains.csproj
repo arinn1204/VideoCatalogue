@@ -52,4 +52,8 @@
         <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackReader.cs"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Linker"/>
+    </ItemGroup>
+
 </Project>

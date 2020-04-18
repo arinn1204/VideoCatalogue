@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
-using Grains.VideoSearcher.Models;
+using GrainsInterfaces.FileFormat.Models;
 
 namespace Grains.VideoSearcher.Repositories.Models
 {
@@ -10,7 +10,7 @@ namespace Grains.VideoSearcher.Repositories.Models
 	{
 		public FileProfile()
 		{
-			CreateMap<FilePattern, FileFormat>()
+			CreateMap<FilePattern, RegisteredFileFormat>()
 			   .ForMember(
 					dest => dest.Patterns,
 					src => src.MapFrom(m => m.Patterns.SelectMany(BuildRegex)));

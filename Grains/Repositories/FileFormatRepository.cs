@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
-using Grains.VideoSearcher.Interfaces;
-using Grains.VideoSearcher.Models;
 using Grains.VideoSearcher.Repositories.Models;
+using GrainsInterfaces.FileFormat;
+using GrainsInterfaces.FileFormat.Models;
 using Newtonsoft.Json;
 
-namespace Grains.VideoSearcher.Repositories
+namespace Grains.Repositories
 {
 	public class FileFormatRepository : IFileFormatRepository
 	{
@@ -25,7 +25,7 @@ namespace Grains.VideoSearcher.Repositories
 
 #region IFileFormatRepository Members
 
-		public async IAsyncEnumerable<FileFormat> GetAcceptableFileFormats()
+		public async IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats()
 		{
 			var responseContent = await GetResponseContent("fileFormats");
 			var acceptableFormats =
@@ -33,7 +33,7 @@ namespace Grains.VideoSearcher.Repositories
 
 			foreach (var acceptableFormat in acceptableFormats)
 			{
-				yield return _mapper.Map<FileFormat>(acceptableFormat);
+				yield return _mapper.Map<RegisteredFileFormat>(acceptableFormat);
 			}
 		}
 

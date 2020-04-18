@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
+using Grains.Repositories;
 using Grains.Tests.Unit.TestUtilities;
-using Grains.VideoSearcher.Interfaces;
-using Grains.VideoSearcher.Models;
-using Grains.VideoSearcher.Repositories;
 using Grains.VideoSearcher.Repositories.Models;
+using GrainsInterfaces.FileFormat;
+using GrainsInterfaces.FileFormat.Models;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
@@ -169,7 +169,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			response.Single()
 			        .Should()
 			        .BeEquivalentTo(
-				         new FileFormat
+				         new RegisteredFileFormat
 				         {
 					         ContainerGroup = 1,
 					         EpisodeGroup = 3,
@@ -244,7 +244,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			response.Single()
 			        .Should()
 			        .BeEquivalentTo(
-				         new FileFormat
+				         new RegisteredFileFormat
 				         {
 					         ContainerGroup = 1,
 					         EpisodeGroup = 3,

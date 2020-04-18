@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Grains.VideoSearcher.Models
+namespace GrainsInterfaces.FileFormat.Models
 {
-	public class FileFormat
+	public class RegisteredFileFormat
 	{
 		public IEnumerable<Regex> Patterns { get; set; }
 		public int TitleGroup { get; set; }

@@ -5,7 +5,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Grains.VideoSearcher.Interfaces;
+using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.Models.VideoSearcher;
 using GrainsInterfaces.VideoSearcher;
 
@@ -51,7 +51,7 @@ namespace Grains.VideoSearcher
 
 				var year = format.YearGroup.HasValue &&
 				           int.TryParse(
-					           groups[format.YearGroup.Value]
+					           groups[format.YearGroup!.Value]
 						          .Value,
 					           out var parsedYear)
 					? parsedYear
@@ -60,19 +60,19 @@ namespace Grains.VideoSearcher
 				var seasonNumber =
 					format.SeasonGroup.HasValue &&
 					int.TryParse(
-						groups[format.SeasonGroup.Value]
+						groups[format.SeasonGroup!.Value]
 						   .Value,
-						out var parsedseasonNumber)
-						? parsedseasonNumber
+						out var parsedSeasonNumber)
+						? parsedSeasonNumber
 						: null as int?;
 
 				var episodeNumber =
 					format.EpisodeGroup.HasValue &&
 					int.TryParse(
-						groups[format.EpisodeGroup.Value]
+						groups[format.EpisodeGroup!.Value]
 						   .Value,
-						out var parsedepisodeNumber)
-						? parsedepisodeNumber
+						out var parsedEpisodeNumber)
+						? parsedEpisodeNumber
 						: null as int?;
 
 				yield return new VideoSearchResults

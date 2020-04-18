@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Grains.VideoApi.Interfaces.Repositories.Details;
 
-namespace Grains.VideoApi.tmdb
+namespace Grains.VideoApi.TheMovieDatabaseRepositories
 {
 	internal class TheMovieDatabaseTvEpisodeRepository : ITheMovieDatabaseTvEpisodeDetailRepository
 	{

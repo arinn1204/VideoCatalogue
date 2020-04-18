@@ -3,7 +3,7 @@ using BoDi;
 using Grains.VideoApi;
 using Grains.VideoApi.Interfaces.Repositories;
 using Grains.VideoApi.Interfaces.Repositories.Details;
-using Grains.VideoApi.tmdb;
+using Grains.VideoApi.TheMovieDatabaseRepositories;
 using GrainsInterfaces.VideoApi;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;

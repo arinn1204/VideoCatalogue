@@ -13,7 +13,7 @@ using GrainsInterfaces.Models.VideoApi.Enums;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace Grains.VideoApi.tmdb
+namespace Grains.VideoApi.TheMovieDatabaseRepositories
 {
 	internal class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
 	{

@@ -7,7 +7,7 @@ using Grains.Helpers;
 using Grains.VideoApi.Interfaces.Repositories.Details;
 using GrainsInterfaces.Models.VideoApi.Enums;
 
-namespace Grains.VideoApi.tmdb
+namespace Grains.VideoApi.TheMovieDatabaseRepositories
 {
 	internal class TheMovieDatabaseSearchRepository : ITheMovieDatabaseSearchDetailRepository
 	{

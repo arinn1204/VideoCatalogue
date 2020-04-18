@@ -11,7 +11,7 @@ using Grains.VideoApi.Interfaces.Repositories.Details;
 using Grains.VideoApi.Models.VideoApi.Credits;
 using Grains.VideoApi.Models.VideoApi.Details;
 using Grains.VideoApi.Models.VideoApi.SerachResults;
-using Grains.VideoApi.tmdb;
+using Grains.VideoApi.TheMovieDatabaseRepositories;
 using GrainsInterfaces.Models.VideoApi.Enums;
 using Microsoft.Extensions.Configuration;
 using Moq;

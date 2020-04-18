@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
-using Grains.Repositories;
+using Grains.FileFormat;
 using Grains.Tests.Unit.TestUtilities;
 using Grains.VideoSearcher.Repositories.Models;
 using GrainsInterfaces.FileFormat;

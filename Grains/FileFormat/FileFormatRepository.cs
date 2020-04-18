@@ -8,7 +8,7 @@ using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.FileFormat.Models;
 using Newtonsoft.Json;
 
-namespace Grains.Repositories
+namespace Grains.FileFormat
 {
 	public class FileFormatRepository : IFileFormatRepository
 	{

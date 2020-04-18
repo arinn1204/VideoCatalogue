@@ -1,9 +1,18 @@
 ﻿using System;
 using System.IO;
-using Grains.Helpers.Extensions;
-using Microsoft.Data.SqlClient;
+using System.IO.Abstractions;
+using BoDi;
+using Grains.VideoSearcher.Interfaces;
+using Grains.VideoSearcher.Repositories;
+using Grains.VideoSearcher.Repositories.Models;
+using GrainsInterfaces.VideoSearcher;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using TechTalk.SpecFlow;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 
 namespace Grains.Tests.Integration.Features.Support
 {
@@ -12,30 +21,83 @@ namespace Grains.Tests.Integration.Features.Support
 	{
 		public const string DataDirectory = "VideoSearcherDataLocation";
 
+
 		[BeforeScenario("VideoSearcher")]
-		public static void AddAcceptableFileFormats(IConfiguration configuration)
+		public static void SetupVideoSearcher(
+			IServiceCollection serviceCollection,
+			IObjectContainer objectContainer)
+		{
+			serviceCollection.AddTransient<IFileFormatRepository, FileFormatRepository>()
+			                 .AddTransient<IFileSystem, FileSystem>()
+			                 .AddTransient<IVideoSearcher, VideoSearcher.VideoSearcher>()
+			                 .AddHttpClient(
+				                  nameof(FileFormatRepository),
+				                  client =>
+				                  {
+					                  client.BaseAddress = new Uri(
+						                  "http://localhost:8080/api/videoFile/");
+				                  });
+
+			var serviceProvider = serviceCollection.BuildServiceProvider();
+			var searcher = serviceProvider.GetRequiredService<IVideoSearcher>();
+			objectContainer.RegisterInstanceAs(searcher);
+		}
+
+		[BeforeScenario("VideoSearcher")]
+		public static void SetupServiceCalls(
+			IConfiguration configuration,
+			WireMockServer wiremock)
 		{
 			var filePattern =
 				@"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$&FILTER&^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$";
 
-			ExecuteCommand(
-				configuration,
-				@$"
-INSERT INTO video_file.filtered_keywords(keyword, created_time, created_by) VALUES('BLURAY', '{DateTime.Now}', '{nameof(VideoSearcherHooks)}');
-INSERT INTO video_file.file_types(file_type, created_time, created_by) VALUES('mkv', '{DateTime.Now}', '{nameof(VideoSearcherHooks)}');
-INSERT INTO video_file.file_patterns(file_name_pattern, title_group, year_group, container_group, created_time, created_by) VALUES
-    ('{filePattern}', 1, 2, 3, '{DateTime.Now}', '{nameof(VideoSearcherHooks)}');");
-		}
+			wiremock.Given(
+				         Request.Create()
+				                .UsingGet()
+				                .WithPath("/api/videoFile/fileFormats"))
+			        .RespondWith(
+				         Response.Create()
+				                 .WithBody(
+					                  JsonConvert.SerializeObject(
+						                  new[]
+						                  {
+							                  new FilePattern
+							                  {
+								                  Patterns = new[]
+								                             {
+									                             filePattern
+								                             },
+								                  TitleGroup = 1,
+								                  YearGroup = 2,
+								                  ContainerGroup = 3
+							                  }
+						                  })));
 
-		[AfterScenario("VideoSearcher")]
-		public static void RemoveFileFormats(IConfiguration configuration)
-		{
-			ExecuteCommand(
-				configuration,
-				@$"
-DELETE FROM video_file.filtered_keywords WHERE created_by = '{nameof(VideoSearcherHooks)}';
-DELETE FROM video_file.file_types WHERE created_by = '{nameof(VideoSearcherHooks)}';
-DELETE FROM video_file.file_patterns WHERE created_by = '{nameof(VideoSearcherHooks)}';");
+			wiremock.Given(
+				         Request.Create()
+				                .UsingGet()
+				                .WithPath("/api/videoFile/fileTypes"))
+			        .RespondWith(
+				         Response.Create()
+				                 .WithBody(
+					                  JsonConvert.SerializeObject(
+						                  new[]
+						                  {
+							                  "mkv"
+						                  })));
+
+			wiremock.Given(
+				         Request.Create()
+				                .UsingGet()
+				                .WithPath("/api/videoFile/filteredKeywords"))
+			        .RespondWith(
+				         Response.Create()
+				                 .WithBody(
+					                  JsonConvert.SerializeObject(
+						                  new[]
+						                  {
+							                  "BLURAY"
+						                  })));
 		}
 
 		[AfterScenario("VideoSearcher", Order = int.MaxValue - 1)]
@@ -44,15 +106,6 @@ DELETE FROM video_file.file_patterns WHERE created_by = '{nameof(VideoSearcherHo
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			Directory.Delete(DataDirectory, true);
-		}
-
-		private static void ExecuteCommand(IConfiguration configuration, string commandText)
-		{
-			var connectionString = configuration.CreateConnectionString("VideoSearcher");
-			using var connection = new SqlConnection(connectionString);
-			connection.Open();
-			using var command = new SqlCommand(commandText, connection);
-			command.ExecuteNonQuery();
 		}
 	}
 }

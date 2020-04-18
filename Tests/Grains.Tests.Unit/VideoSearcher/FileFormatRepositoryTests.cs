@@ -1,246 +1,265 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
-using Grains.Tests.Unit.Fixtures;
+using Grains.Tests.Unit.TestUtilities;
+using Grains.VideoSearcher.Interfaces;
 using Grains.VideoSearcher.Models;
 using Grains.VideoSearcher.Repositories;
+using Grains.VideoSearcher.Repositories.Models;
+using Moq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Grains.Tests.Unit.VideoSearcher
 {
-	public class FileFormatRepositoryTests : IClassFixture<DatabaseFixture>
+	public class FileFormatRepositoryTests
 	{
 #region Setup/Teardown
 
-		public FileFormatRepositoryTests(DatabaseFixture databaseFixture)
+		public FileFormatRepositoryTests()
 		{
-			_databaseFixture = databaseFixture;
-			_databaseFixture.ResetTables();
-
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
-
-			_fixture.Inject(databaseFixture.Configuration);
+			_fixture.Register<IFileFormatRepository>(() => _fixture.Create<FileFormatRepository>());
+			_fixture.Inject(MapperHelper.CreateMapper());
 		}
 
 #endregion
 
-		private readonly DatabaseFixture _databaseFixture;
 		private readonly Fixture _fixture;
 
 		[Fact]
-		[Trait("Category", "DbConnection")]
-		public void CanConnectToDatabase()
+		public async Task ShouldBuildFilteredKeywordPath()
 		{
-			_databaseFixture.CanConnect()
-			                .Should()
-			                .BeTrue();
+			var keywords = new[]
+			               {
+				               "INSANE",
+				               "FILTERED"
+			               };
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(keywords),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var result = await repo.GetFilteredKeywords().ToListAsync();
+
+			var (_, request) = mockClientBuilder();
+
+			request.RequestUri.Should()
+			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/filteredKeywords"));
 		}
 
 		[Fact]
-		[Trait("Category", "video_file.file_patterns")]
-		public async Task ShouldProperlySplitTheIncomingRegex()
+		public async Task ShouldCreateProperFileFormatPath()
 		{
-			var command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.file_patterns",
-				new[]
-				{
-					"file_name_pattern",
-					"title_group",
-					"year_group",
-					"season_group",
-					"episode_group",
-					"container_group"
-				},
-				new object[]
-				{
-					@"(.*)&FILTER&[sS](\d{1,2})",
-					0,
-					0,
-					0,
-					0,
-					0
-				});
-			command.ExecuteNonQuery();
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(
+						new[]
+						{
+							new FilePattern()
+						}),
+					baseAddress: "http://localhost/api/videoFile/");
 
-			var repository = _fixture.Create<FileFormatRepository>();
-			var pattern = await repository.GetAcceptableFileFormats()
-			                              .Select(
-				                               s => s.Patterns
-				                                     .Aggregate(
-					                                      string.Empty,
-					                                      (acc, cur)
-						                                      => $"{(string.IsNullOrWhiteSpace(acc) ? string.Empty : acc + ' ')}{cur}"))
-			                              .FirstAsync();
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
 
-			pattern.Should()
-			       .BeEquivalentTo(@"(.*) [sS](\d{1,2})");
-			command.Dispose();
+			var repo = _fixture.Create<IFileFormatRepository>();
+			_ = await repo.GetAcceptableFileFormats().ToListAsync();
+
+			var (_, request) = mockClientBuilder();
+
+			request.RequestUri.Should()
+			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/fileFormats"));
 		}
 
 		[Fact]
-		[Trait("Category", "video_file.file_patterns")]
-		public async Task ShouldRetrieveAllAcceptableFilePatterns()
+		public async Task ShouldCreateProperFileTypePath()
 		{
-			var command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.file_patterns",
-				new[]
-				{
-					"file_name_pattern",
-					"title_group",
-					"year_group",
-					"season_group",
-					"episode_group",
-					"container_group"
-				},
-				new object[]
-				{
-					"(.*)",
-					0,
-					null,
-					null,
-					null,
-					0
-				});
-			command.ExecuteNonQuery();
-			command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.file_patterns",
-				new[]
-				{
-					"file_name_pattern",
-					"title_group",
-					"year_group",
-					"season_group",
-					"episode_group",
-					"container_group"
-				},
-				new object[]
-				{
-					@"(.*) [sS]\d{1,2}[eE]\d{1,2}",
-					0,
-					0,
-					0,
-					0,
-					0
-				});
-			command.ExecuteNonQuery();
+			var fileTypes = new[]
+			                {
+				                "MKV"
+			                };
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(fileTypes),
+					baseAddress: "http://localhost/api/videoFile/");
 
-			var repository = _fixture.Create<FileFormatRepository>();
-			var pattern = await repository.GetAcceptableFileFormats()
-			                              .ToListAsync();
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
 
-			pattern.Should()
-			       .BeEquivalentTo(
-				        new[]
-				        {
-					        new FileFormat
-					        {
-						        TitleGroup = 0,
-						        YearGroup = null,
-						        SeasonGroup = null,
-						        EpisodeGroup = null,
-						        ContainerGroup = 0
-					        },
-					        new FileFormat
-					        {
-						        TitleGroup = 0,
-						        YearGroup = 0,
-						        SeasonGroup = 0,
-						        EpisodeGroup = 0,
-						        ContainerGroup = 0
-					        }
-				        },
-				        opts => opts.Excluding(e => e.Patterns));
+			var repo = _fixture.Create<IFileFormatRepository>();
+			_ = await repo.GetAllowedFileTypes().ToListAsync();
 
-			pattern
-			   .Select(
-					s => s.Patterns.First()
-					      .ToString())
-			   .Should()
-			   .BeEquivalentTo("(.*)", @"(.*) [sS]\d{1,2}[eE]\d{1,2}");
-			command.Dispose();
+			var (_, request) = mockClientBuilder();
+
+			request.RequestUri.Should()
+			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/fileTypes"));
 		}
 
 		[Fact]
-		[Trait("Category", "video_file.file_types")]
-		public async Task ShouldRetrieveAllAcceptableFileTypes()
+		public async Task ShouldGetAllowedFileTypes()
 		{
-			var command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.file_types",
-				new[]
-				{
-					"file_type"
-				},
-				new[]
-				{
-					"mkv"
-				});
-			command.ExecuteNonQuery();
-			command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.file_types",
-				new[]
-				{
-					"file_type"
-				},
-				new[]
-				{
-					"avi"
-				});
-			command.ExecuteNonQuery();
+			var fileTypes = new[]
+			                {
+				                "MKV"
+			                };
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(fileTypes),
+					baseAddress: "http://localhost/api/videoFile");
 
-			var repository = _fixture.Create<FileFormatRepository>();
-			var pattern = await repository
-			                   .GetAllowedFileTypes()
-			                   .ToListAsync();
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
 
-			pattern.Should()
-			       .BeEquivalentTo(
-				        Enumerable.Empty<string>()
-				                  .Append("mkv")
-				                  .Append("avi"));
-			command.Dispose();
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var result = await repo.GetAllowedFileTypes().ToListAsync();
+
+			result.Should()
+			      .BeEquivalentTo(fileTypes);
 		}
 
 		[Fact]
-		[Trait("Category", "video_file.filtered_keywords")]
-		public async Task ShouldRetrieveAllFilteredKeywords()
+		public async Task ShouldGetFileFormats()
 		{
-			var command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.filtered_keywords",
-				new[]
-				{
-					"keyword"
-				},
-				new[]
-				{
-					"BLURAY"
-				});
-			command.ExecuteNonQuery();
-			command = _databaseFixture.AddAcceptableFileFormat(
-				"video_file.filtered_keywords",
-				new[]
-				{
-					"keyword"
-				},
-				new[]
-				{
-					"XVID"
-				});
-			command.ExecuteNonQuery();
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(
+						new[]
+						{
+							new FilePattern
+							{
+								Patterns = new[]
+								           {
+									           @"^(.d+)$"
+								           },
+								ContainerGroup = 1,
+								EpisodeGroup = 3,
+								SeasonGroup = 5,
+								TitleGroup = 2,
+								YearGroup = 0
+							}
+						}),
+					baseAddress: "http://localhost/api/videoFile/");
 
-			var repository = _fixture.Create<FileFormatRepository>();
-			var pattern = await repository
-			                   .GetFilteredKeywords()
-			                   .ToListAsync();
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
 
-			pattern.Should()
-			       .BeEquivalentTo(
-				        Enumerable.Empty<string>()
-				                  .Append("BLURAY")
-				                  .Append("XVID"));
-			command.Dispose();
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var response = await repo.GetAcceptableFileFormats().ToListAsync();
+
+			response.Single()
+			        .Should()
+			        .BeEquivalentTo(
+				         new FileFormat
+				         {
+					         ContainerGroup = 1,
+					         EpisodeGroup = 3,
+					         SeasonGroup = 5,
+					         TitleGroup = 2,
+					         YearGroup = 0
+				         },
+				         opts => opts.Excluding(e => e.Patterns));
+
+			response.Single()
+			        .Patterns
+			        .Should()
+			        .Match(pattern => pattern.Single().ToString() == @"^(.d+)$");
+		}
+
+		[Fact]
+		public async Task ShouldGetFilteredKeywords()
+		{
+			var keywords = new[]
+			               {
+				               "INSANE",
+				               "FILTERED"
+			               };
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(keywords),
+					baseAddress: "http://localhost/api/videoFile");
+
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var result = await repo.GetFilteredKeywords().ToListAsync();
+
+			result.Should()
+			      .BeEquivalentTo(keywords);
+		}
+
+		[Fact]
+		public async Task ShouldSplitFilterInFilePatterns()
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(
+						new[]
+						{
+							new FilePattern
+							{
+								Patterns = new[]
+								           {
+									           @"^(.d+)$&FILTER&.*"
+								           },
+								ContainerGroup = 1,
+								EpisodeGroup = 3,
+								SeasonGroup = 5,
+								TitleGroup = 2,
+								YearGroup = 0
+							}
+						}),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var response = await repo.GetAcceptableFileFormats().ToListAsync();
+
+			response.Single()
+			        .Should()
+			        .BeEquivalentTo(
+				         new FileFormat
+				         {
+					         ContainerGroup = 1,
+					         EpisodeGroup = 3,
+					         SeasonGroup = 5,
+					         TitleGroup = 2,
+					         YearGroup = 0
+				         },
+				         opts => opts.Excluding(e => e.Patterns));
+
+			response.Single()
+			        .Patterns
+			        .Should()
+			        .Match(
+				         pattern => pattern.First().ToString() == @"^(.d+)$" &&
+				                    pattern.Skip(1).First().ToString() == ".*");
 		}
 	}
 }

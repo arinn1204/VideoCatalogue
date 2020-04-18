@@ -289,7 +289,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject("FORMAT"),
+					"FORMAT",
 					baseAddress: "http://localhost/api/videoFile/");
 
 			var (client, _) = mockClientBuilder();

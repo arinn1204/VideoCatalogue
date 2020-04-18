@@ -60,6 +60,9 @@ namespace Grains.FileFormat
 			}
 		}
 
+		public async Task<string> GetTargetTitleFormat()
+			=> await GetResponseContent("targetTitleFormat");
+
 #endregion
 
 		private async Task<string> GetResponseContent(string relativePath)

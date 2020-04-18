@@ -60,6 +60,28 @@ namespace Grains.Tests.Unit.VideoSearcher
 		}
 
 		[Fact]
+		public async Task ShouldBuildTargetTitleFormatPath()
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject("FORMAT"),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			await repo.GetTargetTitleFormat();
+
+			var (_, request) = mockClientBuilder();
+
+			request.RequestUri.Should()
+			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/targetTitleFormat"));
+		}
+
+		[Fact]
 		public async Task ShouldCreateProperFileFormatPath()
 		{
 			var mockClientBuilder =
@@ -211,7 +233,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		}
 
 		[Fact]
-		public async Task ShouldSplitFilterInFilePatterns()
+		public async Task ShouldSplitFilterInFilePatternsForFileFormat()
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
@@ -260,6 +282,25 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Match(
 				         pattern => pattern.First().ToString() == @"^(.d+)$" &&
 				                    pattern.Skip(1).First().ToString() == ".*");
+		}
+
+		[Fact]
+		public async Task ShouldSuccessfullyGetTargetFileType()
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject("FORMAT"),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var result = await repo.GetTargetTitleFormat();
+
+			result.Should().Be("FORMAT");
 		}
 	}
 }

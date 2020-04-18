@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GrainsInterfaces.FileFormat.Models;
 
 namespace GrainsInterfaces.FileFormat
@@ -8,5 +9,6 @@ namespace GrainsInterfaces.FileFormat
 		IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats();
 		IAsyncEnumerable<string> GetAllowedFileTypes();
 		IAsyncEnumerable<string> GetFilteredKeywords();
+		Task<string> GetTargetTitleFormat();
 	}
 }

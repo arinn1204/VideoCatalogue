@@ -44,7 +44,7 @@ namespace Grains.FileFormat
 			return AsyncEnumerable.Create(
 				token => EnumerateContent(
 						responseContentTask,
-						(string response) => _mapper.Map<string>(response))
+						(string response) => response)
 				   .GetAsyncEnumerator(token));
 		}
 
@@ -55,7 +55,7 @@ namespace Grains.FileFormat
 			return AsyncEnumerable.Create(
 				token => EnumerateContent(
 						responseContentTask,
-						(string response) => _mapper.Map<string>(response))
+						(string response) => response)
 				   .GetAsyncEnumerator(token));
 		}
 

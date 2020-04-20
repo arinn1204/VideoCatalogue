@@ -37,27 +37,26 @@ namespace Grains.FileFormat
 				   .GetAsyncEnumerator(token));
 		}
 
-		public async IAsyncEnumerable<string> GetAllowedFileTypes()
+		public IAsyncEnumerable<string> GetAllowedFileTypes()
 		{
-			var responseContent = await GetResponseContent("fileTypes");
-			var fileTypes = JsonConvert.DeserializeObject<IEnumerable<string>>(responseContent);
+			var responseContentTask = GetResponseContent("fileTypes");
 
-			foreach (var fileType in fileTypes)
-			{
-				yield return fileType;
-			}
+			return AsyncEnumerable.Create(
+				token => EnumerateContent(
+						responseContentTask,
+						(string response) => _mapper.Map<string>(response))
+				   .GetAsyncEnumerator(token));
 		}
 
-		public async IAsyncEnumerable<string> GetFilteredKeywords()
+		public IAsyncEnumerable<string> GetFilteredKeywords()
 		{
-			var responseContent = await GetResponseContent("filteredKeywords");
-			var filteredKeywords =
-				JsonConvert.DeserializeObject<IEnumerable<string>>(responseContent);
+			var responseContentTask = GetResponseContent("filteredKeywords");
 
-			foreach (var filteredKeyword in filteredKeywords)
-			{
-				yield return filteredKeyword;
-			}
+			return AsyncEnumerable.Create(
+				token => EnumerateContent(
+						responseContentTask,
+						(string response) => _mapper.Map<string>(response))
+				   .GetAsyncEnumerator(token));
 		}
 
 		public async Task<string> GetTargetTitleFormat()

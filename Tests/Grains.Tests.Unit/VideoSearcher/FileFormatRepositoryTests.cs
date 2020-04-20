@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -233,6 +234,10 @@ namespace Grains.Tests.Unit.VideoSearcher
 		}
 
 		[Fact]
+		[SuppressMessage(
+			"ReSharper",
+			"PossibleMultipleEnumeration",
+			Justification = "Intentionally enumerating multiple times")]
 		public async Task ShouldOnlyCallFileFormatOnceWithMultipleEnumerations()
 		{
 			var mockClientBuilder =
@@ -262,6 +267,78 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var repo = _fixture.Create<IFileFormatRepository>();
 			var fileFormats = repo.GetAcceptableFileFormats();
+
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+
+			var (_, _, callCount) = mockClientBuilder();
+
+			callCount.Should().Be(1);
+		}
+
+
+		[Fact]
+		[SuppressMessage(
+			"ReSharper",
+			"PossibleMultipleEnumeration",
+			Justification = "Intentionally enumerating multiple times")]
+		public async Task ShouldOnlyCallFileTypesOnceWithMultipleEnumerations()
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(
+						new[]
+						{
+							"ONE",
+							"TWO"
+						}),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var fileFormats = repo.GetAllowedFileTypes();
+
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+
+			var (_, _, callCount) = mockClientBuilder();
+
+			callCount.Should().Be(1);
+		}
+
+
+		[Fact]
+		[SuppressMessage(
+			"ReSharper",
+			"PossibleMultipleEnumeration",
+			Justification = "Intentionally enumerating multiple times")]
+		public async Task ShouldOnlyCallFilteredKeywordsOnceWithMultipleEnumerations()
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(
+						new[]
+						{
+							"ONE",
+							"TWO"
+						}),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var fileFormats = repo.GetFilteredKeywords();
 
 			_ = await fileFormats.ToListAsync();
 			_ = await fileFormats.ToListAsync();

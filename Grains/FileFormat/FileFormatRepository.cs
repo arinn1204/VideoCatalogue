@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -25,16 +26,15 @@ namespace Grains.FileFormat
 
 #region IFileFormatRepository Members
 
-		public async IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats()
+		public IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats()
 		{
-			var responseContent = await GetResponseContent("fileFormats");
-			var acceptableFormats =
-				JsonConvert.DeserializeObject<IEnumerable<FilePattern>>(responseContent);
+			var responseContentTask = GetResponseContent("fileFormats");
 
-			foreach (var acceptableFormat in acceptableFormats)
-			{
-				yield return _mapper.Map<RegisteredFileFormat>(acceptableFormat);
-			}
+			return AsyncEnumerable.Create(
+				token => EnumerateContent(
+						responseContentTask,
+						(FilePattern response) => _mapper.Map<RegisteredFileFormat>(response))
+				   .GetAsyncEnumerator(token));
 		}
 
 		public async IAsyncEnumerable<string> GetAllowedFileTypes()
@@ -77,6 +77,21 @@ namespace Grains.FileFormat
 			var responseMessage = await client.SendAsync(request);
 			var responseContent = await responseMessage.Content.ReadAsStringAsync();
 			return responseContent;
+		}
+
+
+		private async IAsyncEnumerable<TResult> EnumerateContent<TResponse, TResult>(
+			Task<string> responseContent,
+			Func<TResponse, TResult> getResult)
+		{
+			var content = await responseContent;
+			var acceptableFormats =
+				JsonConvert.DeserializeObject<IEnumerable<TResponse>>(content);
+
+			foreach (var acceptableFormat in acceptableFormats)
+			{
+				yield return getResult(acceptableFormat);
+			}
 		}
 	}
 }

@@ -9,11 +9,12 @@ namespace Grains.Tests.Unit.TestUtilities
 {
 	public static class MockHttpClient
 	{
-		public static Func<(HttpClient client, HttpRequestMessage request)> GetFakeHttpClient(
-			string response,
-			string contentType = "application/json",
-			string baseAddress = "",
-			HttpStatusCode statusCode = HttpStatusCode.OK)
+		public static Func<(HttpClient client, HttpRequestMessage request, int callCounter)>
+			GetFakeHttpClient(
+				string response,
+				string contentType = "application/json",
+				string baseAddress = "",
+				HttpStatusCode statusCode = HttpStatusCode.OK)
 		{
 			var content = new StringContent(response, Encoding.UTF8, contentType);
 
@@ -28,7 +29,7 @@ namespace Grains.Tests.Unit.TestUtilities
 					       client.BaseAddress = new Uri(baseAddress);
 				       }
 
-				       return (client, handler.Request);
+				       return (client, handler.Request, handler.CallCounter);
 			       };
 		}
 
@@ -48,11 +49,14 @@ namespace Grains.Tests.Unit.TestUtilities
 				Request = new HttpRequestMessage();
 			}
 
+			public int CallCounter { get; private set; }
+
 			protected override Task<HttpResponseMessage> SendAsync(
 				HttpRequestMessage request,
 				CancellationToken cancellationToken)
 			{
 				Request = request;
+				CallCounter++;
 				return Task.FromResult(
 					new HttpResponseMessage
 					{

@@ -45,7 +45,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					JsonConvert.SerializeObject(keywords),
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -53,7 +53,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var repo = _fixture.Create<IFileFormatRepository>();
 			var result = await repo.GetFilteredKeywords().ToListAsync();
 
-			var (_, request) = mockClientBuilder();
+			var (_, request, _) = mockClientBuilder();
 
 			request.RequestUri.Should()
 			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/filteredKeywords"));
@@ -67,7 +67,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					JsonConvert.SerializeObject("FORMAT"),
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -75,7 +75,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var repo = _fixture.Create<IFileFormatRepository>();
 			await repo.GetTargetTitleFormat();
 
-			var (_, request) = mockClientBuilder();
+			var (_, request, _) = mockClientBuilder();
 
 			request.RequestUri.Should()
 			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/targetTitleFormat"));
@@ -93,7 +93,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 						}),
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -101,7 +101,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var repo = _fixture.Create<IFileFormatRepository>();
 			_ = await repo.GetAcceptableFileFormats().ToListAsync();
 
-			var (_, request) = mockClientBuilder();
+			var (_, request, _) = mockClientBuilder();
 
 			request.RequestUri.Should()
 			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/fileFormats"));
@@ -119,7 +119,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					JsonConvert.SerializeObject(fileTypes),
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -127,7 +127,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var repo = _fixture.Create<IFileFormatRepository>();
 			_ = await repo.GetAllowedFileTypes().ToListAsync();
 
-			var (_, request) = mockClientBuilder();
+			var (_, request, _) = mockClientBuilder();
 
 			request.RequestUri.Should()
 			       .BeEquivalentTo(new Uri("http://localhost/api/videoFile/fileTypes"));
@@ -145,7 +145,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					JsonConvert.SerializeObject(fileTypes),
 					baseAddress: "http://localhost/api/videoFile");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -180,7 +180,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 						}),
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -220,7 +220,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					JsonConvert.SerializeObject(keywords),
 					baseAddress: "http://localhost/api/videoFile");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -230,6 +230,47 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			result.Should()
 			      .BeEquivalentTo(keywords);
+		}
+
+		[Fact]
+		public async Task ShouldOnlyCallFileFormatOnceWithMultipleEnumerations()
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					JsonConvert.SerializeObject(
+						new[]
+						{
+							new FilePattern
+							{
+								Patterns = new[]
+								           {
+									           @"^(.d+)$"
+								           },
+								ContainerGroup = 1,
+								EpisodeGroup = 3,
+								SeasonGroup = 5,
+								TitleGroup = 2,
+								YearGroup = 0
+							}
+						}),
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var fileFormats = repo.GetAcceptableFileFormats();
+
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+			_ = await fileFormats.ToListAsync();
+
+			var (_, _, callCount) = mockClientBuilder();
+
+			callCount.Should().Be(1);
 		}
 
 		[Fact]
@@ -255,7 +296,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 						}),
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);
@@ -292,7 +333,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					"FORMAT",
 					baseAddress: "http://localhost/api/videoFile/");
 
-			var (client, _) = mockClientBuilder();
+			var (client, _, _) = mockClientBuilder();
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
 			       .Returns(client);

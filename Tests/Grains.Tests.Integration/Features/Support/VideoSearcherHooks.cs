@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Abstractions;
 using BoDi;
 using Grains.FileFormat;
+using Grains.VideoSearcher;
 using Grains.VideoSearcher.Repositories.Models;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.VideoSearcher;
@@ -29,7 +30,7 @@ namespace Grains.Tests.Integration.Features.Support
 		{
 			serviceCollection.AddTransient<IFileFormatRepository, FileFormatRepository>()
 			                 .AddTransient<IFileSystem, FileSystem>()
-			                 .AddTransient<IVideoSearcher, VideoSearcher.VideoSearcher>()
+			                 .AddTransient<ISearcher, Searcher>()
 			                 .AddHttpClient(
 				                  nameof(FileFormatRepository),
 				                  client =>
@@ -39,7 +40,7 @@ namespace Grains.Tests.Integration.Features.Support
 				                  });
 
 			var serviceProvider = serviceCollection.BuildServiceProvider();
-			var searcher = serviceProvider.GetRequiredService<IVideoSearcher>();
+			var searcher = serviceProvider.GetRequiredService<ISearcher>();
 			objectContainer.RegisterInstanceAs(searcher);
 		}
 

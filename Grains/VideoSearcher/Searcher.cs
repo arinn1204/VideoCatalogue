@@ -11,12 +11,12 @@ using GrainsInterfaces.VideoSearcher;
 
 namespace Grains.VideoSearcher
 {
-	public class VideoSearcher : IVideoSearcher
+	public class Searcher : ISearcher
 	{
 		private readonly IFileFormatRepository _fileFormatRepository;
 		private readonly IFileSystem _fileSystem;
 
-		public VideoSearcher(
+		public Searcher(
 			IFileFormatRepository fileFormatRepository,
 			IFileSystem fileSystem)
 		{
@@ -24,7 +24,7 @@ namespace Grains.VideoSearcher
 			_fileSystem = fileSystem;
 		}
 
-#region IVideoSearcher Members
+#region ISearcher Members
 
 		public async IAsyncEnumerable<VideoSearchResults> Search(string path)
 		{

@@ -132,7 +132,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -200,7 +200,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -268,7 +268,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -334,7 +334,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -413,7 +413,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -488,7 +488,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -578,7 +578,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -639,7 +639,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -705,7 +705,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -773,7 +773,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 			var files = await searcher.Search("Y:")
 			                          .ToListAsync();
 
@@ -807,7 +807,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 					           return directory.Object;
 				           });
 
-			var searcher = _fixture.Create<VS.VideoSearcher>();
+			var searcher = _fixture.Create<VS.Searcher>();
 
 			await searcher.Search("Y:")
 			              .ToListAsync();

@@ -12,16 +12,16 @@ namespace Grains.Tests.Integration.Features.Actions
 	[Binding]
 	public class VideoSearcherActions
 	{
+		private readonly ISearcher _searcher;
 		private readonly VideoFile _videoFile;
-		private readonly IVideoSearcher _videoSearcher;
 
 		public VideoSearcherActions(
 			VideoFile videoFile,
 			IConfiguration configuration,
-			IVideoSearcher videoSearcher)
+			ISearcher searcher)
 		{
 			_videoFile = videoFile;
-			_videoSearcher = videoSearcher;
+			_searcher = searcher;
 		}
 
 		[When(@"I view the available movies")]
@@ -35,8 +35,8 @@ namespace Grains.Tests.Integration.Features.Actions
 					File.Create(newName);
 				});
 
-			_videoFile.VideoDetails = await _videoSearcher.Search(VideoSearcherHooks.DataDirectory)
-			                                              .ToListAsync();
+			_videoFile.VideoDetails = await _searcher.Search(VideoSearcherHooks.DataDirectory)
+			                                         .ToListAsync();
 		}
 	}
 }

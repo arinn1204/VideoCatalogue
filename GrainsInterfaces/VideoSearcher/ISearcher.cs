@@ -3,7 +3,7 @@ using GrainsInterfaces.Models.VideoSearcher;
 
 namespace GrainsInterfaces.VideoSearcher
 {
-	public interface IVideoSearcher
+	public interface ISearcher
 	{
 		IAsyncEnumerable<VideoSearchResults> Search(string path);
 	}

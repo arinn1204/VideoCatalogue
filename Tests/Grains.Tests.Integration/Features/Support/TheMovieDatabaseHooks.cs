@@ -1,9 +1,9 @@
 ﻿using System;
 using BoDi;
 using Grains.VideoInformation;
-using Grains.VideoInformation.Interfaces.Repositories;
-using Grains.VideoInformation.Interfaces.Repositories.Details;
 using Grains.VideoInformation.TheMovieDatabaseRepositories;
+using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
+using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
 using GrainsInterfaces.VideoApi;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;

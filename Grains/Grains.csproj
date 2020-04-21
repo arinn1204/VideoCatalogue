@@ -50,6 +50,15 @@
         <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Video.cs"/>
         <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackEntryReader.cs"/>
         <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackReader.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\GenreDetail.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\MovieDetail.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\PersonDetail.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\ProductionCompanyDetail.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\TvDetail.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Exceptions\VideoApiException.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\SerachResults\SearchResults.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\SerachResults\SearchResultWrapper.cs"/>
+        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\SerachResults\TvSearchResults.cs"/>
     </ItemGroup>
 
 </Project>

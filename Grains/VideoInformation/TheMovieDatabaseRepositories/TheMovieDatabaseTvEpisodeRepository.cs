@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Grains.VideoInformation.Interfaces.Repositories.Details;
+using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 {

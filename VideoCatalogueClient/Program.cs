@@ -1,5 +1,8 @@
+using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Orleans.Configuration;
+using Orleans.Hosting;
 
 namespace VideoCatalogueClient
 {
@@ -7,7 +10,7 @@ namespace VideoCatalogueClient
 	{
 		public static void Main(string[] args)
 		{
-			CreateHostBuilder(args).Build().Run();
+			CreateHostBuilder(args).RunConsoleAsync();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -16,6 +19,22 @@ namespace VideoCatalogueClient
 				     webBuilder =>
 				     {
 					     webBuilder.UseStartup<Startup>();
+				     })
+			    .UseOrleans(
+				     siloBuilder =>
+				     {
+					     siloBuilder.UseLocalhostClustering()
+					                .Configure<ClusterOptions>(
+						                 opts =>
+						                 {
+							                 opts.ClusterId = "Dev";
+							                 opts.ServiceId = "OrleansBasic";
+						                 })
+					                .Configure<EndpointOptions>(
+						                 opts =>
+						                 {
+							                 opts.AdvertisedIPAddress = IPAddress.Loopback;
+						                 });
 				     });
 	}
 }

@@ -8,10 +8,11 @@ using Grains.FileFormat.Models;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.FileFormat.Models;
 using Newtonsoft.Json;
+using Orleans;
 
 namespace Grains.FileFormat
 {
-	public class FileFormatRepository : IFileFormatRepository
+	public class FileFormatRepository : Grain, IFileFormatRepository
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;

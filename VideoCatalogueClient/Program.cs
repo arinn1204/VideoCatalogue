@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RenamerClient
+namespace VideoCatalogueClient
 {
 	public class Program
 	{

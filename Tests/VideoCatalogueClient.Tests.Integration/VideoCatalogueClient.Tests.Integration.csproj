@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RootNamespace>RenamerClient.Tetss.Integration</RootNamespace>
+    <RootNamespace>VideoCatalogueClient.Tetss.Integration</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoBogus" Version="2.8.0" />
+    <PackageReference Include="AutoBogus" Version="2.8.0"/>
     <PackageReference Include="AutoFixture" Version="4.11.0"/>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0"/>
     <PackageReference Include="AutoFixture.Xunit2" Version="4.11.0"/>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RenamerClient\RenamerClient.csproj" />
+    <ProjectReference Include="..\..\VideoCatalogueClient\VideoCatalogueClient.csproj"/>
   </ItemGroup>
 
 </Project>

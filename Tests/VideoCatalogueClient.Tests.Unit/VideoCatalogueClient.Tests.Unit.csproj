@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RenamerClient\RenamerClient.csproj" />
+    <ProjectReference Include="..\..\VideoCatalogueClient\VideoCatalogueClient.csproj"/>
   </ItemGroup>
 
 </Project>

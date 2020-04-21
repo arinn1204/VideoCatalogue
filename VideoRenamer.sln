@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenamerClient", "RenamerClient\RenamerClient.csproj", "{C0768A6B-46B3-4ADB-B51B-DF4C7D7C5E50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient", "VideoCatalogueClient\VideoCatalogueClient.csproj", "{C0768A6B-46B3-4ADB-B51B-DF4C7D7C5E50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "Silo\Silo.csproj", "{AAB808C2-9271-4C3F-B6DA-8CAA41718BC1}"
 EndProject
@@ -17,9 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains.Tests.Unit", "Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains.Tests.Integration", "Tests\Grains.Tests.Integration\Grains.Tests.Integration.csproj", "{DE82DD2B-74E7-43ED-91F9-4D046BE57AA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenamerClient.Tests.Unit", "Tests\RenamerClient.Tests.Unit\RenamerClient.Tests.Unit.csproj", "{2B8FA2E3-7D7D-4C13-982C-2175FC68339D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Unit", "Tests\VideoCatalogueClient.Tests.Unit\VideoCatalogueClient.Tests.Unit.csproj", "{2B8FA2E3-7D7D-4C13-982C-2175FC68339D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenamerClient.Tests.Integration", "Tests\RenamerClient.Tests.Integration\RenamerClient.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Integration", "Tests\VideoCatalogueClient.Tests.Integration\VideoCatalogueClient.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.Models.VideoSearcher;
 using GrainsInterfaces.VideoSearcher;
+using Orleans;
 
 namespace Grains.VideoSearcher
 {
-	public class Searcher : ISearcher
+	public class Searcher : Grain, ISearcher
 	{
 		private readonly IFileFormatRepository _fileFormatRepository;
 		private readonly IFileSystem _fileSystem;

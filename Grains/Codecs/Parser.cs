@@ -5,10 +5,11 @@ using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.Models.CodecParser;
+using Orleans;
 
 namespace Grains.Codecs
 {
-	public class Parser : IParser
+	public class Parser : Grain, IParser
 	{
 		private readonly IMapper _mapper;
 		private readonly IMatroska _matroska;
@@ -23,7 +24,7 @@ namespace Grains.Codecs
 
 #region IParser Members
 
-		public FileInformation GetInformation(string path, out FileError error)
+		public FileInformation GetInformation(string path, out FileError? error)
 		{
 			var fileError = null as FileError;
 			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);

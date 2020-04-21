@@ -1,5 +1,6 @@
 using System;
 using GrainsInterfaces.CodecParser;
+using GrainsInterfaces.VideoApi;
 using GrainsInterfaces.VideoSearcher;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +23,14 @@ namespace VideoCatalogueClient
 					         var parser = grainFactory.GetGrain<IParser>(Guid.NewGuid());
 
 					         return parser;
+				         })
+			        .AddTransient(
+				         provider =>
+				         {
+					         var grainFactory = provider.GetRequiredService<IGrainFactory>();
+					         var videoApi = grainFactory.GetGrain<IVideoApi>(Guid.NewGuid());
+
+					         return videoApi;
 				         })
 			        .AddTransient(
 				         provider =>

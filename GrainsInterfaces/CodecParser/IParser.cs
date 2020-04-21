@@ -5,6 +5,6 @@ namespace GrainsInterfaces.CodecParser
 {
 	public interface IParser : IGrainWithGuidKey
 	{
-		FileInformation GetInformation(string path, out FileError error);
+		FileInformation GetInformation(string path, out FileError? error);
 	}
 }

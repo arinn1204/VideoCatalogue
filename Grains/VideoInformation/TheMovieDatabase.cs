@@ -9,13 +9,14 @@ using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
 using GrainsInterfaces.Models.VideoApi;
 using GrainsInterfaces.Models.VideoApi.Enums;
 using GrainsInterfaces.VideoApi;
+using Orleans;
 
 [assembly: InternalsVisibleTo("Grains.Tests.Unit")]
 [assembly: InternalsVisibleTo("Grains.Tests.Integration")]
 
 namespace Grains.VideoInformation
 {
-	public class TheMovieDatabase : IVideoApi
+	public class TheMovieDatabase : Grain, IVideoApi
 	{
 		private readonly IMapper _mapper;
 		private readonly ITheMovieDatabaseRepository _theMovieDatabaseRepository;

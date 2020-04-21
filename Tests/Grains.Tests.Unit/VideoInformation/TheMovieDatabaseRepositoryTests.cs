@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -164,6 +165,50 @@ namespace Grains.Tests.Unit.VideoInformation
 		}
 
 		[Fact]
+		[Trait("Category", "Search")]
+		[Trait("Category", "Movie")]
+		[SuppressMessage(
+			"ReSharper",
+			"PossibleMultipleEnumeration",
+			Justification = "Intentionally multiple enumeration")]
+		public async Task ShouldOnlyCallSearchRepositoryOnce()
+		{
+			var results = new SearchResultWrapper<SearchResult>
+			              {
+				              SearchResults = new[]
+				                              {
+					                              new SearchResult
+					                              {
+						                              Id = 24428,
+						                              Title = "The Avengers",
+						                              ReleaseDate = new DateTime(2012, 4, 25),
+						                              Type = MovieType.Movie
+					                              }
+				                              }
+			              };
+			var stringResponse = JsonConvert.SerializeObject(results);
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+
+			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
+
+			factory.Setup(s => s.CreateClient("TheMovieDatabase"))
+			       .Returns(
+				        httpClientFunc()
+					       .client);
+
+			var repository = _fixture.Create<TheMovieDatabaseRepository>();
+
+			var response = repository.SearchMovie("title", 2019);
+
+			_ = await response.ToListAsync();
+			_ = await response.ToListAsync();
+			_ = await response.ToListAsync();
+			_ = await response.ToListAsync();
+
+			httpClientFunc().callCounter.Should().Be(1);
+		}
+
+		[Fact]
 		[Trait("Category", "Authorization")]
 		public async Task ShouldPullAuthorizationTokenFromConfiguration()
 		{
@@ -191,8 +236,8 @@ namespace Grains.Tests.Unit.VideoInformation
 
 			var repository = _fixture.Create<TheMovieDatabaseRepository>();
 
-			var results = await repository.SearchMovie("title", 2019)
-			                              .FirstAsync();
+			_ = await repository.SearchMovie("title", 2019)
+			                    .FirstAsync();
 
 			httpClientFunc()
 			   .request.Headers

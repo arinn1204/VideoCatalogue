@@ -84,20 +84,29 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			return await ProcessResponse<PersonDetail>(response);
 		}
 
-		public async IAsyncEnumerable<SearchResult> SearchMovie(string title, int? year = null)
+		public IAsyncEnumerable<SearchResult> SearchMovie(string title, int? year = null)
 		{
-			var response = await _searchRepository.Search(
+			var responseMessage = _searchRepository.Search(
 				title,
 				year,
 				BuildBaseUri(),
 				GetClient(),
 				MovieType.Movie);
-			var result = await ProcessResponse<SearchResultWrapper<SearchResult>>(response);
 
-			foreach (var searchResult in result.SearchResults ?? Enumerable.Empty<SearchResult>())
+			return AsyncEnumerable.Create(
+				token => Process(responseMessage).GetAsyncEnumerator(token));
+
+			async IAsyncEnumerable<SearchResult> Process(Task<HttpResponseMessage> responseTask)
 			{
-				searchResult.Type = MovieType.Movie;
-				yield return searchResult;
+				var response = await responseTask;
+				var result = await ProcessResponse<SearchResultWrapper<SearchResult>>(response);
+
+				foreach (var searchResult in result.SearchResults ??
+				                             Enumerable.Empty<SearchResult>())
+				{
+					searchResult.Type = MovieType.Movie;
+					yield return searchResult;
+				}
 			}
 		}
 
@@ -145,19 +154,17 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 
 		private Task<TResponse> ProcessResponse<TResponse>(
 			HttpResponseMessage responseMessage,
-			Func<HttpResponseMessage, Task<TResponse>> processResponse = null)
+			Func<HttpResponseMessage, Task<TResponse>>? processResponse = null)
 		{
-			Func<HttpResponseMessage, Task<TResponse>> defaultProcess = async response =>
-			                                                            {
-				                                                            var responseContent =
-					                                                            await response
-					                                                                 .Content
-					                                                                 .ReadAsStringAsync();
-				                                                            return JsonConvert
-					                                                           .DeserializeObject<
-						                                                            TResponse>(
-						                                                            responseContent);
-			                                                            };
+			Func<HttpResponseMessage, Task<TResponse>> defaultProcess =
+				async response =>
+				{
+					var responseContent =
+						await response
+						     .Content
+						     .ReadAsStringAsync();
+					return JsonConvert.DeserializeObject<TResponse>(responseContent);
+				};
 			processResponse ??= defaultProcess;
 
 			return processResponse(responseMessage);

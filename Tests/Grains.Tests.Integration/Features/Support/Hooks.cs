@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BoDi;
-using Grains.VideoApi;
+using Grains.VideoInformation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;

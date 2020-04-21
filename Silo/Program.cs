@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Grains.VideoApi;
+using Grains.VideoInformation;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;

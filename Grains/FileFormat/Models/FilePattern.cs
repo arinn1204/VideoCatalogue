@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Grains.VideoSearcher.Repositories.Models
+namespace Grains.FileFormat.Models
 {
 	public class FilePattern
 	{

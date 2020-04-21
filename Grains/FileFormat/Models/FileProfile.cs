@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using GrainsInterfaces.FileFormat.Models;
 
-namespace Grains.VideoSearcher.Repositories.Models
+namespace Grains.FileFormat.Models
 {
 	public class FileProfile : Profile
 	{

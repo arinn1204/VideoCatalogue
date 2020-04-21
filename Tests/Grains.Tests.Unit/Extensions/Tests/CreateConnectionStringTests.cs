@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 
-namespace Grains.Tests.Unit.Extensions
+namespace Grains.Tests.Unit.Extensions.Tests
 {
 	public class CreateConnectionStringTests
 	{

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
+using Grains.VideoInformation.Models.Details;
 using Grains.VideoInformation.Models.Exceptions;
 using Grains.VideoInformation.Models.SerachResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
@@ -43,10 +44,9 @@ namespace Grains.VideoInformation
 				                                   w =>
 				                                   {
 					                                   var titlesMatch = w.Title == request.Title;
-					                                   var yearsMatch = request.Year.HasValue
-						                                   ? w.ReleaseDate.Year ==
-						                                     request.Year.Value
-						                                   : true;
+					                                   var yearsMatch = !request.Year.HasValue ||
+					                                                    w.ReleaseDate.Year ==
+					                                                    request.Year.Value;
 
 					                                   return titlesMatch && yearsMatch;
 				                                   })
@@ -84,12 +84,12 @@ namespace Grains.VideoInformation
 			var movieCredits = await _theMovieDatabaseRepository
 			                        .GetMovieCredit(match.Id)
 			                        .ConfigureAwait(false);
-			return _mapper.Map<VideoDetail>(
+			return _mapper.Map<MovieDetail, VideoDetail>(
 				await movieDetailsTask.ConfigureAwait(false),
 				opts => opts.AfterMap(
 					(_, dest) =>
 					{
-						var videoDetail = dest as VideoDetail;
+						var videoDetail = dest;
 						var credits = _mapper.Map<Credit>(movieCredits);
 						videoDetail.Credits = credits;
 					}));

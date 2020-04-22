@@ -23,7 +23,7 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddHttpClient(
 				"MatroskaClient",
 				client => client.BaseAddress = new Uri(
-					"https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
+					"http://localhost:8080/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
 			serviceCollection.AddTransient<ISpecification, Specification>();
 			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<IEbmlReader, EbmlReader>();

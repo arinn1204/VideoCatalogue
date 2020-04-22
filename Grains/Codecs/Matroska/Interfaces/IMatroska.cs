@@ -6,6 +6,6 @@ namespace Grains.Codecs.Matroska.Interfaces
 {
 	public interface IMatroska
 	{
-		IEnumerable<EbmlDocument> GetFileInformation(Stream stream);
+		IAsyncEnumerable<EbmlDocument> GetFileInformation(Stream stream);
 	}
 }

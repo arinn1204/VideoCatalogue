@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using AutoBogus;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -33,7 +34,7 @@ namespace Grains.Tests.Unit.Codecs
 		private readonly EbmlSpecification _specification;
 
 		[Fact]
-		public void ShouldCreateSegment()
+		public async Task ShouldCreateSegment()
 		{
 			var expectedSegment = new AutoFaker<Segment>().Generate();
 
@@ -44,10 +45,10 @@ namespace Grains.Tests.Unit.Codecs
 					       It.IsAny<long>(),
 					       It.IsAny<Dictionary<byte[], EbmlElement>>(),
 					       It.IsAny<List<uint>>()))
-			      .Returns(expectedSegment);
+			      .ReturnsAsync(expectedSegment);
 
 			var segmentReader = _fixture.Create<ISegmentReader>();
-			var segment = segmentReader.GetSegmentInformation(
+			var segment = await segmentReader.GetSegmentInformation(
 				new MemoryStream(),
 				_specification,
 				100);

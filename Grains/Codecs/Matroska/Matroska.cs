@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
@@ -39,7 +40,7 @@ namespace Grains.Codecs.Matroska
 
 #region IMatroska Members
 
-		public IEnumerable<EbmlDocument> GetFileInformation(Stream stream)
+		public async IAsyncEnumerable<EbmlDocument> GetFileInformation(Stream stream)
 		{
 			var elements =
 				_matroskaSpecification.Value.Elements.TakeUntil(t => t.Name == "Segment")
@@ -50,30 +51,31 @@ namespace Grains.Codecs.Matroska
 			elements.Remove(segmentSequence);
 			while (stream.Position < stream.Length)
 			{
-				var id = _reader.ReadBytes(stream, 4).ConvertToUlong();
+				var data = await _reader.ReadBytes(stream, 4);
+				var id = data.ConvertToUlong();
 
 				if (id != ebmlIdDefinition)
 				{
 					throw new MatroskaException($"{id} is not a valid ebml ID.");
 				}
 
-				yield return GetDocument(stream, segment.Id, elements);
+				yield return await GetDocument(stream, segment.Id, elements);
 			}
 		}
 
 #endregion
 
-		private EbmlDocument GetDocument(
+		private async Task<EbmlDocument> GetDocument(
 			Stream stream,
 			uint segmentIdDefinition,
 			Dictionary<byte[], EbmlElement> ebmlTrackedElements)
 		{
-			var ebmlHeader = GetEbmlHeader(
+			var ebmlHeader = await GetEbmlHeader(
 				stream,
 				ebmlTrackedElements,
 				new List<uint>());
 
-			var segment = GetSegment(stream, segmentIdDefinition);
+			var segment = await GetSegment(stream, segmentIdDefinition);
 
 			return new EbmlDocument
 			       {
@@ -82,19 +84,19 @@ namespace Grains.Codecs.Matroska
 			       };
 		}
 
-		private EbmlHeader GetEbmlHeader(
+		private async Task<EbmlHeader> GetEbmlHeader(
 			Stream stream,
 			Dictionary<byte[], EbmlElement> ebmlTrackedElements,
 			List<uint> skippedElementIds)
 		{
-			var size = _reader.GetSize(stream);
-			var ebmlHeader = _reader.GetElement<EbmlHeader>(
+			var size = await _reader.GetSize(stream);
+			var ebmlHeader = await _reader.GetElement<EbmlHeader>(
 				stream,
 				size,
 				ebmlTrackedElements,
 				skippedElementIds);
 
-			if (ebmlHeader.EbmlVersion == 1 && ebmlHeader.DocType == "matroska")
+			if (ebmlHeader!.EbmlVersion == 1 && ebmlHeader.DocType == "matroska")
 			{
 				return ebmlHeader;
 			}
@@ -106,16 +108,17 @@ namespace Grains.Codecs.Matroska
 			throw new MatroskaException(errorDescription);
 		}
 
-		private Segment? GetSegment(Stream stream, ulong segmentIdDefinition)
+		private async Task<Segment?> GetSegment(Stream stream, ulong segmentIdDefinition)
 		{
-			var segmentId = _reader.ReadBytes(stream, 4).ConvertToUlong();
+			var data = await _reader.ReadBytes(stream, 4);
+			var segmentId = data.ConvertToUlong();
 
 			return segmentId != segmentIdDefinition
 				? default
-				: _segmentReader.GetSegmentInformation(
+				: await _segmentReader.GetSegmentInformation(
 					stream,
 					_matroskaSpecification.Value,
-					_reader.GetSize(stream));
+					await _reader.GetSize(stream));
 		}
 	}
 }

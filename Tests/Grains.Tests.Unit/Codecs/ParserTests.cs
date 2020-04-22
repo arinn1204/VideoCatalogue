@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
@@ -163,39 +164,40 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldAddTheNameOfStreamToTheFileError()
+		public async Task ShouldAddTheNameOfStreamToTheFileError()
 		{
 			var expectedDocument = BuildDocument(out var uid);
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
-			        .Returns<Stream>(
-				         stream => Enumerable.Empty<EbmlDocument>()
-				                             .Append(expectedDocument)
-				                             .Throw(new Exception("An error occured.")));
+			        .Returns(
+				         AsyncEnumerable.Empty<EbmlDocument>()
+				                        .Append(expectedDocument)
+				                        .Throw(new Exception("An error occured.")));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out var fileError);
-			fileError.Errors.Single().Should().Be("An error occured.");
-			fileError.StreamName.Should().Be(FileName);
+			var (fileInformation, error) = await parser.GetInformation(FileName);
+			error.Errors.Single().Should().Be("An error occured.");
+			error.StreamName.Should().Be(FileName);
 
-			result.SegmentId.Should()
-			      .Be(new Guid(uid));
+			fileInformation!.SegmentId.Should()
+			                .Be(new Guid(uid));
 		}
 
 		[Fact]
-		public void ShouldHaveDefaultDateOfJanFirstTwoThousandOne()
+		public async Task ShouldHaveDefaultDateOfJanFirstTwoThousandOne()
 		{
 			var expectedDocument = BuildDocument(out _);
-			expectedDocument.Segment.SegmentInformations.First().TimeSinceMatroskaEpoch = null;
+			expectedDocument.Segment!.SegmentInformations.First().TimeSinceMatroskaEpoch = null;
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
 			        .Returns<Stream>(
-				         stream => Enumerable.Empty<EbmlDocument>()
-				                             .Append(expectedDocument));
+				         stream => AsyncEnumerable.Empty<EbmlDocument>()
+				                                  .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out _);
+			var result = await parser.GetInformation(FileName);
 			result
+			   .fileInformation
 			   .DateCreated
 			   .Should()
 			   .Be(
@@ -210,23 +212,23 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldHaveDurationOfZeroWhenNotRead()
+		public async Task ShouldHaveDurationOfZeroWhenNotRead()
 		{
 			var expectedDocument = BuildDocument(out _);
-			expectedDocument.Segment.SegmentInformations.First().Duration = null;
+			expectedDocument.Segment!.SegmentInformations.First().Duration = null;
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
 			        .Returns<Stream>(
-				         stream => Enumerable.Empty<EbmlDocument>()
-				                             .Append(expectedDocument));
+				         stream => AsyncEnumerable.Empty<EbmlDocument>()
+				                                  .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out _);
-			result.Duration.TotalMilliseconds.Should().Be(0);
+			var result = await parser.GetInformation(FileName);
+			result.fileInformation.Duration.TotalMilliseconds.Should().Be(0);
 		}
 
 		[Fact]
-		public void ShouldMapMatroskaResponseIntoAFileInformationWithoutOverrides()
+		public async Task ShouldMapMatroskaResponseIntoAFileInformationWithoutOverrides()
 		{
 			var expectedDocument = BuildDocument(out var uid);
 
@@ -236,94 +238,106 @@ namespace Grains.Tests.Unit.Codecs
 				         new[]
 				         {
 					         expectedDocument
-				         });
+				         }.ToAsyncEnumerable);
 
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out var fileError);
+			var result = await parser.GetInformation(FileName);
 
-			fileError.Should().BeNull();
-			result.Should()
-			      .BeEquivalentTo(
-				       new FileInformation
-				       {
-					       Container = Container.Matroska,
-					       Title = "This is a title.",
-					       Duration = new TimeSpan(
-						       0,
-						       0,
-						       0,
-						       0,
-						       7138000),
-					       ContainerVersion = 3,
-					       DateCreated = new DateTime(2020, 4, 4),
-					       PixelHeight = 1080,
-					       PixelWidth = 1920,
-					       SegmentId = new Guid(uid),
-					       VideoCodec = Codec.HEVC,
-					       TimeCodeScale = TimeCodeScale.Millisecond,
-					       Audios = new[]
-					                {
-						                new AudioTrack
-						                {
-							                Channels = 8,
-							                Codec = Codec.AAC,
-							                Frequency = 48000,
-							                Language = "en",
-							                Name = "Main Audio"
-						                },
-						                new AudioTrack
-						                {
-							                Channels = 2,
-							                Codec = Codec.AAC,
-							                Frequency = 16000,
-							                Language = "fr",
-							                Name = "En Français"
-						                }
-					                },
-					       Subtitles = new[]
-					                   {
-						                   new Subtitle
-						                   {
-							                   Language = "en",
-							                   Name = "Subtitle"
-						                   },
-						                   new Subtitle
-						                   {
-							                   Language = "fr",
-							                   Name = "En Français"
-						                   }
-					                   }
-				       });
+			result.error.Should().BeNull();
+			result
+			   .fileInformation
+			   .Should()
+			   .BeEquivalentTo(
+					new FileInformation
+					{
+						Container = Container.Matroska,
+						Title = "This is a title.",
+						Duration = new TimeSpan(
+							0,
+							0,
+							0,
+							0,
+							7138000),
+						ContainerVersion = 3,
+						DateCreated = new DateTime(2020, 4, 4),
+						PixelHeight = 1080,
+						PixelWidth = 1920,
+						SegmentId = new Guid(uid),
+						VideoCodec = Codec.HEVC,
+						TimeCodeScale = TimeCodeScale.Millisecond,
+						Audios = new[]
+						         {
+							         new AudioTrack
+							         {
+								         Channels = 8,
+								         Codec = Codec.AAC,
+								         Frequency = 48000,
+								         Language = "en",
+								         Name = "Main Audio"
+							         },
+							         new AudioTrack
+							         {
+								         Channels = 2,
+								         Codec = Codec.AAC,
+								         Frequency = 16000,
+								         Language = "fr",
+								         Name = "En Français"
+							         }
+						         },
+						Subtitles = new[]
+						            {
+							            new Subtitle
+							            {
+								            Language = "en",
+								            Name = "Subtitle"
+							            },
+							            new Subtitle
+							            {
+								            Language = "fr",
+								            Name = "En Français"
+							            }
+						            }
+					});
 		}
 
 		[Fact]
-		public void ShouldOverrideAudioLanguageWhenOverrideSet()
+		public async Task ShouldOverrideAudioLanguageWhenOverrideSet()
 		{
 			var expectedDocument = BuildDocument(out _, "CH");
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
 			        .Returns<Stream>(
-				         stream => Enumerable.Empty<EbmlDocument>()
-				                             .Append(expectedDocument));
+				         stream => AsyncEnumerable.Empty<EbmlDocument>()
+				                                  .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out _);
-			result.Audios.First(f => f.Name == "Main Audio").Language.Should().Be("CH");
+			var result = await parser.GetInformation(FileName);
+			result.fileInformation
+			      .Audios
+			      .First(f => f.Name == "Main Audio")
+			      .Language
+			      .Should()
+			      .Be("CH");
 		}
 
 		[Fact]
-		public void ShouldOverrideSubtitleLanguageWhenOverrideSet()
+		public async Task ShouldOverrideSubtitleLanguageWhenOverrideSet()
 		{
 			var expectedDocument = BuildDocument(out _, null, "CH");
 
 			var matroska = _fixture.Freeze<Mock<IMatroska>>();
 			matroska.Setup(s => s.GetFileInformation(It.IsAny<Stream>()))
 			        .Returns<Stream>(
-				         stream => Enumerable.Empty<EbmlDocument>()
-				                             .Append(expectedDocument));
+				         stream => AsyncEnumerable.Empty<EbmlDocument>()
+				                                  .Append(expectedDocument));
 			var parser = _fixture.Create<IParser>();
-			var result = parser.GetInformation(FileName, out _);
-			result.Subtitles.First(f => f.Name == "Subtitle").Language.Should().Be("CH");
+			var result = await parser.GetInformation(FileName);
+			result.fileInformation
+			      .Subtitles
+					!.First(f => f.Name == "Subtitle")
+					 .Language
+					 .Should()
+					 .Be("CH");
 		}
 	}
 }

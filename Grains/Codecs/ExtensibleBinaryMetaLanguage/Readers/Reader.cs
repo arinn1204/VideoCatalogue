@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
@@ -7,9 +9,17 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 	{
 #region IReader Members
 
-		public virtual long GetSize(Stream stream)
+		public virtual async Task<long> GetSize(Stream stream)
 		{
-			var firstByte = (byte) stream.ReadByte();
+			var bytes = new byte[1];
+			var read = await stream.ReadAsync(bytes, 0, 1);
+
+			if (read == 0)
+			{
+				return 0;
+			}
+
+			var firstByte = bytes[0];
 			var width = GetWidth(firstByte);
 
 			var result = width switch
@@ -28,11 +38,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			return result;
 		}
 
-		public virtual byte[] ReadBytes(Stream stream, int bytesToRead)
+		public virtual async Task<byte[]> ReadBytes(Stream stream, int bytesToRead)
 		{
 			var bytes = new byte[bytesToRead];
-			stream.Read(bytes, 0, bytesToRead);
-			return bytes;
+			var read = await stream.ReadAsync(bytes, 0, bytesToRead);
+
+			return read == 0
+				? Array.Empty<byte>()
+				: bytes;
 		}
 
 #endregion

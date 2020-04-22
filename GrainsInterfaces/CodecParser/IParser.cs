@@ -1,10 +1,11 @@
-﻿using GrainsInterfaces.Models.CodecParser;
+﻿using System.Threading.Tasks;
+using GrainsInterfaces.Models.CodecParser;
 using Orleans;
 
 namespace GrainsInterfaces.CodecParser
 {
 	public interface IParser : IGrainWithGuidKey
 	{
-		FileInformation GetInformation(string path, out FileError? error);
+		Task<(FileInformation? fileInformation, FileError? error)> GetInformation(string path);
 	}
 }

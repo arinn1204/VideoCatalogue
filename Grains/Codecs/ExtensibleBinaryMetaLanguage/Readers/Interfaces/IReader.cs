@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces
 {
 	public interface IReader
 	{
-		long GetSize(Stream stream);
+		Task<long> GetSize(Stream stream);
 
-		byte[] ReadBytes(Stream stream, int bytesToRead);
+		Task<byte[]> ReadBytes(Stream stream, int bytesToRead);
 	}
 }

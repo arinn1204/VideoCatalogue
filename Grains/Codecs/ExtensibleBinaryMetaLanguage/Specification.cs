@@ -23,8 +23,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 		public async Task<EbmlSpecification> GetSpecification()
 		{
-			var responseMessage = await GetContent();
-			var responseContent = await responseMessage.Content.ReadAsStreamAsync();
+			var responseMessage = await GetContent()
+			   .ConfigureAwait(false);
+			var responseContent = await responseMessage
+			                           .Content
+			                           .ReadAsStreamAsync()
+			                           .ConfigureAwait(false);
 			var content = SerializeFromXml(responseContent);
 			return content;
 		}
@@ -47,7 +51,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 				                     Method = HttpMethod.Get
 			                     };
 
-			var response = await client.SendAsync(requestMessage);
+			var response = await client.SendAsync(requestMessage).ConfigureAwait(false);
 
 			_ = response.IsSuccessStatusCode || HandleResponse(response);
 

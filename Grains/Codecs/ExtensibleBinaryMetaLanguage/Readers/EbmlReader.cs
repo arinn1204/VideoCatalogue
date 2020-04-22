@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
@@ -13,35 +14,35 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 	{
 #region IEbmlReader Members
 
-		public T GetElement<T>(
+		public async Task<T> GetElement<T>(
 			Stream stream,
 			long elementSize,
 			Dictionary<byte[], EbmlElement> elements,
 			List<uint> skippedElementIds)
 			where T : class, new()
 		{
-			var values = GetChildren(
+			var values = await GetChildren(
 					stream,
 					elementSize,
 					elements,
 					skippedElementIds)
-			   .ToArray();
+			   .ToArrayAsync();
 
-			return EbmlConvert.DeserializeTo<T>(values);
+			return EbmlConvert.DeserializeTo<T>(values)!;
 		}
 
 #endregion
 
-		private (string Name, object Value) ProcessElement(
+		private async Task<(string Name, object? Value)> ProcessElement(
 			Stream stream,
 			EbmlElement element,
 			Dictionary<byte[], EbmlElement> elements,
 			List<uint> skippedElements)
 		{
-			var size = GetSize(stream);
+			var size = await GetSize(stream);
 			if (element.Type != "master")
 			{
-				var data = ReadBytes(stream, (int) size);
+				var data = await ReadBytes(stream, (int) size);
 				return GetValue(element, data);
 			}
 
@@ -50,9 +51,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 					size,
 					elements,
 					skippedElements)
-			   .ToArray();
+			   .ToArrayAsync();
 
-			var masterElement = EbmlConvert.DeserializeTo(element.Name, values);
+			var masterElement = EbmlConvert.DeserializeTo(
+				element.Name,
+				await values);
 
 			return (element.Name, masterElement);
 		}
@@ -66,7 +69,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 		}
 
 
-		private IEnumerable<(string Name, object value)> GetChildren(
+		private async IAsyncEnumerable<(string Name, object? value)> GetChildren(
 			Stream stream,
 			long elementSize,
 			Dictionary<byte[], EbmlElement> elements,
@@ -76,16 +79,16 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 
 			while (stream.Position < endPosition)
 			{
-				var element = GetElement(elements, stream, endPosition);
+				var element = await GetElement(elements, stream, endPosition);
 
-				if (skippedElementIds.Contains(element.Id))
+				if (skippedElementIds.Contains(element!.Id))
 				{
-					var size = GetSize(stream);
+					var size = await GetSize(stream);
 					stream.Seek(size, SeekOrigin.Current);
 					continue;
 				}
 
-				var value = ProcessElement(
+				var value = await ProcessElement(
 					stream,
 					element,
 					elements,
@@ -95,7 +98,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			}
 		}
 
-		private EbmlElement GetElement(
+		private async Task<EbmlElement?> GetElement(
 			Dictionary<byte[], EbmlElement> elements,
 			Stream stream,
 			long endPosition)
@@ -104,7 +107,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			var readElement = default(EbmlElement);
 			while (stream.Position < endPosition)
 			{
-				data = data.Concat(ReadBytes(stream, 1));
+				var dataRead = await ReadBytes(stream, 1);
+				data = data.Concat(dataRead);
 				var readIds = elements
 				             .Where(w => w.Key.ContainsSequence(data))
 				             .ToList();

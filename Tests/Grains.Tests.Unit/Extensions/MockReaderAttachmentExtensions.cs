@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Moq;
@@ -35,13 +36,13 @@ namespace Grains.Tests.Unit.Extensions
 					       var returnValue = sizeCounter++ switch
 					                         {
 						                         0 => attachmentSize,
-						                         5 => 1,
-						                         _ => 5
+						                         5 => 1L,
+						                         _ => 5L
 					                         };
 					       s.Position = returnValue == 1
 						       ? s.Position
 						       : s.Position + 1;
-					       return returnValue;
+					       return Task.FromResult(returnValue);
 				       });
 
 			return attachmentSize;
@@ -54,22 +55,22 @@ namespace Grains.Tests.Unit.Extensions
 		{
 			var attachedFile = attachment.AttachedFiles.Single();
 			reader.SetupSequence(s => s.ReadBytes(stream, 5))
-			      .Returns(Encoding.UTF8.GetBytes(attachedFile.Description))
-			      .Returns(Encoding.UTF8.GetBytes(attachedFile.Name))
-			      .Returns(Encoding.UTF8.GetBytes(attachedFile.MimeType))
-			      .Returns(BitConverter.GetBytes(attachedFile.Uid).Reverse().ToArray());
+			      .ReturnsAsync(Encoding.UTF8.GetBytes(attachedFile.Description))
+			      .ReturnsAsync(Encoding.UTF8.GetBytes(attachedFile.Name))
+			      .ReturnsAsync(Encoding.UTF8.GetBytes(attachedFile.MimeType))
+			      .ReturnsAsync(BitConverter.GetBytes(attachedFile.Uid).Reverse().ToArray());
 		}
 
 		private static void SetupAttachmentIds(Mock<EbmlReader> reader, Stream stream)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
-			      .Returns("1941A469".ToBytes().ToArray())
-			      .Returns("61A7".ToBytes().ToArray())
-			      .Returns("467E".ToBytes().ToArray())
-			      .Returns("466E".ToBytes().ToArray())
-			      .Returns("4660".ToBytes().ToArray())
-			      .Returns("465C".ToBytes().ToArray())
-			      .Returns("46AE".ToBytes().ToArray());
+			      .ReturnsAsync("1941A469".ToBytes().ToArray())
+			      .ReturnsAsync("61A7".ToBytes().ToArray())
+			      .ReturnsAsync("467E".ToBytes().ToArray())
+			      .ReturnsAsync("466E".ToBytes().ToArray())
+			      .ReturnsAsync("4660".ToBytes().ToArray())
+			      .ReturnsAsync("465C".ToBytes().ToArray())
+			      .ReturnsAsync("46AE".ToBytes().ToArray());
 		}
 	}
 }

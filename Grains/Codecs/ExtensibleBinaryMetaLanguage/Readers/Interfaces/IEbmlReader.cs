@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces
 {
 	public interface IEbmlReader : IReader
 	{
-		T GetElement<T>(
+		Task<T> GetElement<T>(
 			Stream stream,
 			long elementSize,
 			Dictionary<byte[], EbmlElement> elements,

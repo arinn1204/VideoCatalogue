@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
@@ -35,7 +36,7 @@ namespace Grains.Tests.Unit.Codecs
 		[InlineData(3, 2036498)]
 		[InlineData(2, 16147)]
 		[InlineData(1, 127)]
-		public void ShouldReturnWidthAndSize(int expectedWidth, long expectedSize)
+		public async Task ShouldReturnWidthAndSize(int expectedWidth, long expectedSize)
 		{
 			var reader = _fixture.Create<IReader>();
 			var width = expectedWidth switch
@@ -71,7 +72,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			stream.Position = 0;
 
-			var result = reader.GetSize(stream);
+			var result = await reader.GetSize(stream);
 
 			result.Should()
 			      .Be(expectedSize);
@@ -89,6 +90,7 @@ namespace Grains.Tests.Unit.Codecs
 			stream.Position = 0;
 
 			reader.ReadBytes(stream, 8)
+			      .Result
 			      .ConvertToString()
 			      .Should()
 			      .Be("matroska");
@@ -109,6 +111,7 @@ namespace Grains.Tests.Unit.Codecs
 			stream.Position = 0;
 
 			reader.ReadBytes(stream, 8)
+			      .Result
 			      .ConvertToUint()
 			      .Should()
 			      .Be(

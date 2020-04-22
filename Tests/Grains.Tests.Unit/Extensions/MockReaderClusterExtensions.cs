@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Moq;
@@ -34,7 +35,7 @@ namespace Grains.Tests.Unit.Extensions
 					       var returnValue = sizeCounter switch
 					                         {
 						                         0  => clusterSize,
-						                         2  => 1,
+						                         2  => 1L,
 						                         6  => 1,
 						                         7  => 14,
 						                         8  => 1,
@@ -50,7 +51,7 @@ namespace Grains.Tests.Unit.Extensions
 						       : returnValue == 1 && sizeCounter - 1 != 2
 							       ? stream.Position
 							       : stream.Position + 1;
-					       return returnValue;
+					       return Task.FromResult(returnValue);
 				       });
 
 			return clusterSize;
@@ -64,40 +65,41 @@ namespace Grains.Tests.Unit.Extensions
 			var sequence = reader.SetupSequence(s => s.ReadBytes(stream, 5));
 
 			sequence
-			   .Returns(BitConverter.GetBytes(cluster.Timestamp).Reverse().ToArray());
+			   .ReturnsAsync(BitConverter.GetBytes(cluster.Timestamp).Reverse().ToArray());
 
-			foreach (var trackNumber in cluster.SilentTrack.TrackNumbers)
+			foreach (var trackNumber in cluster.SilentTrack!.TrackNumbers!)
 			{
-				sequence.Returns(BitConverter.GetBytes(trackNumber).Reverse().ToArray);
+				sequence.ReturnsAsync(BitConverter.GetBytes(trackNumber).Reverse().ToArray);
 			}
 
-			sequence.Returns(BitConverter.GetBytes(cluster.Position.Value).Reverse().ToArray)
-			        .Returns(BitConverter.GetBytes(cluster.PreviousSize.Value).Reverse().ToArray);
+			sequence.ReturnsAsync(BitConverter.GetBytes(cluster.Position!.Value).Reverse().ToArray)
+			        .ReturnsAsync(
+				         BitConverter.GetBytes(cluster.PreviousSize!.Value).Reverse().ToArray);
 
-			var blockGroup = cluster.BlockGroups.Single();
-			var blockMore = blockGroup.BlockAddition.BlockMores.Single();
-			sequence.Returns(
+			var blockGroup = cluster.BlockGroups!.Single();
+			var blockMore = blockGroup.BlockAddition!.BlockMores.Single();
+			sequence.ReturnsAsync(
 				() => BitConverter.GetBytes(blockMore.AdditionalId).Reverse().ToArray());
 
 
-			sequence.Returns(
+			sequence.ReturnsAsync(
 				         () =>
-					         BitConverter.GetBytes(blockGroup.Duration.Value)
+					         BitConverter.GetBytes(blockGroup.Duration!.Value)
 					                     .Reverse()
 					                     .ToArray())
-			        .Returns(
+			        .ReturnsAsync(
 				         () => BitConverter
 				              .GetBytes(blockGroup.ReferencePriority)
 				              .Reverse()
 				              .ToArray());
 
-			foreach (var referenceBlock in blockGroup.ReferenceBlocks)
+			foreach (var referenceBlock in blockGroup.ReferenceBlocks!)
 			{
-				sequence.Returns(BitConverter.GetBytes(referenceBlock).Reverse().ToArray);
+				sequence.ReturnsAsync(BitConverter.GetBytes(referenceBlock).Reverse().ToArray);
 			}
 
-			sequence.Returns(
-				BitConverter.GetBytes(blockGroup.DiscardPadding.Value)
+			sequence.ReturnsAsync(
+				BitConverter.GetBytes(blockGroup.DiscardPadding!.Value)
 				            .Reverse()
 				            .ToArray);
 		}
@@ -108,27 +110,27 @@ namespace Grains.Tests.Unit.Extensions
 			Stream stream)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
-			      .Returns("0x1F43B675".ToBytes().ToArray()) //Cluster
-			      .Returns("0xE7".ToBytes().ToArray())       //Timestamp
-			      .Returns("0x5854".ToBytes().ToArray())     //SilentTracks M
-			      .Returns("0x58D7".ToBytes().ToArray())     //Silent Track Number
-			      .Returns("0xA7".ToBytes().ToArray())       // Position
-			      .Returns("0xAB".ToBytes().ToArray())       // PrevSize
-			      .Returns("0xA3".ToBytes().ToArray())       // SimpleBlock
+			      .ReturnsAsync("0x1F43B675".ToBytes().ToArray()) //Cluster
+			      .ReturnsAsync("0xE7".ToBytes().ToArray())       //Timestamp
+			      .ReturnsAsync("0x5854".ToBytes().ToArray())     //SilentTracks M
+			      .ReturnsAsync("0x58D7".ToBytes().ToArray())     //Silent Track Number
+			      .ReturnsAsync("0xA7".ToBytes().ToArray())       // Position
+			      .ReturnsAsync("0xAB".ToBytes().ToArray())       // PrevSize
+			      .ReturnsAsync("0xA3".ToBytes().ToArray())       // SimpleBlock
 			       /*----------------------------------------------------------------------------*/
-			      .Returns("0xA0".ToBytes().ToArray())    //Block Group M
-			      .Returns("0xA1".ToBytes().ToArray())    //Block
-			      .Returns("0x75A1".ToBytes().ToArray())  //BlockAdditions M
-			      .Returns("0xA6".ToBytes().ToArray())    //BlockMore M
-			      .Returns("0xEE".ToBytes().ToArray())    //BlockAddID
-			      .Returns("0xA5".ToBytes().ToArray())    //BlockAdditional
-			      .Returns("0x9B".ToBytes().ToArray())    //BlockDuration
-			      .Returns("0xFA".ToBytes().ToArray())    //ReferencePriority
-			      .Returns("0xFB".ToBytes().ToArray())    //ReferenceBlock
-			      .Returns("0xFB".ToBytes().ToArray())    //ReferenceBlock
-			      .Returns("0xFB".ToBytes().ToArray())    //ReferenceBlock
-			      .Returns("0xA4".ToBytes().ToArray())    //CodecState
-			      .Returns("0x75A2".ToBytes().ToArray()); //DiscardPadding
+			      .ReturnsAsync("0xA0".ToBytes().ToArray())    //Block Group M
+			      .ReturnsAsync("0xA1".ToBytes().ToArray())    //Block
+			      .ReturnsAsync("0x75A1".ToBytes().ToArray())  //BlockAdditions M
+			      .ReturnsAsync("0xA6".ToBytes().ToArray())    //BlockMore M
+			      .ReturnsAsync("0xEE".ToBytes().ToArray())    //BlockAddID
+			      .ReturnsAsync("0xA5".ToBytes().ToArray())    //BlockAdditional
+			      .ReturnsAsync("0x9B".ToBytes().ToArray())    //BlockDuration
+			      .ReturnsAsync("0xFA".ToBytes().ToArray())    //ReferencePriority
+			      .ReturnsAsync("0xFB".ToBytes().ToArray())    //ReferenceBlock
+			      .ReturnsAsync("0xFB".ToBytes().ToArray())    //ReferenceBlock
+			      .ReturnsAsync("0xFB".ToBytes().ToArray())    //ReferenceBlock
+			      .ReturnsAsync("0xA4".ToBytes().ToArray())    //CodecState
+			      .ReturnsAsync("0x75A2".ToBytes().ToArray()); //DiscardPadding
 		}
 	}
 }

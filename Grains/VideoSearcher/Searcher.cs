@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GrainsInterfaces.FileFormat;
+using GrainsInterfaces.FileFormat.Models;
 using GrainsInterfaces.Models.VideoSearcher;
 using GrainsInterfaces.VideoSearcher;
 using Orleans;
@@ -27,7 +28,7 @@ namespace Grains.VideoSearcher
 
 #region ISearcher Members
 
-		public async IAsyncEnumerable<VideoSearchResults> Search(string path)
+		public async Task<IAsyncEnumerable<VideoSearchResults>> Search(string path)
 		{
 			var fileFormats = _fileFormatRepository.GetAcceptableFileFormats();
 			var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
@@ -40,6 +41,17 @@ namespace Grains.VideoSearcher
 							fileFormats.Select(s => s.Patterns)));
 
 
+			var searchResults = BuildSearchResults(files, fileFormats);
+
+			return await Task.FromResult(searchResults);
+		}
+
+#endregion
+
+		private static async IAsyncEnumerable<VideoSearchResults> BuildSearchResults(
+			IAsyncEnumerable<(string originalFileName, string newFileName)> files,
+			IAsyncEnumerable<RegisteredFileFormat> fileFormats)
+		{
 			await foreach (var (originalFilePath, newFilePath) in files)
 			{
 				var newFile = Path.GetFileName(newFilePath);
@@ -92,8 +104,6 @@ namespace Grains.VideoSearcher
 				             };
 			}
 		}
-
-#endregion
 
 		private async IAsyncEnumerable<(string originalFileName, string newFileName)> GetFiles(
 			string path,

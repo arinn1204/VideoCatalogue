@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
 using GrainsInterfaces.CodecParser;
@@ -24,27 +25,37 @@ namespace Grains.Codecs
 
 #region IParser Members
 
-		public FileInformation GetInformation(string path, out FileError? error)
+		public async Task<(FileInformation? fileInformation, FileError? error)> GetInformation(
+			string path)
 		{
-			var fileError = null as FileError;
-			using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-			var fileInformations =
-				_matroska.GetFileInformation(stream)
-				         .Select(_mapper.Map<FileInformation>)
-				         .Catch<FileInformation, Exception>(
-					          exception =>
-					          {
-						          fileError ??= new FileError(path);
-						          fileError.Errors = fileError.Errors.Append(exception.Message);
-
-						          return Enumerable.Empty<FileInformation>();
-					          })
-				         .ToList();
-
-			error = fileError;
-			return fileInformations.FirstOrDefault();
+			var fileInformation = await GetMatroskaInformation(path);
+			return fileInformation;
 		}
 
 #endregion
+
+		private async Task<(FileInformation? fileInformation, FileError? error)>
+			GetMatroskaInformation(string path)
+		{
+			var fileError = null as FileError;
+			await using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+			var fileInformations =
+				await _matroska.GetFileInformation(stream)
+				               .Select(_mapper.Map<FileInformation>)
+				               .Catch<FileInformation, Exception>(
+					                exception =>
+					                {
+						                fileError ??= new FileError(path);
+						                fileError.Errors =
+							                fileError.Errors.Append(exception.Message);
+
+						                return AsyncEnumerable.Empty<FileInformation>();
+					                })
+				               .ToListAsync();
+
+			var error = fileError;
+			var fileInformation = fileInformations.FirstOrDefault();
+			return (fileInformation, error);
+		}
 	}
 }

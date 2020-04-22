@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions;
@@ -20,7 +21,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 
 #region ISegmentReader Members
 
-		public Segment GetSegmentInformation(
+		public async Task<Segment?> GetSegmentInformation(
 			Stream stream,
 			EbmlSpecification ebmlSpecification,
 			long segmentSize)
@@ -40,11 +41,13 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 					                     .Select(s => s.Id))
 			                     .ToList(); // list as it should be a short list of skipped ids, this makes it inconsequential to enumerate
 
-			return _reader.GetElement<Segment>(
+			var segment = await _reader.GetElement<Segment>(
 				stream,
 				segmentSize,
 				trackedElements,
 				skippedElements);
+
+			return segment;
 		}
 
 #endregion

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Moq;
@@ -16,7 +17,7 @@ namespace Grains.Tests.Unit.Extensions
 			SeekHead seekhead)
 		{
 			SetupSeekHeadReturnIds(reader, stream);
-			SetupSeekHeadReturnValues(reader, stream, seekhead.Seeks);
+			SetupSeekHeadReturnValues(reader, stream, seekhead.Seeks.ToList());
 			SetupSeekHeadSizes(reader, stream);
 
 			return seekhead.GetSize();
@@ -26,10 +27,10 @@ namespace Grains.Tests.Unit.Extensions
 			Mock<EbmlReader> reader,
 			Stream stream)
 		{
-			var sizes = new Queue<int>(
+			var sizes = new Queue<long>(
 				new[]
 				{
-					2,
+					2L,
 					10,
 					10
 				});
@@ -40,7 +41,7 @@ namespace Grains.Tests.Unit.Extensions
 				       s =>
 				       {
 					       var itemToReturn = s.Position == 0
-						       ? 25
+						       ? 25L
 						       : sizes.Dequeue();
 
 					       if (itemToReturn != 25)
@@ -52,25 +53,25 @@ namespace Grains.Tests.Unit.Extensions
 						       ? 40
 						       : 1;
 
-					       return itemToReturn;
+					       return Task.FromResult(itemToReturn);
 				       });
 		}
 
 		private static void SetupSeekHeadReturnValues(
 			Mock<EbmlReader> reader,
 			Stream stream,
-			IEnumerable<Seek> seeks)
+			List<Seek> seeks)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 10))
-			      .Returns(seeks.First().ElementId)
-			      .Returns(BitConverter.GetBytes(seeks.First().Position).Reverse().ToArray())
-			      .Returns(seeks.Skip(1).First().ElementId)
-			      .Returns(
+			      .ReturnsAsync(seeks.First().ElementId)
+			      .ReturnsAsync(BitConverter.GetBytes(seeks.First().Position).Reverse().ToArray())
+			      .ReturnsAsync(seeks.Skip(1).First().ElementId)
+			      .ReturnsAsync(
 				       BitConverter.GetBytes(seeks.Skip(1).First().Position)
 				                   .Reverse()
 				                   .ToArray())
-			      .Returns(seeks.Skip(2).First().ElementId)
-			      .Returns(
+			      .ReturnsAsync(seeks.Skip(2).First().ElementId)
+			      .ReturnsAsync(
 				       BitConverter.GetBytes(seeks.Skip(2).First().Position)
 				                   .Reverse()
 				                   .ToArray());
@@ -79,16 +80,16 @@ namespace Grains.Tests.Unit.Extensions
 		private static void SetupSeekHeadReturnIds(Mock<EbmlReader> reader, Stream stream)
 		{
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
-			      .Returns("114D9B74".ToBytes().ToArray()) //seekhead
-			      .Returns("4DBB".ToBytes().ToArray())     //seek
-			      .Returns("53AB".ToBytes().ToArray())     //seekid
-			      .Returns("53AC".ToBytes().ToArray())     //seekposition
-			      .Returns("4DBB".ToBytes().ToArray())
-			      .Returns("53AB".ToBytes().ToArray())
-			      .Returns("53AC".ToBytes().ToArray())
-			      .Returns("4DBB".ToBytes().ToArray())
-			      .Returns("53AB".ToBytes().ToArray())
-			      .Returns("53AC".ToBytes().ToArray());
+			      .ReturnsAsync("114D9B74".ToBytes().ToArray()) //seekhead
+			      .ReturnsAsync("4DBB".ToBytes().ToArray())     //seek
+			      .ReturnsAsync("53AB".ToBytes().ToArray())     //seekid
+			      .ReturnsAsync("53AC".ToBytes().ToArray())     //seekposition
+			      .ReturnsAsync("4DBB".ToBytes().ToArray())
+			      .ReturnsAsync("53AB".ToBytes().ToArray())
+			      .ReturnsAsync("53AC".ToBytes().ToArray())
+			      .ReturnsAsync("4DBB".ToBytes().ToArray())
+			      .ReturnsAsync("53AB".ToBytes().ToArray())
+			      .ReturnsAsync("53AC".ToBytes().ToArray());
 		}
 	}
 }

@@ -6,7 +6,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 {
 	public static class EbmlConvert
 	{
-		public static TTarget? DeserializeTo<TTarget>(params (string name, object value)[] values)
+		public static TTarget? DeserializeTo<TTarget>(params (string name, object? value)[] values)
 			where TTarget : class, new()
 		{
 			return typeof(TTarget).CustomAttributes.All(
@@ -17,7 +17,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 
 		public static object? DeserializeTo(
 			string targetObjectName,
-			params (string name, object value)[] values)
+			params (string name, object? value)[] values)
 		{
 			var masterTypes = typeof(EbmlConvert)
 			                 .Assembly

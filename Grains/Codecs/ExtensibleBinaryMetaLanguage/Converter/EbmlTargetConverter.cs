@@ -9,7 +9,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 {
 	public static class EbmlTargetConverter
 	{
-		public static TTarget CreateTarget<TTarget>(IEnumerable<(string name, object value)> values)
+		public static TTarget CreateTarget<TTarget>(
+			IEnumerable<(string name, object? value)> values)
 			where TTarget : new()
 		{
 			var target = new TTarget();
@@ -47,7 +48,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 
 		private static PropertyInfo DeterminePropertyToSet(
 			PropertyInfo propertyByAttribute,
-			PropertyInfo propertyByName,
+			PropertyInfo? propertyByName,
 			string name,
 			string containingObjectName)
 		{
@@ -62,7 +63,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 				                    (true, true, _) => throw new EbmlConverterException(
 					                    $"There is no element with the name '{name}' in '{containingObjectName}'.")
 			                    };
-			return propertyToSet;
+			return propertyToSet!;
 		}
 
 		private static PropertyInfo GetPropertyByAttribute<TTarget>(string name)
@@ -77,7 +78,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 						                     (string) a
 						                             .ConstructorArguments
 						                             .FirstOrDefault()
-						                             .Value ==
+						                             .Value! ==
 						                     name))
 				               .ToList();
 

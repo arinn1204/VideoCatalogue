@@ -7,23 +7,25 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 {
 	public static class EbmlEnumerableConverter
 	{
-		public static object HandleMultipleObjects(
+		public static object? HandleMultipleObjects(
 			PropertyInfo propertyToSet,
-			IEnumerable<object> values)
+			IEnumerable<object?> values)
 			=> propertyToSet.PropertyType.IsInterface
 				? HandleInterface(propertyToSet, values)
 				: HandleConcrete(propertyToSet, values);
 
-		private static object HandleConcrete(PropertyInfo propertyToSet, IEnumerable<object> values)
+		private static object? HandleConcrete(
+			PropertyInfo propertyToSet,
+			IEnumerable<object?> values)
 		{
 			var isGenericType = propertyToSet.PropertyType.IsGenericType;
 
 			var conversionType = isGenericType
 				? propertyToSet.PropertyType.GenericTypeArguments.First()
 				: Type.GetType(
-					propertyToSet.PropertyType.UnderlyingSystemType.FullName.Replace(
+					propertyToSet.PropertyType.UnderlyingSystemType.FullName!.Replace(
 						"[]",
-						string.Empty));
+						string.Empty))!;
 
 			var enumerableOfUnderlying =
 				typeof(IEnumerable<>).MakeGenericType(conversionType);
@@ -35,13 +37,13 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 				values);
 		}
 
-		private static object ConvertToConcreteType(
+		private static object? ConvertToConcreteType(
 			PropertyInfo propertyInfo,
 			Type enumerableType,
 			Type underlyingType,
-			IEnumerable<object> values)
+			IEnumerable<object?> values)
 		{
-			var castedValues = values.Cast(underlyingType);
+			var castedValues = values?.Cast(underlyingType);
 			return propertyInfo.PropertyType.IsArray
 				? CreateArray(underlyingType, castedValues)
 				: propertyInfo.PropertyType
@@ -71,14 +73,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 			return array;
 		}
 
-		private static object HandleInterface(
+		private static object? HandleInterface(
 			PropertyInfo propertyToSet,
-			IEnumerable<object> values)
+			IEnumerable<object?> values)
 			=> HandleIEnumerable(propertyToSet, values);
 
-		private static object HandleIEnumerable(
+		private static object? HandleIEnumerable(
 			PropertyInfo propertyToSet,
-			IEnumerable<object> values)
+			IEnumerable<object?> values)
 		{
 			var underlyingTypeForProperty = propertyToSet
 			                               .PropertyType
@@ -91,10 +93,14 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Converter
 		}
 
 
-		private static object? Cast(this IEnumerable<object> @this, Type typeToCastTo)
+		private static object? Cast(this IEnumerable<object?> @this, Type typeToCastTo)
 		{
-			var castValue = @this.Count() == 1 && @this.All(a => a.GetType().IsArray)
-				? @this.First()
+			var sourceArray = @this
+			                 .Where(w => w != null)
+			                 .ToArray();
+			var castValue = sourceArray.Length == 1 &&
+			                sourceArray.All(a => a!.GetType().IsArray)
+				? sourceArray[0]
 				: @this;
 			return typeof(Enumerable)
 			      .GetMethod(nameof(Enumerable.Cast))

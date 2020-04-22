@@ -76,6 +76,14 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       };
 		}
 
+		private async Task<List<VideoSearchResults>> GetResults()
+		{
+			var searcher = _fixture.Create<VS.Searcher>();
+
+			return await (await searcher.Search("Y:"))
+			   .ToListAsync();
+		}
+
 		[Fact]
 		public async Task ShouldFindContainerTypeBasedOnFileFormatRegex()
 		{
@@ -132,9 +140,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => s.ContainerType)
@@ -200,9 +206,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => s.Title)
@@ -268,9 +272,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => s.Year)
@@ -334,9 +336,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
@@ -413,9 +413,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
@@ -488,9 +486,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Should()
@@ -578,9 +574,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
@@ -639,9 +633,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
@@ -705,9 +697,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => Path.Combine(s.OriginalDirectory, s.OriginalFile))
@@ -773,9 +763,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			fileSystem.Setup(s => s.File)
 			          .Returns(file.Object);
 
-			var searcher = _fixture.Create<VS.Searcher>();
-			var files = await searcher.Search("Y:")
-			                          .ToListAsync();
+			var files = await GetResults();
 
 			files
 			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
@@ -807,10 +795,8 @@ namespace Grains.Tests.Unit.VideoSearcher
 					           return directory.Object;
 				           });
 
-			var searcher = _fixture.Create<VS.Searcher>();
+			await GetResults();
 
-			await searcher.Search("Y:")
-			              .ToListAsync();
 
 			calledPath.Should()
 			          .Be("Y:");

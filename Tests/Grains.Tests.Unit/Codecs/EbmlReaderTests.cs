@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoBogus;
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Extensions;
@@ -42,7 +43,7 @@ namespace Grains.Tests.Unit.Codecs
 		private readonly List<uint> _skippedElements;
 
 		[Fact]
-		public void ShouldBeAbleToCreateAChapter()
+		public async Task ShouldBeAbleToCreateAChapter()
 		{
 			var chapterProcessCommand = new AutoFaker<ChapterProcessCommand>()
 			                           .RuleFor(r => r.ProcessData, null as byte[])
@@ -88,7 +89,7 @@ namespace Grains.Tests.Unit.Codecs
 			var reader = new Mock<EbmlReader>();
 			var size = reader.SetupChapters(stream, chapter);
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
@@ -98,24 +99,30 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldBeAbleToCreateACluster()
+		public async Task ShouldBeAbleToCreateACluster()
 		{
+			var blockMore = new AutoFaker<BlockMore>()
+			               .RuleFor(
+				                r => r.AdditionalData,
+				                null as byte[])
+			               .Generate(1);
+
+			var blockAddition = new AutoFaker<BlockAddition>().RuleFor(
+				r => r.BlockMores,
+				r => blockMore);
+
+			var blockGroup = new AutoFaker<BlockGroup>()
+			                .RuleFor(r => r.Block, null as byte[])
+			                .RuleFor(r => r.CodecState, null as byte[])
+			                .RuleFor(
+				                 r => r.BlockAddition,
+				                 r => blockAddition)
+			                .Generate(1);
+
 			var expectedCluster = new AutoFaker<SegmentCluster>()
 			                     .RuleFor(
 				                      r => r.BlockGroups,
-				                      r => new AutoFaker<BlockGroup>()
-				                          .RuleFor(r => r.Block, null as byte[])
-				                          .RuleFor(r => r.CodecState, null as byte[])
-				                          .RuleFor(
-					                           r => r.BlockAddition,
-					                           r => new AutoFaker<BlockAddition>().RuleFor(
-						                           r => r.BlockMores,
-						                           r => new AutoFaker<BlockMore>()
-						                               .RuleFor(
-							                                r => r.AdditionalData,
-							                                null as byte[])
-						                               .Generate(1)))
-				                          .Generate(1))
+				                      r => blockGroup)
 			                     .RuleFor(
 				                      r => r.SilentTrack,
 				                      r => new SilentTrack
@@ -131,19 +138,19 @@ namespace Grains.Tests.Unit.Codecs
 			var reader = new Mock<EbmlReader>();
 			var size = reader.SetupCluster(stream, expectedCluster);
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
 				_skippedElements);
 
-			var cluster = result.Clusters.Single();
+			var cluster = result.Clusters!.Single();
 
 			cluster.Should().BeEquivalentTo(expectedCluster);
 		}
 
 		[Fact]
-		public void ShouldBeAbleToCreateACue()
+		public async Task ShouldBeAbleToCreateACue()
 		{
 			var cueReference = new AutoFaker<CueReference>()
 			   .Generate(1);
@@ -165,7 +172,7 @@ namespace Grains.Tests.Unit.Codecs
 
 			var size = reader.SetupCues(stream, cue);
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
@@ -178,7 +185,7 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldBeAbleToCreateASeekHead()
+		public async Task ShouldBeAbleToCreateASeekHead()
 		{
 			var seekHead = new AutoFaker<SeekHead>()
 			   .Generate();
@@ -186,7 +193,7 @@ namespace Grains.Tests.Unit.Codecs
 			var reader = new Mock<EbmlReader>();
 			var size = reader.SetupSeekhead(stream, seekHead);
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
@@ -196,7 +203,7 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldBeAbleToCreateATrack()
+		public async Task ShouldBeAbleToCreateATrack()
 		{
 			var projection = new AutoFaker<Projection>()
 			                .RuleFor(r => r.PrivateDataForProjection, null as byte[])
@@ -252,17 +259,17 @@ namespace Grains.Tests.Unit.Codecs
 			var reader = new Mock<EbmlReader>();
 			var size = reader.SetupTrack(stream, track);
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
 				_skippedElements);
 
-			result.Tracks.Single().Should().BeEquivalentTo(track);
+			result.Tracks!.Single().Should().BeEquivalentTo(track);
 		}
 
 		[Fact]
-		public void ShouldBeAbleToCreateAttachment()
+		public async Task ShouldBeAbleToCreateAttachment()
 		{
 			var attachedFile = new AutoFaker<AttachedFile>()
 			                  .RuleFor(r => r.Data, r => null)
@@ -275,7 +282,7 @@ namespace Grains.Tests.Unit.Codecs
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
 			var size = reader.SetupAttachment(stream, expectedAttachment);
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
@@ -286,7 +293,7 @@ namespace Grains.Tests.Unit.Codecs
 
 
 		[Fact]
-		public void ShouldBeAbleToCreateInfo()
+		public async Task ShouldBeAbleToCreateInfo()
 		{
 			var info = new AutoFaker<Info>()
 			          .RuleFor(
@@ -303,7 +310,7 @@ namespace Grains.Tests.Unit.Codecs
 				              .GetProperties()
 				              .Length;
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				infoSize + 10,
 				_elements,
@@ -313,7 +320,7 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldBeAbleToCreateTags()
+		public async Task ShouldBeAbleToCreateTags()
 		{
 			var bottomSimpleTag = new AutoFaker<SimpleTag>()
 			                     .RuleFor(r => r.SimpleTagChild, r => default)
@@ -346,17 +353,17 @@ namespace Grains.Tests.Unit.Codecs
 			var reader = new Mock<EbmlReader>();
 			var size = reader.SetupTags(stream, tag);
 
-			var result = reader.Object.GetElement<Segment>(
+			var result = await reader.Object.GetElement<Segment>(
 				stream,
 				size,
 				_elements,
 				_skippedElements);
 
-			result.Tags.Single().Should().BeEquivalentTo(tag);
+			result.Tags!.Single().Should().BeEquivalentTo(tag);
 		}
 
 		[Fact]
-		public void ShouldKeepReadingUntilReceivingAnAcceptableId()
+		public async Task ShouldKeepReadingUntilReceivingAnAcceptableId()
 		{
 			var seek = new Seek
 			           {
@@ -371,22 +378,22 @@ namespace Grains.Tests.Unit.Codecs
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
 			reader.SetupSequence(s => s.ReadBytes(stream, 1))
-			      .Returns(
+			      .ReturnsAsync(
 				       new[]
 				       {
 					       Convert.ToByte("53", 16)
 				       })
-			      .Returns(
+			      .ReturnsAsync(
 				       new[]
 				       {
 					       Convert.ToByte("AB", 16)
 				       })
-			      .Returns(
+			      .ReturnsAsync(
 				       new[]
 				       {
 					       Convert.ToByte("53", 16)
 				       })
-			      .Returns(
+			      .ReturnsAsync(
 				       new[]
 				       {
 					       Convert.ToByte("AC", 16)
@@ -397,14 +404,14 @@ namespace Grains.Tests.Unit.Codecs
 				       s =>
 				       {
 					       s.Position++;
-					       return 5;
+					       return Task.FromResult(5L);
 				       });
 
 			reader.SetupSequence(s => s.ReadBytes(stream, 5))
-			      .Returns(seek.ElementId)
-			      .Returns(BitConverter.GetBytes(seek.Position).Reverse().ToArray());
+			      .ReturnsAsync(seek.ElementId)
+			      .ReturnsAsync(BitConverter.GetBytes(seek.Position).Reverse().ToArray());
 
-			var result = reader.Object.GetElement<Seek>(
+			var result = await reader.Object.GetElement<Seek>(
 				stream,
 				2,
 				_elements,
@@ -417,12 +424,12 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void ShouldSeekIfReceivingSkippedId()
+		public async Task ShouldSeekIfReceivingSkippedId()
 		{
 			var stream = new MemoryStream();
 			var reader = new Mock<EbmlReader>();
 			reader.Setup(s => s.ReadBytes(stream, 1))
-			      .Returns(
+			      .ReturnsAsync(
 				       BitConverter.GetBytes(_skippedElements.First())
 				                   .Where(w => w != 0)
 				                   .ToArray());
@@ -432,10 +439,10 @@ namespace Grains.Tests.Unit.Codecs
 				       s =>
 				       {
 					       s.Position++;
-					       return 5;
+					       return Task.FromResult(5L);
 				       });
 
-			var result = reader.Object.GetElement<Info>(
+			var result = await reader.Object.GetElement<Info>(
 				stream,
 				1,
 				_elements,
@@ -448,7 +455,7 @@ namespace Grains.Tests.Unit.Codecs
 		}
 
 		[Fact]
-		public void WillDiscardReadIfNotBelongingToAnId()
+		public async Task WillDiscardReadIfNotBelongingToAnId()
 		{
 			var stream = new MemoryStream();
 			var reader = new EbmlReader();
@@ -475,7 +482,7 @@ namespace Grains.Tests.Unit.Codecs
 			stream.Flush();
 			stream.Position = 0;
 
-			var result = reader.GetElement<Info>(
+			var result = await reader.GetElement<Info>(
 				stream,
 				12,
 				_elements,

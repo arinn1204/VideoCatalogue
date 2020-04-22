@@ -65,6 +65,9 @@
       <None Update="TestData\VideoApi\theAvengers.searchResults.json">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="TestData\CodecParser\specificationData.xml">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
   </ItemGroup>
 
   <ItemGroup>

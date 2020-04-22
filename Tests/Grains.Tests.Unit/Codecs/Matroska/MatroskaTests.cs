@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoBogus;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -46,7 +47,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						It.IsAny<long>(),
 						It.IsAny<Dictionary<byte[], EbmlElement>>(),
 						It.IsAny<List<uint>>()))
-			   .Returns(
+			   .ReturnsAsync(
 					new EbmlHeader
 					{
 						DocType = "matroska",
@@ -54,19 +55,18 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					});
 
 			reader.SetupSequence(s => s.ReadBytes(It.IsAny<Stream>(), 4))
-			      .Returns(
+			      .ReturnsAsync(
 				       _specification.Elements
 				                     .First(f => f.Name == "EBML")
 				                     .IdString
 				                     .ToBytes()
 				                     .ToArray())
-			      .Returns(
+			      .ReturnsAsync(
 				       _specification.Elements
 				                     .First(f => f.Name == "Segment")
 				                     .IdString
 				                     .ToBytes()
 				                     .ToArray());
-			;
 		}
 
 #endregion
@@ -90,7 +90,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						It.IsAny<long>(),
 						It.IsAny<Dictionary<byte[], EbmlElement>>(),
 						It.IsAny<List<uint>>()))
-			   .Returns(
+			   .ReturnsAsync(
 					new EbmlHeader
 					{
 						DocType = doctype,
@@ -98,7 +98,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 					});
 
 			reader.Setup(s => s.ReadBytes(It.IsAny<Stream>(), 4))
-			      .Returns(
+			      .ReturnsAsync(
 				       _specification.Elements
 				                     .First(f => f.Name == "EBML")
 				                     .IdString
@@ -122,11 +122,11 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                   () =>
 				                   {
 					                   stream.Position++;
-					                   return new Segment();
+					                   return Task.FromResult(new Segment());
 				                   });
 
 			var matroska = _fixture.Create<IMatroska>();
-			Action error = () => matroska.GetFileInformation(stream).ToList();
+			Func<Task> error = async () => await matroska.GetFileInformation(stream).ToListAsync();
 
 			segmentInformation.Verify(
 				v => v.GetSegmentInformation(
@@ -142,7 +142,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 		}
 
 		[Fact]
-		public void DocumentShouldHaveNullSegmentIfIdDoesNotFollowEbmlHeader()
+		public async Task DocumentShouldHaveNullSegmentIfIdDoesNotFollowEbmlHeader()
 		{
 			var stream = new MemoryStream(
 				new byte[]
@@ -158,10 +158,10 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         () =>
 				         {
 					         stream.Position++;
-					         return "1A45DFA3".ToBytes().ToArray();
+					         return Task.FromResult("1A45DFA3".ToBytes().ToArray());
 				         });
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska.GetFileInformation(stream);
+			var fileInformation = await matroska.GetFileInformation(stream).ToListAsync();
 
 			fileInformation
 			   .Single()
@@ -179,7 +179,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 
 
 		[Fact]
-		public void ShouldReturnRetrievedFileInformation()
+		public async Task ShouldReturnRetrievedFileInformation()
 		{
 			var stream = new MemoryStream(
 				new byte[]
@@ -202,12 +202,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				                   () =>
 				                   {
 					                   stream.Position++;
-					                   return expectedSegmentInformation;
+					                   return Task.FromResult(expectedSegmentInformation);
 				                   });
 			var matroska = _fixture.Create<IMatroska>();
-			var fileInformation = matroska
-			                     .GetFileInformation(stream)
-			                     .ToList();
+			var fileInformation = await matroska
+			                           .GetFileInformation(stream)
+			                           .ToListAsync();
 
 			fileInformation
 			   .Single()
@@ -245,11 +245,11 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				         () =>
 				         {
 					         stream.Position++;
-					         return "1A45DFA8".ToBytes().ToArray();
+					         return Task.FromResult("1A45DFA8".ToBytes().ToArray());
 				         });
 
 			var matroska = _fixture.Create<IMatroska>();
-			Action error = () => matroska.GetFileInformation(stream).ToList();
+			Func<Task> error = async () => await matroska.GetFileInformation(stream).ToListAsync();
 
 			error
 			   .Should()

@@ -36,14 +36,15 @@ namespace Grains.VideoSearcher
 			   .WhereAwait(
 					async w
 						=> await IsAcceptableFile(
-							Path.GetFileName(w.newFileName),
-							fileTypes,
-							fileFormats.Select(s => s.Patterns)));
+								Path.GetFileName(w.newFileName),
+								fileTypes,
+								fileFormats.Select(s => s.Patterns))
+						   .ConfigureAwait(false));
 
 
 			var searchResults = BuildSearchResults(files, fileFormats);
 
-			return await Task.FromResult(searchResults);
+			return await Task.FromResult(searchResults).ConfigureAwait(false);
 		}
 
 #endregion
@@ -52,11 +53,12 @@ namespace Grains.VideoSearcher
 			IAsyncEnumerable<(string originalFileName, string newFileName)> files,
 			IAsyncEnumerable<RegisteredFileFormat> fileFormats)
 		{
-			await foreach (var (originalFilePath, newFilePath) in files)
+			await foreach (var (originalFilePath, newFilePath) in files.ConfigureAwait(false))
 			{
 				var newFile = Path.GetFileName(newFilePath);
 				var format =
-					await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(newFile)));
+					await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(newFile)))
+					                 .ConfigureAwait(false);
 				var match = format.Patterns.First()
 				                  .Match(newFile);
 
@@ -117,19 +119,22 @@ namespace Grains.VideoSearcher
 				{
 					var originalFile = entry;
 					var newFile = await filteredKeywords
-					   .AggregateAsync(
-							entry,
-							(accumulate, current) => accumulate
-							                        .Replace(
-								                         current,
-								                         string.Empty,
-								                         StringComparison.OrdinalIgnoreCase)
-							                        .Replace("  ", " "));
+					                   .AggregateAsync(
+						                    entry,
+						                    (accumulate, current) => accumulate
+						                                            .Replace(
+							                                             current,
+							                                             string.Empty,
+							                                             StringComparison
+								                                            .OrdinalIgnoreCase)
+						                                            .Replace("  ", " "))
+					                   .ConfigureAwait(false);
 					yield return (originalFile, newFile);
 				}
 				else
 				{
-					await foreach (var file in GetFiles(entry, filteredKeywords))
+					await foreach (var file in GetFiles(entry, filteredKeywords)
+					   .ConfigureAwait(false))
 					{
 						yield return file;
 					}
@@ -143,11 +148,19 @@ namespace Grains.VideoSearcher
 			IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
 		{
 			var hasFileType = await acceptableFileTypes.AnyAsync(
-				fileType => file.EndsWith(fileType, StringComparison.OrdinalIgnoreCase));
+				                                            fileType => file.EndsWith(
+					                                            fileType,
+					                                            StringComparison.OrdinalIgnoreCase))
+			                                           .ConfigureAwait(false);
 			var matchesOnlyOneAcceptableFilePatternSet = await acceptableFileFormats.CountAsync(
-				                                             acceptableFormat
-					                                             => acceptableFormat.All(
-						                                             a => a.IsMatch(file))) ==
+				                                                                         acceptableFormat
+					                                                                         => acceptableFormat
+						                                                                        .All(
+							                                                                         a => a
+								                                                                        .IsMatch(
+									                                                                         file)))
+			                                                                        .ConfigureAwait(
+				                                                                         false) ==
 			                                             1;
 
 			return hasFileType && matchesOnlyOneAcceptableFilePatternSet;

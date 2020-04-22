@@ -28,7 +28,7 @@ namespace Grains.Codecs
 		public async Task<(FileInformation? fileInformation, FileError? error)> GetInformation(
 			string path)
 		{
-			var fileInformation = await GetMatroskaInformation(path);
+			var fileInformation = await GetMatroskaInformation(path).ConfigureAwait(false);
 			return fileInformation;
 		}
 
@@ -51,7 +51,8 @@ namespace Grains.Codecs
 
 						                return AsyncEnumerable.Empty<FileInformation>();
 					                })
-				               .ToListAsync();
+				               .ToListAsync()
+				               .ConfigureAwait(false);
 
 			var error = fileError;
 			var fileInformation = fileInformations.FirstOrDefault();

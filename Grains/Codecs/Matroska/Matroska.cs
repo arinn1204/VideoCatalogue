@@ -51,7 +51,7 @@ namespace Grains.Codecs.Matroska
 			elements.Remove(segmentSequence);
 			while (stream.Position < stream.Length)
 			{
-				var data = await _reader.ReadBytes(stream, 4);
+				var data = await _reader.ReadBytes(stream, 4).ConfigureAwait(false);
 				var id = data.ConvertToUlong();
 
 				if (id != ebmlIdDefinition)
@@ -59,7 +59,7 @@ namespace Grains.Codecs.Matroska
 					throw new MatroskaException($"{id} is not a valid ebml ID.");
 				}
 
-				yield return await GetDocument(stream, segment.Id, elements);
+				yield return await GetDocument(stream, segment.Id, elements).ConfigureAwait(false);
 			}
 		}
 
@@ -71,11 +71,12 @@ namespace Grains.Codecs.Matroska
 			Dictionary<byte[], EbmlElement> ebmlTrackedElements)
 		{
 			var ebmlHeader = await GetEbmlHeader(
-				stream,
-				ebmlTrackedElements,
-				new List<uint>());
+					stream,
+					ebmlTrackedElements,
+					new List<uint>())
+			   .ConfigureAwait(false);
 
-			var segment = await GetSegment(stream, segmentIdDefinition);
+			var segment = await GetSegment(stream, segmentIdDefinition).ConfigureAwait(false);
 
 			return new EbmlDocument
 			       {
@@ -89,12 +90,13 @@ namespace Grains.Codecs.Matroska
 			Dictionary<byte[], EbmlElement> ebmlTrackedElements,
 			List<uint> skippedElementIds)
 		{
-			var size = await _reader.GetSize(stream);
+			var size = await _reader.GetSize(stream).ConfigureAwait(false);
 			var ebmlHeader = await _reader.GetElement<EbmlHeader>(
-				stream,
-				size,
-				ebmlTrackedElements,
-				skippedElementIds);
+				                               stream,
+				                               size,
+				                               ebmlTrackedElements,
+				                               skippedElementIds)
+			                              .ConfigureAwait(false);
 
 			if (ebmlHeader!.EbmlVersion == 1 && ebmlHeader.DocType == "matroska")
 			{
@@ -110,15 +112,16 @@ namespace Grains.Codecs.Matroska
 
 		private async Task<Segment?> GetSegment(Stream stream, ulong segmentIdDefinition)
 		{
-			var data = await _reader.ReadBytes(stream, 4);
+			var data = await _reader.ReadBytes(stream, 4).ConfigureAwait(false);
 			var segmentId = data.ConvertToUlong();
 
 			return segmentId != segmentIdDefinition
 				? default
 				: await _segmentReader.GetSegmentInformation(
-					stream,
-					_matroskaSpecification.Value,
-					await _reader.GetSize(stream));
+					                       stream,
+					                       _matroskaSpecification.Value,
+					                       await _reader.GetSize(stream))
+				                      .ConfigureAwait(false);
 		}
 	}
 }

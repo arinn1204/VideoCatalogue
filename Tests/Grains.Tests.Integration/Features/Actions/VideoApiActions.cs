@@ -46,8 +46,7 @@ namespace Grains.Tests.Integration.Features.Actions
 			return title switch
 			       {
 				       "The Avengers" => 24428,
-				       _ => throw new Exception(
-					       $"{title} has not been setup with an id")
+				       _ => throw new Exception($"{title} has not been setup with an id")
 			       };
 		}
 	}

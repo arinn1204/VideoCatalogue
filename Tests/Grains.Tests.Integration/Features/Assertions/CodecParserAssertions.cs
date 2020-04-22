@@ -21,8 +21,7 @@ namespace Grains.Tests.Integration.Features.Assertions
 			var expectedGuid = fileName switch
 			                   {
 				                   "small.mkv" => "58bee59e-7c36-ce21-d917-f7c0982f1527",
-				                   _ => throw new Exception(
-					                   $"{fileName} is not supported.")
+				                   _ => throw new Exception($"{fileName} is not supported.")
 			                   };
 			_codecParserData.VideoInformation
 			                .SegmentId

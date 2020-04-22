@@ -50,7 +50,8 @@ namespace Grains.VideoInformation
 
 					                                   return titlesMatch && yearsMatch;
 				                                   })
-			                                  .ToListAsync();
+			                                  .ToListAsync()
+			                                  .ConfigureAwait(false);
 
 			var match = matchedResults.Count switch
 			            {
@@ -65,7 +66,8 @@ namespace Grains.VideoInformation
 
 			var details = match.Type switch
 			              {
-				              MovieType.Movie => await GetDetailFromMovie(match),
+				              MovieType.Movie => await GetDetailFromMovie(match)
+					             .ConfigureAwait(false),
 				              _ => throw new VideoApiException(
 					              $"Unsupported video type: `{match.Type}`",
 					              match)
@@ -79,9 +81,11 @@ namespace Grains.VideoInformation
 		private async Task<VideoDetail> GetDetailFromMovie(SearchResult match)
 		{
 			var movieDetailsTask = _theMovieDatabaseRepository.GetMovieDetail(match.Id);
-			var movieCredits = await _theMovieDatabaseRepository.GetMovieCredit(match.Id);
+			var movieCredits = await _theMovieDatabaseRepository
+			                        .GetMovieCredit(match.Id)
+			                        .ConfigureAwait(false);
 			return _mapper.Map<VideoDetail>(
-				await movieDetailsTask,
+				await movieDetailsTask.ConfigureAwait(false),
 				opts => opts.AfterMap(
 					(_, dest) =>
 					{

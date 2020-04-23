@@ -8,5 +8,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Specification
 	{
 		[XmlElement("element")]
 		public List<EbmlElement> Elements { get; set; }
+			= new List<EbmlElement>();
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Grains.VideoInformation.Models.Details
@@ -9,12 +10,13 @@ namespace Grains.VideoInformation.Models.Details
 	{
 		[JsonProperty]
 		public IEnumerable<GenreDetail> Genres { get; set; }
+			= Enumerable.Empty<GenreDetail>();
 
 		[JsonProperty]
-		public string ImdbId { get; set; }
+		public string ImdbId { get; set; } = string.Empty;
 
 		[JsonProperty]
-		public string Overview { get; set; }
+		public string Overview { get; set; } = string.Empty;
 
 		[JsonProperty("first_air_date")]
 		public DateTime ReleaseDate { get; set; }
@@ -29,15 +31,15 @@ namespace Grains.VideoInformation.Models.Details
 		public int NumberOfSeasons { get; set; }
 
 		[JsonProperty]
-		public string Status { get; set; }
+		public string Status { get; set; } = string.Empty;
 
 		[JsonProperty]
-		public string Name { get; set; }
+		public string Name { get; set; } = string.Empty;
 
 		[JsonProperty("original_name")]
-		public string OriginalName { get; set; }
+		public string OriginalName { get; set; } = string.Empty;
 
 		[JsonProperty("original_language")]
-		public string OriginalLanguage { get; set; }
+		public string OriginalLanguage { get; set; } = string.Empty;
 	}
 }

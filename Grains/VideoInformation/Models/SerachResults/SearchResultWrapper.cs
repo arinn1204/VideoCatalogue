@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Grains.VideoInformation.Models.SerachResults
@@ -8,5 +9,6 @@ namespace Grains.VideoInformation.Models.SerachResults
 	{
 		[JsonProperty("results")]
 		public IEnumerable<T> SearchResults { get; set; }
+			= Enumerable.Empty<T>();
 	}
 }

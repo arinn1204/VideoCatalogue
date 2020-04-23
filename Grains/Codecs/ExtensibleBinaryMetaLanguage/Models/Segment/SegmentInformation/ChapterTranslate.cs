@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
+﻿using System;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation
 {
@@ -13,5 +14,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 
 		[EbmlElement("ChapterTranslateID")]
 		public byte[] ChapterTranslateId { get; set; }
+			= Array.Empty<byte>();
 	}
 }

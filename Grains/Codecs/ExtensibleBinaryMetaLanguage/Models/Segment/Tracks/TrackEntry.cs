@@ -35,7 +35,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public string? LanguageOverride { get; set; }
 
 		[EbmlElement("CodecID")]
-		public string CodecId { get; set; }
+		public string CodecId { get; set; } = string.Empty;
 
 		[EbmlElement("CodecPrivate")]
 		public byte[]? CodecPrivateData { get; set; }
@@ -66,6 +66,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		[EbmlElement("TrackOperation")]
 		public TrackOperation? TrackOperation { get; set; }
 
-		public ContentEncodingContainer ContentEncodings { get; set; }
+		public ContentEncodingContainer? ContentEncodings { get; set; }
 	}
 }

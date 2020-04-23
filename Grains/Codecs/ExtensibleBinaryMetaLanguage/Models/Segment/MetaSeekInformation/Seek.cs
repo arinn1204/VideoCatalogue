@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
+﻿using System;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInformation
 {
@@ -10,5 +11,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.MetaSeekInfo
 
 		[EbmlElement("SeekID")]
 		public byte[] ElementId { get; set; }
+			= Array.Empty<byte>();
 	}
 }

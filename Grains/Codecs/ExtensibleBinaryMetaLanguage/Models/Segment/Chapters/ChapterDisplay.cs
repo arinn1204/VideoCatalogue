@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
@@ -8,10 +9,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 	public class ChapterDisplay
 	{
 		[EbmlElement("ChapString")]
-		public string ChapterString { get; set; }
+		public string ChapterString { get; set; } = string.Empty;
 
 		[EbmlElement("ChapLanguage")]
 		public IEnumerable<string> Languages { get; set; }
+			= Enumerable.Empty<string>();
 
 		[SuppressMessage(
 			"ReSharper",

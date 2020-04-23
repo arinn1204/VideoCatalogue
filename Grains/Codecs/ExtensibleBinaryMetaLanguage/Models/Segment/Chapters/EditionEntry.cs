@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
@@ -20,5 +21,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 
 		[EbmlElement("ChapterAtom")]
 		public IEnumerable<ChapterAtom> ChapterAtoms { get; set; }
+			= Enumerable.Empty<ChapterAtom>();
 	}
 }

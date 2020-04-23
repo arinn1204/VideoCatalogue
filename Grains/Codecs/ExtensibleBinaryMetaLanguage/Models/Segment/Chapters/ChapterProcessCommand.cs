@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
+﻿using System;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 {
@@ -10,5 +11,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters
 
 		[EbmlElement("ChapProcessData")]
 		public byte[] ProcessData { get; set; }
+			= Array.Empty<byte>();
 	}
 }

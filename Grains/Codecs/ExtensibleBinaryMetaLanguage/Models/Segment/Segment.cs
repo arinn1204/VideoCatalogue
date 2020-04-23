@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Chapters;
@@ -30,6 +31,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment
 
 		[EbmlElement("Info")]
 		public IEnumerable<Info> SegmentInformations { get; set; }
+			= Enumerable.Empty<Info>();
 
 		[EbmlElement("Cluster")]
 		public IEnumerable<SegmentCluster>? Clusters { get; set; }

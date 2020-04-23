@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues
@@ -11,5 +12,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Cues
 
 		[EbmlElement("CueTrackPositions")]
 		public IEnumerable<CueTrackPosition> TrackPositions { get; set; }
+			= Enumerable.Empty<CueTrackPosition>();
 	}
 }

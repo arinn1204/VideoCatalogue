@@ -6,9 +6,9 @@ namespace Grains.VideoInformation.Models.Credits
 	public class CrewCredit : PersonCredit
 	{
 		[JsonProperty]
-		public string Department { get; set; }
+		public string Department { get; set; } = string.Empty;
 
 		[JsonProperty]
-		public string Job { get; set; }
+		public string Job { get; set; } = string.Empty;
 	}
 }

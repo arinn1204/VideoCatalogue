@@ -15,6 +15,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes
 			ElementName = elementName;
 		}
 
-		public string ElementName { get; }
+		public string? ElementName { get; }
 	}
 }

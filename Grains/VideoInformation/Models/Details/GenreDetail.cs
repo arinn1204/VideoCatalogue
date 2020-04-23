@@ -6,6 +6,6 @@ namespace Grains.VideoInformation.Models.Details
 	public class GenreDetail
 	{
 		[JsonProperty]
-		public string Name { get; set; }
+		public string Name { get; set; } = string.Empty;
 	}
 }

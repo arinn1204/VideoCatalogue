@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
@@ -8,5 +9,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 	{
 		[EbmlElement("BlockMore")]
 		public IEnumerable<BlockMore> BlockMores { get; set; }
+			= Enumerable.Empty<BlockMore>();
 	}
 }

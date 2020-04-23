@@ -1,13 +1,14 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GrainsInterfaces.Models.CodecParser
 {
 	public class FileInformation
 	{
 		public Container Container { get; set; }
-		public string Title { get; set; }
+		public string Title { get; set; } = string.Empty;
 		public int ContainerVersion { get; set; }
 		public TimeCodeScale TimeCodeScale { get; set; }
 		public TimeSpan Duration { get; set; }
@@ -16,7 +17,10 @@ namespace GrainsInterfaces.Models.CodecParser
 		public Codec VideoCodec { get; set; }
 		public int PixelHeight { get; set; }
 		public int PixelWidth { get; set; }
+
 		public IEnumerable<AudioTrack> Audios { get; set; }
+			= Enumerable.Empty<AudioTrack>();
+
 		public IEnumerable<Subtitle>? Subtitles { get; set; }
 
 		public string Resolution => GetResolution();

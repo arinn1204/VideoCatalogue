@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
@@ -7,6 +8,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Clusters
 	public class BlockGroup
 	{
 		public byte[] Block { get; set; }
+			= Array.Empty<byte>();
 
 		[EbmlElement("BlockAdditions")]
 		public BlockAddition? BlockAddition { get; set; }

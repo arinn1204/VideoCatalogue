@@ -11,7 +11,7 @@ namespace Grains.VideoInformation.Models.SerachResults
 		public virtual int Id { get; set; }
 
 		[JsonProperty]
-		public virtual string Title { get; set; }
+		public virtual string Title { get; set; } = string.Empty;
 
 		[JsonProperty("release_date")]
 		public virtual DateTime ReleaseDate { get; set; }

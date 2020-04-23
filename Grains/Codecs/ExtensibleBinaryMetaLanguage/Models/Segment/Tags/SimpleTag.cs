@@ -10,10 +10,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tags
 		public SimpleTag? SimpleTagChild { get; set; }
 
 		[EbmlElement("TagName")]
-		public string Name { get; set; }
+		public string Name { get; set; } = string.Empty;
 
 		[EbmlElement("TagLanguage")]
-		public string Language { get; set; }
+		public string Language { get; set; } = string.Empty;
 
 		[SuppressMessage(
 			"ReSharper",

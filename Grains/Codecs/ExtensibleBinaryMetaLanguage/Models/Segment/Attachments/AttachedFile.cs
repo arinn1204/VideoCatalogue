@@ -1,4 +1,5 @@
-﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
+﻿using System;
+using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments
 {
@@ -9,15 +10,16 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Attachments
 		public string? Description { get; set; }
 
 		[EbmlElement("FileName")]
-		public string Name { get; set; }
+		public string Name { get; set; } = string.Empty;
 
 		[EbmlElement("FileMimeType")]
-		public string MimeType { get; set; }
+		public string MimeType { get; set; } = string.Empty;
 
 		[EbmlElement("FileUID")]
 		public uint Uid { get; set; }
 
 		[EbmlElement("FileData")]
 		public byte[] Data { get; set; }
+			= Array.Empty<byte>();
 	}
 }

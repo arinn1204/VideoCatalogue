@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
@@ -8,5 +9,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 	{
 		[EbmlElement("TrackEntry")]
 		public IEnumerable<TrackEntry> Entries { get; set; }
+			= Enumerable.Empty<TrackEntry>();
 	}
 }

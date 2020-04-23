@@ -35,8 +35,8 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInfor
 		public ulong? TimeSinceMatroskaEpoch { get; set; }
 
 		public string? Title { get; set; }
-		public string MuxingApp { get; set; }
-		public string WritingApp { get; set; }
+		public string MuxingApp { get; set; } = string.Empty;
+		public string WritingApp { get; set; } = string.Empty;
 
 		[EbmlElement("ChapterTranslate")]
 		public IEnumerable<ChapterTranslate>? ChapterTranslates { get; set; }

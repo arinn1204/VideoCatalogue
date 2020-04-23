@@ -18,6 +18,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 		public ContentCompression? CompressionSettings { get; set; }
 
 		[EbmlElement("ContentEncryption")]
-		public ContentEncryption EncryptionSettings { get; set; }
+		public ContentEncryption? EncryptionSettings { get; set; }
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Attributes;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
@@ -14,5 +15,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks
 
 		[EbmlElement("TrackTranslateTrackID")]
 		public byte[] TrackId { get; set; }
+			= Array.Empty<byte>();
 	}
 }

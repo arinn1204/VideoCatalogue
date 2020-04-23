@@ -25,8 +25,8 @@ namespace Grains.VideoInformation.Models.Exceptions
 			SearchResult = searchResult;
 		}
 
-		public VideoRequest Request { get; }
-		public IEnumerable<SearchResult> SearchResults { get; }
-		public SearchResult SearchResult { get; }
+		public VideoRequest? Request { get; }
+		public IEnumerable<SearchResult>? SearchResults { get; }
+		public SearchResult? SearchResult { get; }
 	}
 }

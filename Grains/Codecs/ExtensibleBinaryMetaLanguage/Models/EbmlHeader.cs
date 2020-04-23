@@ -17,7 +17,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models
 		[EbmlElement("EBMLMaxSizeLength")]
 		public uint EbmlMaxSizeLength { get; set; }
 
-		public string DocType { get; set; }
+		public string DocType { get; set; } = string.Empty;
 		public uint DocTypeVersion { get; set; }
 		public uint DocTypeReadVersion { get; set; }
 	}

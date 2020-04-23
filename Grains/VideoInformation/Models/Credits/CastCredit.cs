@@ -6,7 +6,7 @@ namespace Grains.VideoInformation.Models.Credits
 	public class CastCredit : PersonCredit
 	{
 		[JsonProperty]
-		public string Character { get; set; }
+		public string Character { get; set; } = string.Empty;
 
 		[JsonProperty]
 		public int Id { get; set; }

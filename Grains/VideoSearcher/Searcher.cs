@@ -93,9 +93,10 @@ namespace Grains.VideoSearcher
 				yield return new VideoSearchResults
 				             {
 					             OriginalFile = Path.GetFileName(originalFilePath),
-					             OriginalDirectory = Path.GetDirectoryName(originalFilePath),
+					             OriginalDirectory =
+						             Path.GetDirectoryName(originalFilePath) ?? string.Empty,
 					             NewFile = Path.GetFileName(newFilePath),
-					             NewDirectory = Path.GetDirectoryName(newFilePath),
+					             NewDirectory = Path.GetDirectoryName(newFilePath) ?? string.Empty,
 					             Title = groups[format.TitleGroup]
 					                    .Value.Trim(),
 					             Year = year,

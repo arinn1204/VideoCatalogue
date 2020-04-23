@@ -12,10 +12,10 @@ namespace Grains.Codecs.Models.Mappers
 			CreateMap<TrackEntry, AudioTrack>()
 			   .ForMember(
 					dest => dest.Channels,
-					src => src.MapFrom(m => m.AudioSettings.Channels))
+					src => src.MapFrom(m => m.AudioSettings!.Channels))
 			   .ForMember(
 					dest => dest.Frequency,
-					src => src.MapFrom(m => m.AudioSettings.SamplingFrequency))
+					src => src.MapFrom(m => m.AudioSettings!.SamplingFrequency))
 			   .ForMember(
 					dest => dest.Language,
 					src => src.MapFrom(m => GetLanguage(m)))
@@ -35,7 +35,7 @@ namespace Grains.Codecs.Models.Mappers
 					src => src.MapFrom(m => m.Name));
 		}
 
-		private string GetLanguage(TrackEntry entry)
+		private string? GetLanguage(TrackEntry entry)
 			=> string.IsNullOrWhiteSpace(entry.LanguageOverride)
 				? entry.Language
 				: entry.LanguageOverride;

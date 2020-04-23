@@ -58,13 +58,6 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 			return word.SignedData;
 		}
 
-		private static DateTime ConvertToDateTime(this IEnumerable<byte> bytes)
-		{
-			var valueInNanoseconds = bytes.ConvertToUlong();
-			var valueInMilliseconds = (double) valueInNanoseconds / 1_000_000;
-			return new DateTime(2001, 1, 1).AddMilliseconds(valueInMilliseconds);
-		}
-
 		private static float ConvertToFloat(this IEnumerable<byte> bytes)
 		{
 			var paddedBytes = bytes.PadStart(4).ToArray();
@@ -94,7 +87,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Extensions
 
 		public static string ConvertToString(
 			this byte[] bytes,
-			Encoding encoding = null)
+			Encoding? encoding = null)
 		{
 			var targetEncoding = encoding ?? Encoding.UTF8;
 

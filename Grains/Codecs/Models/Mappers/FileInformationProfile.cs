@@ -21,9 +21,7 @@ namespace Grains.Codecs.Models.Mappers
 					src => src.MapFrom(m => GetContainerName(m)))
 			   .ForMember(
 					dest => dest.ContainerVersion,
-					src => src.MapFrom(
-						m => m.EbmlHeader
-						      .DocTypeVersion))
+					src => src.MapFrom(m => m.EbmlHeader!.DocTypeVersion))
 			   .ForMember(
 					dest => dest.Audios,
 					src => src.MapFrom(m => GetAudioTracks(m)))
@@ -39,11 +37,11 @@ namespace Grains.Codecs.Models.Mappers
 			   .ForMember(
 					dest => dest.SegmentId,
 					src => src.MapFrom(
-						m => m.Segment
-						      .SegmentInformations
-						      .DistinctBy(d => new Guid(d.SegmentUid))
-						      .Select(s => new Guid(s.SegmentUid))
-						      .First()))
+						m => m.Segment!
+						    .SegmentInformations
+						    .DistinctBy(d => new Guid(d.SegmentUid ?? Guid.NewGuid().ToByteArray()))
+						    .Select(s => new Guid(s.SegmentUid ?? Guid.NewGuid().ToByteArray()))
+						    .First()))
 			   .ForMember(
 					dest => dest.TimeCodeScale,
 					src => src.MapFrom(m => GetInfo(m).TimecodeScale.ToTimeCodeScale()))
@@ -52,10 +50,10 @@ namespace Grains.Codecs.Models.Mappers
 					src => src.MapFrom(m => GetVideoTrack(m).CodecId.ToCodec()))
 			   .ForMember(
 					dest => dest.PixelHeight,
-					src => src.MapFrom(m => GetVideoTrack(m).VideoSettings.PixelHeight))
+					src => src.MapFrom(m => GetVideoTrack(m).VideoSettings!.PixelHeight))
 			   .ForMember(
 					dest => dest.PixelWidth,
-					src => src.MapFrom(m => GetVideoTrack(m).VideoSettings.PixelWidth))
+					src => src.MapFrom(m => GetVideoTrack(m).VideoSettings!.PixelWidth))
 			   .ForMember(
 					dest => dest.Title,
 					src => src.MapFrom(m => GetInfo(m).Title));
@@ -100,9 +98,9 @@ namespace Grains.Codecs.Models.Mappers
 		private Info GetInfo(EbmlDocument documents)
 		{
 			return documents
-			      .Segment
+				      .Segment!
 			      .SegmentInformations
-			      .DistinctBy(d => new Guid(d.SegmentUid))
+			      .DistinctBy(d => new Guid(d.SegmentUid ?? Guid.NewGuid().ToByteArray()))
 			      .First();
 		}
 
@@ -119,13 +117,13 @@ namespace Grains.Codecs.Models.Mappers
 			EbmlDocument documents,
 			string codecStartsWith)
 		{
-			return documents.Segment
-			                .Tracks
-			                .SelectMany(s1 => s1.Entries)
-			                .Where(w => w.CodecId.StartsWith(codecStartsWith));
+			return documents.Segment!
+			      .Tracks
+			      .SelectMany(s1 => s1.Entries)
+			      .Where(w => w.CodecId.StartsWith(codecStartsWith));
 		}
 
 		private Container GetContainerName(EbmlDocument documents)
-			=> documents.EbmlHeader.DocType.ToContainer();
+			=> documents.EbmlHeader!.DocType.ToContainer();
 	}
 }

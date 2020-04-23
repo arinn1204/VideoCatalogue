@@ -8,10 +8,11 @@ using Grains.FileFormat.Models;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.FileFormat.Models;
 using Newtonsoft.Json;
+using Orleans;
 
 namespace Grains.FileFormat
 {
-	public class FileFormatRepository : IFileFormatRepository
+	public class FileFormatRepository : Grain, IFileFormatRepository
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;
@@ -26,37 +27,50 @@ namespace Grains.FileFormat
 
 #region IFileFormatRepository Members
 
-		public IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats()
+		public Task<IAsyncEnumerable<RegisteredFileFormat>> GetAcceptableFileFormats()
 		{
 			var responseContentTask = GetResponseContent("fileFormats");
 
-			return AsyncEnumerable.Create(
-				token => EnumerateContent(
-						responseContentTask,
-						(FilePattern response) => _mapper.Map<RegisteredFileFormat>(response))
-				   .GetAsyncEnumerator(token));
+			return Task.Factory.StartNew(
+				() =>
+				{
+					return AsyncEnumerable.Create(
+						token => EnumerateContent(
+								responseContentTask,
+								(FilePattern response)
+									=> _mapper.Map<RegisteredFileFormat>(response))
+						   .GetAsyncEnumerator(token));
+				});
 		}
 
-		public IAsyncEnumerable<string> GetAllowedFileTypes()
+		public Task<IAsyncEnumerable<string>> GetAllowedFileTypes()
 		{
 			var responseContentTask = GetResponseContent("fileTypes");
 
-			return AsyncEnumerable.Create(
-				token => EnumerateContent(
-						responseContentTask,
-						(string response) => response)
-				   .GetAsyncEnumerator(token));
+			return Task.Factory.StartNew(
+				() =>
+				{
+					return AsyncEnumerable.Create(
+						token => EnumerateContent(
+								responseContentTask,
+								(string response) => response)
+						   .GetAsyncEnumerator(token));
+				});
 		}
 
-		public IAsyncEnumerable<string> GetFilteredKeywords()
+		public Task<IAsyncEnumerable<string>> GetFilteredKeywords()
 		{
 			var responseContentTask = GetResponseContent("filteredKeywords");
 
-			return AsyncEnumerable.Create(
-				token => EnumerateContent(
-						responseContentTask,
-						(string response) => response)
-				   .GetAsyncEnumerator(token));
+			return Task.Factory.StartNew(
+				() =>
+				{
+					return AsyncEnumerable.Create(
+						token => EnumerateContent(
+								responseContentTask,
+								(string response) => response)
+						   .GetAsyncEnumerator(token));
+				});
 		}
 
 		public async Task<string> GetTargetTitleFormat()

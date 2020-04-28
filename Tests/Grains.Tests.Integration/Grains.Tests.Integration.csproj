@@ -70,14 +70,21 @@
       </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestData\CodecParser\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="TestData\CodecParser\"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Features\AClientRequestingVideoDetails.feature" />
-    <Content Include="Features\AClientWantsToViewInformationAboutAFile.feature" />
-    <Content Include="Features\AClientWantsToViewWhatFilesAreAvailable.feature" />
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="Features\AClientRequestingVideoDetails.feature"/>
+        <Content Include="Features\AClientWantsToViewInformationAboutAFile.feature"/>
+        <Content Include="Features\AClientWantsToViewWhatFilesAreAvailable.feature"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <SpecFlowFeatureFiles Update="Features\AClientWantingToSeeAvailableTorrents.feature">
+            <CodeBehindFile>%(RelativeDir)%(Filename).feature.cs</CodeBehindFile>
+            <Visible>true</Visible>
+        </SpecFlowFeatureFiles>
+    </ItemGroup>
 
 </Project>

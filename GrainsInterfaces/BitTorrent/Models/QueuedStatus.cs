@@ -2,7 +2,6 @@
 {
 	public enum QueuedStatus
 	{
-		NA,
 		CheckFiles,
 		Download,
 		Seed

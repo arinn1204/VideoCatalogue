@@ -18,7 +18,7 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		{
 			serviceCollection.AddHttpClient(
 				nameof(Transmission),
-				client => client.BaseAddress = new Uri($"{WiremockSettings.Url}"));
+				client => client.BaseAddress = new Uri($"{WiremockSettings.Url}/transmission/rpc"));
 
 			serviceCollection.AddTransient<IBitTorrentClient, Transmission>();
 

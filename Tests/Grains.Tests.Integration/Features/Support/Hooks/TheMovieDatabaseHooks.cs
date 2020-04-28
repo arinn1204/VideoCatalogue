@@ -1,5 +1,6 @@
 ﻿using System;
 using BoDi;
+using Grains.Tests.Integration.Features.Support.Wiremock;
 using Grains.VideoInformation;
 using Grains.VideoInformation.TheMovieDatabaseRepositories;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
@@ -8,7 +9,7 @@ using GrainsInterfaces.VideoApi;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
-namespace Grains.Tests.Integration.Features.Support
+namespace Grains.Tests.Integration.Features.Support.Hooks
 {
 	[Binding]
 	public class TheMovieDatabaseHooks
@@ -16,7 +17,9 @@ namespace Grains.Tests.Integration.Features.Support
 		[BeforeScenario("@TheMovieDatabase", Order = 1)]
 		public void SetupMovieDb(IServiceCollection serviceContainer)
 		{
-			serviceContainer.AddHttpClient("TheMovieDatabase");
+			serviceContainer.AddHttpClient(
+				"TheMovieDatabase",
+				client => client.BaseAddress = new Uri($"{WiremockSettings.Url}/"));
 			serviceContainer
 			   .AddTransient<ITheMovieDatabaseRepository, TheMovieDatabaseRepository>();
 			serviceContainer

@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using BoDi;
+using Grains.Tests.Integration.Features.Support.Wiremock;
 using Grains.VideoInformation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
-using WireMock.Logging;
 using WireMock.Server;
-using WireMock.Settings;
 
-namespace Grains.Tests.Integration.Features.Support
+namespace Grains.Tests.Integration.Features.Support.Hooks
 {
 	[Binding]
 	public static class Hooks
@@ -16,13 +15,7 @@ namespace Grains.Tests.Integration.Features.Support
 		[BeforeTestRun]
 		public static void BeforeTestRun(IObjectContainer container)
 		{
-			var wiremockSettings = new FluentMockServerSettings
-			                       {
-				                       Port = 8080,
-				                       Logger = new WireMockConsoleLogger()
-			                       };
-			var wiremock = WireMockServer.Start(wiremockSettings);
-
+			var wiremock = WireMockServer.Start(WiremockSettings.Settings);
 			container.RegisterInstanceAs(wiremock);
 		}
 

@@ -7,10 +7,11 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
 using Grains.Codecs.Matroska;
 using Grains.Codecs.Matroska.Interfaces;
+using Grains.Tests.Integration.Features.Support.Wiremock;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
-namespace Grains.Tests.Integration.Features.Support
+namespace Grains.Tests.Integration.Features.Support.Hooks
 {
 	[Binding]
 	public static class CodecParserHooks
@@ -23,7 +24,7 @@ namespace Grains.Tests.Integration.Features.Support
 			serviceCollection.AddHttpClient(
 				"MatroskaClient",
 				client => client.BaseAddress = new Uri(
-					"http://localhost:8080/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
+					$"{WiremockSettings.Url}/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
 			serviceCollection.AddTransient<ISpecification, Specification>();
 			serviceCollection.AddTransient<IMatroska, Matroska>();
 			serviceCollection.AddTransient<IEbmlReader, EbmlReader>();

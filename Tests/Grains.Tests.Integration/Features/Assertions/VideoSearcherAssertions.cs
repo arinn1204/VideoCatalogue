@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using Grains.Tests.Integration.Features.Models;
-using Grains.Tests.Integration.Features.Support;
+using Grains.Tests.Integration.Features.Support.Hooks;
 using GrainsInterfaces.Models.VideoSearcher;
 using TechTalk.SpecFlow;
 

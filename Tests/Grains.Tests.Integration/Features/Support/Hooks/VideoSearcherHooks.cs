@@ -4,6 +4,7 @@ using System.IO.Abstractions;
 using BoDi;
 using Grains.FileFormat;
 using Grains.FileFormat.Models;
+using Grains.Tests.Integration.Features.Support.Wiremock;
 using Grains.VideoSearcher;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.VideoSearcher;
@@ -15,7 +16,7 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace Grains.Tests.Integration.Features.Support
+namespace Grains.Tests.Integration.Features.Support.Hooks
 {
 	[Binding]
 	public static class VideoSearcherHooks
@@ -36,7 +37,7 @@ namespace Grains.Tests.Integration.Features.Support
 				                  client =>
 				                  {
 					                  client.BaseAddress = new Uri(
-						                  "http://localhost:8080/api/videoFile/");
+						                  $"{WiremockSettings.Url}/api/videoFile/");
 				                  });
 
 			var serviceProvider = serviceCollection.BuildServiceProvider();

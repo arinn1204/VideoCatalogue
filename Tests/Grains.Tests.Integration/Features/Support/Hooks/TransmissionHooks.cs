@@ -1,11 +1,12 @@
 ﻿using System;
 using BoDi;
 using Grains.BitTorrent.Transmission;
+using Grains.Tests.Integration.Features.Support.Wiremock;
 using GrainsInterfaces.BitTorrent;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
-namespace Grains.Tests.Integration.Features.Support
+namespace Grains.Tests.Integration.Features.Support.Hooks
 {
 	[Binding]
 	public class TransmissionHooks
@@ -17,7 +18,7 @@ namespace Grains.Tests.Integration.Features.Support
 		{
 			serviceCollection.AddHttpClient(
 				nameof(Transmission),
-				client => client.BaseAddress = new Uri("http://10.0.0.199:9091/"));
+				client => client.BaseAddress = new Uri($"{WiremockSettings.Url}"));
 
 			serviceCollection.AddTransient<IBitTorrentClient, Transmission>();
 

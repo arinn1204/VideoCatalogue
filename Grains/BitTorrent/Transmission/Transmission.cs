@@ -16,7 +16,6 @@ namespace Grains.BitTorrent.Transmission
 {
 	public class Transmission : Grain, IBitTorrentClient
 	{
-		private const string TransmissionPath = "transmission/rpc";
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;
 
@@ -63,7 +62,7 @@ namespace Grains.BitTorrent.Transmission
 			HttpResponseMessage response = default!;
 			while (retryCounter < 2)
 			{
-				var httpRequest = BuildRequestMessage();
+				var httpRequest = BuildRequestMessage(client.BaseAddress);
 
 				response = await client.SendAsync(httpRequest);
 
@@ -86,14 +85,14 @@ namespace Grains.BitTorrent.Transmission
 			return response;
 		}
 
-		private HttpRequestMessage BuildRequestMessage()
+		private HttpRequestMessage BuildRequestMessage(Uri transmissionUri)
 		{
 			var requestContent = BuildRequest();
 
 			var httpRequest = new HttpRequestMessage
 			                  {
 				                  Content = requestContent,
-				                  RequestUri = new Uri(TransmissionPath, UriKind.Relative),
+				                  RequestUri = transmissionUri,
 				                  Method = HttpMethod.Post
 			                  };
 

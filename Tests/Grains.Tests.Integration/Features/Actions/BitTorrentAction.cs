@@ -6,11 +6,11 @@ using TechTalk.SpecFlow;
 namespace Grains.Tests.Integration.Features.Actions
 {
 	[Binding]
-	public class TransmissionAction
+	public class BitTorrentAction
 	{
 		private readonly IBitTorrentClient _bitTorrentClient;
 
-		public TransmissionAction(IBitTorrentClient bitTorrentClient)
+		public BitTorrentAction(IBitTorrentClient bitTorrentClient)
 		{
 			_bitTorrentClient = bitTorrentClient;
 		}

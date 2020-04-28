@@ -3,7 +3,7 @@
 namespace Grains.Tests.Integration.Features.Builders
 {
 	[Binding]
-	public class TransmissionBuilder
+	public class BitTorrentBuilder
 	{
 		[Given(@"an active seeding torrent")]
 		public void GivenAnActiveSeedingTorrent()

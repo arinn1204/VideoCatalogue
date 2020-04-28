@@ -3,7 +3,7 @@
 namespace Grains.Tests.Integration.Features.Assertions
 {
 	[Binding]
-	public class TransmissionAssertion
+	public class BitTorrentAssertion
 	{
 		[Then(@"the client sees (\d+) seeding torrent")]
 		public void ThenTheClientSeesSeedingTorrents(int numberOfSeedingTorrents)

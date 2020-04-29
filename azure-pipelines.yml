@@ -13,6 +13,18 @@ variables:
   buildConfiguration: 'Release'
   testConfiguration: 'Release'
   testCatalog: $(db_catalog)_test
+  unitTests: |
+    source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
+    source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
+  integrationTests: |
+    source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
+    source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj
+
+  mainProject: |
+    source/main/Grains/Grains.csproj
+    source/main/GrainsInterfaces/GrainsInterfaces.csproj
+    source/main/Silo/Silo.csproj
+    source/main/VideoCatalogueClient/VideoCatalogueClient.csproj
 
 stages:
 - stage: Build
@@ -24,11 +36,7 @@ stages:
       inputs:
         command: build
         arguments: '--configuration $(buildConfiguration)'
-        projects: |
-          source/main/Grains/Grains.csproj
-          source/main/GrainsInterfaces/GrainsInterfaces.csproj
-          source/main/Silo/Silo.csproj
-          source/main/VideoCatalogueClient/VideoCatalogueClient.csproj
+        projects: $(mainProject)
 - stage: Tests
   dependsOn: Build
   jobs:
@@ -39,9 +47,7 @@ stages:
       inputs:
         command: test
         arguments: '--configuration $(testConfiguration) --collect "XPlat Code Coverage" --settings $(System.DefaultWorkingDirectory)/coverlet.runsettings'
-        projects: |
-          source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
-          source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
+        projects: $(unitTests)
     - task: DotNetCoreCLI@2
       displayName: Run Integration Tests
       env:
@@ -49,9 +55,7 @@ stages:
       inputs:
         command: test
         arguments: '--configuration $(testConfiguration) --collect "XPlat Code Coverage" --settings $(System.DefaultWorkingDirectory)/coverlet.runsettings'
-        projects: |
-          source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
-          source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj
+        projects: $(integrationTests)
     - task: DotNetCoreCLI@2
       displayName: Install ReportGenerator tool
       inputs:

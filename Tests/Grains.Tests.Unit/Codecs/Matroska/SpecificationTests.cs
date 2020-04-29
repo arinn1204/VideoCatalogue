@@ -63,7 +63,7 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 						MinimumVersion = 1,
 						Description =
 							"Set the EBML characteristics of the data to follow. Each EBML document has to start with this.",
-						Default = default
+						Default = string.Empty
 					});
 		}
 

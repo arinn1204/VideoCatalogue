@@ -46,7 +46,7 @@ namespace Grains.Tests.Unit.Codecs
 		public async Task ShouldBeAbleToCreateAChapter()
 		{
 			var chapterProcessCommand = new AutoFaker<ChapterProcessCommand>()
-			                           .RuleFor(r => r.ProcessData, null as byte[])
+			                           .RuleFor(r => r.ProcessData, Array.Empty<byte>())
 			                           .Generate(1);
 
 			var chapterProcess = new AutoFaker<ChapterProcess>()
@@ -104,7 +104,7 @@ namespace Grains.Tests.Unit.Codecs
 			var blockMore = new AutoFaker<BlockMore>()
 			               .RuleFor(
 				                r => r.AdditionalData,
-				                null as byte[])
+				                Array.Empty<byte>())
 			               .Generate(1);
 
 			var blockAddition = new AutoFaker<BlockAddition>().RuleFor(
@@ -112,7 +112,7 @@ namespace Grains.Tests.Unit.Codecs
 				r => blockMore);
 
 			var blockGroup = new AutoFaker<BlockGroup>()
-			                .RuleFor(r => r.Block, null as byte[])
+			                .RuleFor(r => r.Block, Array.Empty<byte>())
 			                .RuleFor(r => r.CodecState, null as byte[])
 			                .RuleFor(
 				                 r => r.BlockAddition,
@@ -272,7 +272,7 @@ namespace Grains.Tests.Unit.Codecs
 		public async Task ShouldBeAbleToCreateAttachment()
 		{
 			var attachedFile = new AutoFaker<AttachedFile>()
-			                  .RuleFor(r => r.Data, r => null)
+			                  .RuleFor(r => r.Data, r => Array.Empty<byte>())
 			                  .Generate(1);
 			var expectedAttachment = new AutoFaker<SegmentAttachment>()
 			                        .RuleFor(

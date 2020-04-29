@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient", "source\main\VideoCatalogueClient\VideoCatalogueClient.csproj", "{C0768A6B-46B3-4ADB-B51B-DF4C7D7C5E50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient", "main\VideoCatalogueClient\VideoCatalogueClient.csproj", "{C0768A6B-46B3-4ADB-B51B-DF4C7D7C5E50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "source\main\Silo\Silo.csproj", "{AAB808C2-9271-4C3F-B6DA-8CAA41718BC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "main\Silo\Silo.csproj", "{AAB808C2-9271-4C3F-B6DA-8CAA41718BC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains", "source\main\Grains\Grains.csproj", "{5127C5E5-E74D-4B32-90C6-4953652CEC19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains", "main\Grains\Grains.csproj", "{5127C5E5-E74D-4B32-90C6-4953652CEC19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainsInterfaces", "source\main\GrainsInterfaces\GrainsInterfaces.csproj", "{BD9745D9-7CCB-41A3-A2EC-CAEC03A5513B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainsInterfaces", "main\GrainsInterfaces\GrainsInterfaces.csproj", "{BD9745D9-7CCB-41A3-A2EC-CAEC03A5513B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "source\test", "{FD8AEBC8-F729-40A8-8A07-FF922A205865}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "test", "{FD8AEBC8-F729-40A8-8A07-FF922A205865}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains.Tests.Unit", "source\test\Grains.Tests.Unit\Grains.Tests.Unit.csproj", "{F49A15F2-8FE5-4BD2-8DF0-61D58980AA0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains.Tests.Unit", "test\Grains.Tests.Unit\Grains.Tests.Unit.csproj", "{F49A15F2-8FE5-4BD2-8DF0-61D58980AA0D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains.Tests.Integration", "source\test\Grains.Tests.Integration\Grains.Tests.Integration.csproj", "{DE82DD2B-74E7-43ED-91F9-4D046BE57AA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains.Tests.Integration", "test\Grains.Tests.Integration\Grains.Tests.Integration.csproj", "{DE82DD2B-74E7-43ED-91F9-4D046BE57AA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Unit", "source\test\VideoCatalogueClient.Tests.Unit\VideoCatalogueClient.Tests.Unit.csproj", "{2B8FA2E3-7D7D-4C13-982C-2175FC68339D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Unit", "test\VideoCatalogueClient.Tests.Unit\VideoCatalogueClient.Tests.Unit.csproj", "{2B8FA2E3-7D7D-4C13-982C-2175FC68339D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Integration", "source\test\VideoCatalogueClient.Tests.Integration\VideoCatalogueClient.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Integration", "test\VideoCatalogueClient.Tests.Integration\VideoCatalogueClient.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

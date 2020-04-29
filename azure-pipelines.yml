@@ -48,10 +48,11 @@ stages:
           -dbSource '$(db_source)' `
           -useEnvironmentConnectionString true
     - task: DotNetCoreCLI@2
-      command: test
-      projects: |
-        Tests/Grains.Tests.Unit/Grains.Tests.Unit.csproj
-        Tests/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
+      inputs:
+        command: test
+        projects: |
+          Tests/Grains.Tests.Unit/Grains.Tests.Unit.csproj
+          Tests/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
 - stage: Integration
   dependsOn: Unit
   jobs:
@@ -80,7 +81,8 @@ stages:
           -dbSource '$(db_source)' `
           -useEnvironmentConnectionString true
     - task: DotNetCoreCLI@2
-      command: test
-      projects: |
-        Tests/Grains.Tests.Integration/Grains.Tests.Integration.csproj
-        Tests/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj
+      inputs:
+        command: test
+        projects: |
+          Tests/Grains.Tests.Integration/Grains.Tests.Integration.csproj
+          Tests/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj

@@ -23,10 +23,10 @@ stages:
       inputs:
         command: build
         projects: |
-          Grains/Grains.csproj
-          GrainsInterfaces/GrainsInterfaces.csproj
-          Silo/Silo.csproj
-          VideoCatalogueClient/VideoCatalogueClient.csproj
+          source/main/Grains/Grains.csproj
+          source/main/GrainsInterfaces/GrainsInterfaces.csproj
+          source/main/Silo/Silo.csproj
+          source/main/VideoCatalogueClient/VideoCatalogueClient.csproj
 - stage: Unit
   dependsOn: Build
   jobs:
@@ -36,8 +36,8 @@ stages:
       inputs:
         command: test
         projects: |
-          Tests/Grains.Tests.Unit/Grains.Tests.Unit.csproj
-          Tests/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
+          source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
+          source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
 - stage: Integration
   dependsOn: Unit
   jobs:
@@ -53,5 +53,5 @@ stages:
       inputs:
         command: test
         projects: |
-          Tests/Grains.Tests.Integration/Grains.Tests.Integration.csproj
-          Tests/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj
+          source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
+          source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj

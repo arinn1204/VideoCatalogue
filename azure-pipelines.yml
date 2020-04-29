@@ -22,6 +22,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: build
+        arguments: '--configuration $(buildConfiguration)'
         projects: |
           source/main/Grains/Grains.csproj
           source/main/GrainsInterfaces/GrainsInterfaces.csproj
@@ -35,6 +36,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: test
+        arguments: '--configuration $(testConfiguration) --collect "Code Coverage"'
         projects: |
           source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
           source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
@@ -52,6 +54,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: test
+        arguments: '--configuration $(testConfiguration) --collect "Code Coverage"'
         projects: |
           source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
           source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj

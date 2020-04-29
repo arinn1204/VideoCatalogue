@@ -32,7 +32,7 @@ stages:
 - stage: Tests
   dependsOn: Build
   jobs:
-  - job: Run Tests
+  - job: RunTests
     steps:
     - task: DotNetCoreCLI@2
       displayName: Run Unit Tests

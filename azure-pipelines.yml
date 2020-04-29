@@ -19,34 +19,19 @@ stages:
   jobs:
   - job: Build
     steps:
-    - task: AzurePowerShell@4
+    - task: DotNetCoreCLI@2
       inputs:
-        azurePowerShellVersion: latestVersion
-        azureSubscription: $(azure_subscription)
-        scriptType: filePath
-        scriptPath: '$(Build.SourcesDirectory)\azure\createArtifact.ps1'
-        scriptArguments:
-          -projectLocation $(Build.SourcesDirectory)
+        command: build
+        projects: |
+          Grains/Grains.csproj
+          GrainsInterfaces/GrainsInterfaces.csproj
+          Silo/Silo.csproj
+          VideoCatalogueClient/VideoCatalogueClient.csproj
 - stage: Unit
   dependsOn: Build
   jobs:
   - job: UnitTests
     steps:
-    - task: AzurePowerShell@4
-      enabled: false
-      inputs:
-        azurePowerShellVersion: latestVersion
-        azureSubscription: $(azure_subscription)
-        scriptType: filePath
-        scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
-        scriptArguments:
-          -projectLocation '$(Build.SourcesDirectory)' `
-          -type Unit `
-          -dbCatalog '$(testCatalog)' `
-          -dbUsername '$(db_username)' `
-          -dbPassword '$(db_password)' `
-          -dbSource '$(db_source)' `
-          -useEnvironmentConnectionString true
     - task: DotNetCoreCLI@2
       inputs:
         command: test
@@ -64,22 +49,6 @@ stages:
         packageType: sdk
         version: 3.1.103
         installationPath: $(Agent.ToolsDirectory)/dotnet
-    - task: AzurePowerShell@4
-      enabled: false
-      inputs:
-        azurePowerShellVersion: latestVersion
-        azureSubscription: $(azure_subscription)
-        scriptType: filePath
-        scriptPath: '$(Build.SourcesDirectory)\azure\runTests.ps1'
-        scriptArguments:
-          -projectLocation $(Build.SourcesDirectory) `
-          -type Integration `
-          -TheMovieDatabaseKey $(TheMovieDatabaseAuthorization) `
-          -dbCatalog '$(testCatalog)' `
-          -dbUsername '$(db_username)' `
-          -dbPassword '$(db_password)' `
-          -dbSource '$(db_source)' `
-          -useEnvironmentConnectionString true
     - task: DotNetCoreCLI@2
       inputs:
         command: test

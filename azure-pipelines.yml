@@ -33,6 +33,7 @@ stages:
   - job: UnitTests
     steps:
     - task: AzurePowerShell@4
+      enabled: false
       inputs:
         azurePowerShellVersion: latestVersion
         azureSubscription: $(azure_subscription)
@@ -46,6 +47,11 @@ stages:
           -dbPassword '$(db_password)' `
           -dbSource '$(db_source)' `
           -useEnvironmentConnectionString true
+    - task: DotNetCoreCLI@2
+      command: test
+      projects: |
+        Tests/Grains.Tests.Unit/Grains.Tests.Unit.csproj
+        Tests/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
 - stage: Integration
   dependsOn: Unit
   jobs:
@@ -58,6 +64,7 @@ stages:
         version: 3.1.103
         installationPath: $(Agent.ToolsDirectory)/dotnet
     - task: AzurePowerShell@4
+      enabled: false
       inputs:
         azurePowerShellVersion: latestVersion
         azureSubscription: $(azure_subscription)
@@ -72,3 +79,8 @@ stages:
           -dbPassword '$(db_password)' `
           -dbSource '$(db_source)' `
           -useEnvironmentConnectionString true
+    - task: DotNetCoreCLI@2
+      command: test
+      projects: |
+        Tests/Grains.Tests.Integration/Grains.Tests.Integration.csproj
+        Tests/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj

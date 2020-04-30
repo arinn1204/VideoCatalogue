@@ -80,6 +80,5 @@ stages:
           inputs:
             projectFilePath: |
               source/test/Grains.Tests.Integration/Features
-              source/test/VideoCatalogueClient.Tests.Integration/Features
             projectName: $(projectName)
             projectLanguage: en

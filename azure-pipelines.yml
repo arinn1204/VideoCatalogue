@@ -15,13 +15,6 @@ variables:
   testCatalog: $(db_catalog)_test
   coverletSettings: $(System.DefaultWorkingDirectory)/coverlet.runsettings
   collectorName: XPlat Code Coverage
-  unitTests: |
-    source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
-    source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
-  integrationTests: |
-    source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
-    source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj
-
   mainProject: |
     source/main/Grains/Grains.csproj
     source/main/GrainsInterfaces/GrainsInterfaces.csproj
@@ -49,7 +42,9 @@ stages:
       inputs:
         command: test
         arguments: '--configuration $(testConfiguration) --collect $(collectorName) --settings $(coverletSettings)'
-        projects: $(unitTests)
+        projects: |
+          source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
+          source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
     - task: DotNetCoreCLI@2
       displayName: Run Integration Tests
       env:
@@ -57,7 +52,9 @@ stages:
       inputs:
         command: test
         arguments: '--configuration $(testConfiguration) --collect $(collectorName) --settings $(coverletSettings)'
-        projects: $(integrationTests)
+        projects: |
+          source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
+          source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj
     - task: DotNetCoreCLI@2
       displayName: Install ReportGenerator tool
       inputs:

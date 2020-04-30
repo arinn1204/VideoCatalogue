@@ -81,7 +81,3 @@ stages:
           source/test/VideoCatalogueClient.Tests.Integration/Features
         projectName: $(projectName)
         projectLanguage: en
-      enabled: false
-      continueOnError: true
-      condition: always()
-      timeoutInMinutes: 10

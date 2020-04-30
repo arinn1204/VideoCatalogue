@@ -10,4 +10,13 @@
             </DataCollector>
         </DataCollectors>
     </DataCollectionRunSettings>
+    <RunConfiguration>
+        <TargetPlatform>x64</TargetPlatform>
+        <TargetFrameworkVersion>netcoreapp3.1</TargetFrameworkVersion>
+    </RunConfiguration>
+    <!-- Configurations for SpecFlow+ Runner -->
+    <SpecRun>
+        <GenerateSpecRunTrait>true</GenerateSpecRunTrait>
+        <GenerateFeatureTrait>true</GenerateFeatureTrait>
+    </SpecRun>
 </RunSettings>

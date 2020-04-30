@@ -5,22 +5,14 @@
   </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoBogus" Version="2.8.1"/>
-        <PackageReference Include="AutoFixture" Version="4.11.0"/>
-        <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0"/>
-        <PackageReference Include="AutoFixture.Xunit2" Version="4.11.0"/>
-        <PackageReference Include="coverlet.collector" Version="1.2.1"/>
-        <PackageReference Include="FluentAssertions" Version="5.10.3"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1"/>
-        <PackageReference Include="Moq" Version="4.14.1"/>
-        <PackageReference Include="SpecFlow" Version="3.1.97"/>
-        <PackageReference Include="SpecFlow.NUnit.Runners" Version="3.1.97"/>
-        <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.97"/>
-        <PackageReference Include="WireMock.Net" Version="1.2.6"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="AutoBogus" Version="2.8.1" />
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+        <PackageReference Include="Moq" Version="4.14.1" />
+        <PackageReference Include="SpecFlow" Version="3.1.97" />
+        <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.97" />
+        <PackageReference Include="SpecRun.SpecFlow" Version="3.2.22" />
+        <PackageReference Include="WireMock.Net" Version="1.2.6" />
     </ItemGroup>
 
   <ItemGroup>
@@ -69,14 +61,8 @@
     <ItemGroup>
         <Content Include="Features\AClientRequestingVideoDetails.feature" />
         <Content Include="Features\AClientWantsToViewInformationAboutAFile.feature" />
-        <Content Include="Features\AClientWantsToViewWhatFilesAreAvailable.feature" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <SpecFlowFeatureFiles Update="Features\AClientWantingToSeeAvailableTorrents.feature">
-            <CodeBehindFile>%(RelativeDir)%(Filename).feature.cs</CodeBehindFile>
-            <Visible>true</Visible>
-        </SpecFlowFeatureFiles>
+        <Content Include="Features\AClientWantsToViewWhatFilesAreAvailable.feature" />        
+        <Content Include="Features\AClientWantingToSeeAvailableTorrents.feature" />
     </ItemGroup>
 
     <ItemGroup>

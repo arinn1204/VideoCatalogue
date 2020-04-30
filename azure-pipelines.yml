@@ -67,7 +67,6 @@ stages:
     - job: RunIntegrationTests
       steps:
         - task: DotNetCoreCLI@2
-          enabled: false
           displayName: Run Integration Tests
           env:
             MSBUILDSINGLELOADCONTEXT: 1

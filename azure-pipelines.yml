@@ -55,7 +55,7 @@ stages:
         MSBUILDSINGLELOADCONTEXT: 1
       inputs:
         command: test
-        arguments: '--configuration $(testConfiguration) --collect "$(collectorName)" --settings $(coverletSettings)'
+        arguments: '--configuration $(testConfiguration)'
         projects: $(integrationTests)
     - task: DotNetCoreCLI@2
       displayName: Install ReportGenerator tool

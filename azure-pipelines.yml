@@ -14,7 +14,7 @@ variables:
   testConfiguration: 'Release'
   testCatalog: $(db_catalog)_test
   coverletSettings: $(System.DefaultWorkingDirectory)/coverlet.runsettings
-  collectorName: XPlat Code Coverage
+  collectorName: "XPlat Code Coverage"
   mainProject: |
     source/main/Grains/Grains.csproj
     source/main/GrainsInterfaces/GrainsInterfaces.csproj

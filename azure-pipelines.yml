@@ -14,6 +14,7 @@ variables:
   testConfiguration: 'Release'
   testCatalog: $(db_catalog)_test
   coverletSettings: $(System.DefaultWorkingDirectory)/coverlet.runsettings
+  collectorName: XPlat Code Coverage
   unitTests: |
     source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
     source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
@@ -47,7 +48,7 @@ stages:
       displayName: Run Unit Tests
       inputs:
         command: test
-        arguments: '--configuration $(testConfiguration) --collect "XPlat Code Coverage" --settings $(coverletSettings)'
+        arguments: '--configuration $(testConfiguration) --collect $(collectorName) --settings $(coverletSettings)'
         projects: $(unitTests)
     - task: DotNetCoreCLI@2
       displayName: Run Integration Tests
@@ -55,7 +56,7 @@ stages:
         MSBUILDSINGLELOADCONTEXT: 1
       inputs:
         command: test
-        arguments: '--configuration $(testConfiguration) --collect "XPlat Code Coverage" --settings $(coverletSettings)'
+        arguments: '--configuration $(testConfiguration) --collect $(collectorName) --settings $(coverletSettings)'
         projects: $(integrationTests)
     - task: DotNetCoreCLI@2
       displayName: Install ReportGenerator tool

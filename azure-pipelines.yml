@@ -64,20 +64,22 @@ stages:
 - stage: IntegrationTests
   dependsOn: UnitTests
   jobs:
-    - task: DotNetCoreCLI@2
-      enabled: false
-      displayName: Run Integration Tests
-      env:
-        MSBUILDSINGLELOADCONTEXT: 1
-      inputs:
-        command: test
-        arguments: '--configuration $(buildConfiguration)'
-        projects: $(integrationTests)
-    - task: techtalk.techtalk-specflow-plus.specflow-plus.SpecFlowPlus@0
-      displayName: 'SpecFlow+ build step SpecFlow.Plus.Runner.Specs'
-      inputs:
-        projectFilePath: |
-          source/test/Grains.Tests.Integration/Features
-          source/test/VideoCatalogueClient.Tests.Integration/Features
-        projectName: $(projectName)
-        projectLanguage: en
+    - job: RunIntegrationTests
+      steps:
+        - task: DotNetCoreCLI@2
+          enabled: false
+          displayName: Run Integration Tests
+          env:
+            MSBUILDSINGLELOADCONTEXT: 1
+          inputs:
+            command: test
+            arguments: '--configuration $(buildConfiguration)'
+            projects: $(integrationTests)
+        - task: techtalk.techtalk-specflow-plus.specflow-plus.SpecFlowPlus@0
+          displayName: 'SpecFlow+ build step SpecFlow.Plus.Runner.Specs'
+          inputs:
+            projectFilePath: |
+              source/test/Grains.Tests.Integration/Features
+              source/test/VideoCatalogueClient.Tests.Integration/Features
+            projectName: $(projectName)
+            projectLanguage: en

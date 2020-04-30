@@ -10,9 +10,8 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  projectName: VideoCatalogue
   buildConfiguration: 'Release'
-  testConfiguration: 'Release'
-  testCatalog: $(db_catalog)_test
   coverletSettings: $(System.DefaultWorkingDirectory)/coverlet.runsettings
   collectorName: 'XPlat Code Coverage'
   mainProject: |
@@ -38,7 +37,7 @@ stages:
         command: build
         arguments: '--configuration $(buildConfiguration)'
         projects: $(mainProject)
-- stage: Tests
+- stage: UnitTests
   dependsOn: Build
   jobs:
   - job: RunTests
@@ -47,16 +46,8 @@ stages:
       displayName: Run Unit Tests
       inputs:
         command: test
-        arguments: '--configuration $(testConfiguration) --collect "$(collectorName)" --settings $(coverletSettings)'
+        arguments: '--configuration $(buildConfiguration) --collect "$(collectorName)" --settings $(coverletSettings)'
         projects: $(unitTests)
-    - task: DotNetCoreCLI@2
-      displayName: Run Integration Tests
-      env:
-        MSBUILDSINGLELOADCONTEXT: 1
-      inputs:
-        command: test
-        arguments: '--configuration $(testConfiguration)'
-        projects: $(integrationTests)
     - task: DotNetCoreCLI@2
       displayName: Install ReportGenerator tool
       inputs:
@@ -70,3 +61,27 @@ stages:
       inputs:
         codeCoverageTool: Cobertura
         summaryFileLocation: $(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml 
+- stage: IntegrationTests
+  dependsOn: UnitTests
+  jobs:
+    - task: DotNetCoreCLI@2
+      enabled: false
+      displayName: Run Integration Tests
+      env:
+        MSBUILDSINGLELOADCONTEXT: 1
+      inputs:
+        command: test
+        arguments: '--configuration $(buildConfiguration)'
+        projects: $(integrationTests)
+    - task: techtalk.techtalk-specflow-plus.specflow-plus.SpecFlowPlus@0
+      displayName: 'SpecFlow+ build step SpecFlow.Plus.Runner.Specs'
+      inputs:
+        projectFilePath: |
+          source/test/Grains.Tests.Integration/Features
+          source/test/VideoCatalogueClient.Tests.Integration/Features
+        projectName: $(projectName)
+        projectLanguage: en
+      enabled: false
+      continueOnError: true
+      condition: always()
+      timeoutInMinutes: 10

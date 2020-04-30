@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.IO;
+using AutoMapper;
 using BoDi;
+using Grains.Tests.Integration.Extensions;
 using Grains.Tests.Integration.Features.Support.Wiremock;
 using Grains.VideoInformation;
 using Microsoft.Extensions.Configuration;
@@ -35,9 +37,12 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		[BeforeScenario(Order = 0)]
 		public static void SetupMicrosoftDI(IObjectContainer container)
 		{
+            var location = typeof(StringExtensions).Assembly.Location;
+            var sourceDirectory = Directory.GetParent(location).FullName;
+
 			var services = new ServiceCollection();
 			var configuration = new ConfigurationBuilder()
-			                   .AddJsonFile("appsettings.json", true)
+			                   .AddJsonFile(Path.Combine(sourceDirectory, "appsettings.json"), false)
 			                   .AddEnvironmentVariables()
 			                   .Build();
 

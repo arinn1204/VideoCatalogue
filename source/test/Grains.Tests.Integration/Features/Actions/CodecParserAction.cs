@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Grains.Codecs;
+using Grains.Tests.Integration.Extensions;
 using Grains.Tests.Integration.Features.Models;
 using TechTalk.SpecFlow;
 using WireMock.RequestBuilders;
@@ -29,7 +30,7 @@ namespace Grains.Tests.Integration.Features.Actions
 		[When(@"the information about the file is requested")]
 		public async Task WhenTheInformationAboutTheFileIsRequested()
 		{
-			var filePath = Path.Combine("TestData", "CodecParser", "specificationData.xml");
+			var filePath = "specificationData.xml".ToFilePath("CodecParser");
 			var data = await File.ReadAllTextAsync(filePath);
 
 			_wireMockServer.Given(
@@ -43,7 +44,7 @@ namespace Grains.Tests.Integration.Features.Actions
 				                        .WithBody(data));
 
 
-			var file = Path.Combine("TestData", "CodecParser", _codecParserData.FileName);
+			var file = _codecParserData.FileName.ToFilePath("CodecParser");
 			var (fileInformation, error) = await _parser.GetInformation(file);
 			_codecParserData.VideoInformation = fileInformation;
 			_codecParserData.ParserError = error;

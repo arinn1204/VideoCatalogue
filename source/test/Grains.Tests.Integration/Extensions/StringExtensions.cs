@@ -1,12 +1,18 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Grains.Tests.Integration.Extensions
 {
 	public static class StringExtensions
 	{
-		public static string ToFilePath(this string baseFileName)
-			=> Path.Combine("TestData", "VideoApi", baseFileName);
+		public static string ToFilePath(this string baseFileName, string folderName = "VideoApi")
+        {
+            var location = typeof(StringExtensions).Assembly.Location;
+            var sourceDirectory = Directory.GetParent(location).FullName;
+
+			return Path.Combine(sourceDirectory, "TestData", folderName, baseFileName);
+        }
 
 		public static string ToFileBaseName(this string title)
 		{

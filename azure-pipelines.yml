@@ -41,7 +41,7 @@ stages:
       displayName: Run Unit Tests
       inputs:
         command: test
-        arguments: '--configuration $(testConfiguration) --collect $(collectorName) --settings $(coverletSettings)'
+        arguments: '--configuration $(testConfiguration) --collect "$(collectorName)" --settings $(coverletSettings)'
         projects: |
           source/test/Grains.Tests.Unit/Grains.Tests.Unit.csproj
           source/test/VideoCatalogueClient.Tests.Unit/VideoCatalogueClient.Tests.Unit.csproj
@@ -51,7 +51,7 @@ stages:
         MSBUILDSINGLELOADCONTEXT: 1
       inputs:
         command: test
-        arguments: '--configuration $(testConfiguration) --collect $(collectorName) --settings $(coverletSettings)'
+        arguments: '--configuration $(testConfiguration) --collect "$(collectorName)" --settings $(coverletSettings)'
         projects: |
           source/test/Grains.Tests.Integration/Grains.Tests.Integration.csproj
           source/test/VideoCatalogueClient.Tests.Integration/VideoCatalogueClient.Tests.Integration.csproj

@@ -11,14 +11,18 @@ namespace Grains.Tests.Unit.TestUtilities
 	{
 		public static Func<(HttpClient client, HttpRequestMessage request, int callCounter)>
 			GetFakeHttpClient(
-				string response,
+				string response = "{}",
 				string contentType = "application/json",
-				string baseAddress = "",
-				HttpStatusCode statusCode = HttpStatusCode.OK)
+				string baseAddress = "http://localhost",
+				HttpStatusCode statusCode = HttpStatusCode.OK,
+				Func<int, HttpResponseMessage> customResponse = null)
 		{
 			var content = new StringContent(response, Encoding.UTF8, contentType);
 
-			var handler = new MockHandler(content, statusCode);
+			var handler = 
+				customResponse == null
+					? new MockHandler(content, statusCode)
+					: new MockHandler(customResponse);
 
 			return () =>
 			       {
@@ -37,16 +41,25 @@ namespace Grains.Tests.Unit.TestUtilities
 
 		private class MockHandler : HttpMessageHandler
 		{
-			private readonly HttpContent _responseContent;
-			private readonly HttpStatusCode _statusCode;
+			private readonly Func<int, HttpResponseMessage>
+				_createResponse;
 
-			public HttpRequestMessage Request;
+			public HttpRequestMessage Request
+				= new HttpRequestMessage();
 
 			public MockHandler(HttpContent responseContent, HttpStatusCode statusCode)
 			{
-				_responseContent = responseContent;
-				_statusCode = statusCode;
-				Request = new HttpRequestMessage();
+				_createResponse = _ => new HttpResponseMessage
+				                                  {
+					                                  Content = responseContent,
+					                                  StatusCode = statusCode
+				                                  };
+			}
+
+			public MockHandler(
+				Func<int, HttpResponseMessage> createResponse)
+			{
+				_createResponse = createResponse;
 			}
 
 			public int CallCounter { get; private set; }
@@ -57,12 +70,7 @@ namespace Grains.Tests.Unit.TestUtilities
 			{
 				Request = request;
 				CallCounter++;
-				return Task.FromResult(
-					new HttpResponseMessage
-					{
-						Content = _responseContent,
-						StatusCode = _statusCode
-					});
+				return Task.FromResult(_createResponse(CallCounter));
 			}
 		}
 

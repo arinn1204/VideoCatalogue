@@ -42,8 +42,4 @@
     <ProjectReference Include="..\..\main\Grains\Grains.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestResults" />
-  </ItemGroup>
-
 </Project>

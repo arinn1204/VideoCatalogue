@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
-namespace Grains.VideoInformation.Models.SerachResults
+namespace Grains.VideoInformation.Models.SearchResults
 {
-	[JsonObject]
 	public class SearchResultWrapper<T>
 	{
-		[JsonProperty("results")]
+		[JsonPropertyName("results")]
 		public IEnumerable<T> SearchResults { get; set; }
 			= Enumerable.Empty<T>();
 	}

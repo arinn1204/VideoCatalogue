@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Grains.VideoInformation.Models.Credits;
 using Grains.VideoInformation.Models.Details;
-using Grains.VideoInformation.Models.SerachResults;
+using Grains.VideoInformation.Models.SearchResults;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces
 {

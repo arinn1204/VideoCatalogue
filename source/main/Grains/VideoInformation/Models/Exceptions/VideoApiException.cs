@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grains.VideoInformation.Models.SerachResults;
+using Grains.VideoInformation.Models.SearchResults;
 using GrainsInterfaces.Models.VideoApi;
 
 namespace Grains.VideoInformation.Models.Exceptions

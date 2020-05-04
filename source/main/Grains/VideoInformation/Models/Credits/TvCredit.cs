@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Grains.VideoInformation.Models.Credits
 {
 	public class TvCredit : MovieCredit
 	{
-		[JsonProperty("guest_stars")]
+		[JsonPropertyName("guest_stars")]
 		public IEnumerable<CastCredit> GuestStars { get; set; }
 			= Enumerable.Empty<CastCredit>();
 	}

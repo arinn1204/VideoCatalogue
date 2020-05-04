@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -12,7 +13,6 @@ using Grains.Tests.Unit.TestUtilities;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.FileFormat.Models;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Grains.Tests.Unit.VideoSearcher
@@ -43,7 +43,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			               };
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(keywords),
+					JsonSerializer.Serialize(keywords),
 					baseAddress: "http://localhost/api/videoFile/");
 
 			var (client, _, _) = mockClientBuilder();
@@ -65,7 +65,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject("FORMAT"),
+					JsonSerializer.Serialize("FORMAT"),
 					baseAddress: "http://localhost/api/videoFile/");
 
 			var (client, _, _) = mockClientBuilder();
@@ -87,7 +87,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(
+					JsonSerializer.Serialize(
 						new[]
 						{
 							new FilePattern()
@@ -117,7 +117,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			                };
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(fileTypes),
+					JsonSerializer.Serialize(fileTypes),
 					baseAddress: "http://localhost/api/videoFile/");
 
 			var (client, _, _) = mockClientBuilder();
@@ -143,7 +143,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			                };
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(fileTypes),
+					JsonSerializer.Serialize(fileTypes),
 					baseAddress: "http://localhost/api/videoFile");
 
 			var (client, _, _) = mockClientBuilder();
@@ -163,7 +163,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(
+					JsonSerializer.Serialize(
 						new[]
 						{
 							new FilePattern
@@ -218,7 +218,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			               };
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(keywords),
+					JsonSerializer.Serialize(keywords),
 					baseAddress: "http://localhost/api/videoFile");
 
 			var (client, _, _) = mockClientBuilder();
@@ -242,7 +242,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(
+					JsonSerializer.Serialize(
 						new[]
 						{
 							new FilePattern
@@ -288,7 +288,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(
+					JsonSerializer.Serialize(
 						new[]
 						{
 							"ONE",
@@ -324,7 +324,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(
+					JsonSerializer.Serialize(
 						new[]
 						{
 							"ONE",
@@ -355,7 +355,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var mockClientBuilder =
 				MockHttpClient.GetFakeHttpClient(
-					JsonConvert.SerializeObject(
+					JsonSerializer.Serialize(
 						new[]
 						{
 							new FilePattern

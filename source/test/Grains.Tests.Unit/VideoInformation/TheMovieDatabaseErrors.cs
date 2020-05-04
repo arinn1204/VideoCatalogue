@@ -7,7 +7,7 @@ using AutoMapper;
 using FluentAssertions;
 using Grains.VideoInformation;
 using Grains.VideoInformation.Models.Exceptions;
-using Grains.VideoInformation.Models.SerachResults;
+using Grains.VideoInformation.Models.SearchResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
 using GrainsInterfaces.Models.VideoApi;
 using GrainsInterfaces.Models.VideoApi.Enums;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Text.Json;
 using BoDi;
 using Grains.FileFormat;
 using Grains.FileFormat.Models;
@@ -10,7 +11,6 @@ using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.VideoSearcher;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using TechTalk.SpecFlow;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -60,7 +60,7 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			        .RespondWith(
 				         Response.Create()
 				                 .WithBody(
-					                  JsonConvert.SerializeObject(
+					                  JsonSerializer.Serialize(
 						                  new[]
 						                  {
 							                  new FilePattern
@@ -82,7 +82,7 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			        .RespondWith(
 				         Response.Create()
 				                 .WithBody(
-					                  JsonConvert.SerializeObject(
+					                  JsonSerializer.Serialize(
 						                  new[]
 						                  {
 							                  "mkv"
@@ -95,7 +95,7 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			        .RespondWith(
 				         Response.Create()
 				                 .WithBody(
-					                  JsonConvert.SerializeObject(
+					                  JsonSerializer.Serialize(
 						                  new[]
 						                  {
 							                  "BLURAY"

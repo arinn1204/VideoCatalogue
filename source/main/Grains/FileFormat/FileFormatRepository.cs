@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Grains.FileFormat.Models;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.FileFormat.Models;
-using Newtonsoft.Json;
 using Orleans;
 
 namespace Grains.FileFormat
@@ -102,7 +102,7 @@ namespace Grains.FileFormat
 		{
 			var content = await responseContent.ConfigureAwait(false);
 			var acceptableFormats =
-				JsonConvert.DeserializeObject<IEnumerable<TResponse>>(content);
+				JsonSerializer.Deserialize<IEnumerable<TResponse>>(content);
 
 			foreach (var acceptableFormat in acceptableFormats)
 			{

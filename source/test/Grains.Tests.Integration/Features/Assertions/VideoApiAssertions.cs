@@ -1,10 +1,12 @@
 ﻿using System.IO;
 using System.Text;
+using System.Text.Json;
+using AutoMapper;
 using FluentAssertions;
 using Grains.Tests.Integration.Extensions;
-using Grains.Tests.Integration.Features.Models.Resolvers;
+using Grains.VideoInformation.Models.Credits;
+using Grains.VideoInformation.Models.Details;
 using GrainsInterfaces.Models.VideoApi;
-using Newtonsoft.Json;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Assertions
@@ -13,10 +15,14 @@ namespace Grains.Tests.Integration.Features.Assertions
 	public class VideoApiAssertions
 	{
 		private readonly VideoDetail _details;
+		private readonly IMapper _mapper;
 
-		public VideoApiAssertions(VideoDetail details)
+		public VideoApiAssertions(
+			VideoDetail details,
+			IMapper mapper)
 		{
 			_details = details;
+			_mapper = mapper;
 		}
 
 		[Then(@"the client is given the information about (.*)")]
@@ -48,27 +54,29 @@ namespace Grains.Tests.Integration.Features.Assertions
 		{
 			var filename = $"{baseFileName.ToFilePath()}.credits.json";
 			var fileContents = File.ReadAllText(filename, encoding);
-			return
-				JsonConvert.DeserializeObject<Credit>(
+			var detail = 
+				JsonSerializer.Deserialize<MovieCredit>(
 					fileContents,
-					new JsonSerializerSettings
+					new JsonSerializerOptions
 					{
-						ContractResolver = new CreditResolver()
+						PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 					});
+
+			return _mapper.Map<Credit>(detail);
 		}
 
 		private VideoDetail GetDetails(string baseFileName, Encoding encoding)
 		{
 			var filename = $"{baseFileName.ToFilePath()}.json";
 			var fileContents = File.ReadAllText(filename, encoding);
-			var fileData = JsonConvert.DeserializeObject<VideoDetail>(
+			var movieDetail = JsonSerializer.Deserialize<MovieDetail>(
 				fileContents,
-				new JsonSerializerSettings
+				new JsonSerializerOptions
 				{
-					ContractResolver = new VideoDetailResolver()
+					PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 				});
 
-			return fileData;
+			return _mapper.Map<VideoDetail>(movieDetail);
 		}
 	}
 }

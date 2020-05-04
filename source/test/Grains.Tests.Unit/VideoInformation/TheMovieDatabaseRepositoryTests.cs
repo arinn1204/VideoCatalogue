@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -10,13 +11,12 @@ using FluentAssertions;
 using Grains.Tests.Unit.TestUtilities;
 using Grains.VideoInformation.Models.Credits;
 using Grains.VideoInformation.Models.Details;
-using Grains.VideoInformation.Models.SerachResults;
+using Grains.VideoInformation.Models.SearchResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
 using GrainsInterfaces.Models.VideoApi.Enums;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Grains.Tests.Unit.VideoInformation
@@ -126,7 +126,7 @@ namespace Grains.Tests.Unit.VideoInformation
 			string expectedUrl)
 		{
 			var results = new SearchResultWrapper<object>();
-			var resultString = JsonConvert.SerializeObject(results);
+			var resultString = JsonSerializer.Serialize(results);
 
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(resultString);
@@ -186,7 +186,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					                              }
 				                              }
 			              };
-			var stringResponse = JsonConvert.SerializeObject(results);
+			var stringResponse = JsonSerializer.Serialize(results);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -224,7 +224,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					                             }
 				                             }
 			             };
-			var stringResponse = JsonConvert.SerializeObject(result);
+			var stringResponse = JsonSerializer.Serialize(result);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -273,7 +273,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					         }
 				};
 
-			var stringResponse = JsonConvert.SerializeObject(expected);
+			var stringResponse = JsonSerializer.Serialize(expected);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -312,7 +312,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					         }
 				};
 
-			var stringResponse = JsonConvert.SerializeObject(expected);
+			var stringResponse = JsonSerializer.Serialize(expected);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -356,7 +356,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					         }
 				};
 
-			var stringResponse = JsonConvert.SerializeObject(expected);
+			var stringResponse = JsonSerializer.Serialize(expected);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -392,7 +392,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					                              }
 				                              }
 			              };
-			var stringResponse = JsonConvert.SerializeObject(results);
+			var stringResponse = JsonSerializer.Serialize(results);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -445,7 +445,7 @@ namespace Grains.Tests.Unit.VideoInformation
 			               };
 
 
-			var stringResponse = JsonConvert.SerializeObject(expected);
+			var stringResponse = JsonSerializer.Serialize(expected);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -483,7 +483,7 @@ namespace Grains.Tests.Unit.VideoInformation
 				               Profile = "/profile"
 			               };
 
-			var stringResponse = JsonConvert.SerializeObject(expected);
+			var stringResponse = JsonSerializer.Serialize(expected);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -547,7 +547,7 @@ namespace Grains.Tests.Unit.VideoInformation
 			               };
 
 
-			var stringResponse = JsonConvert.SerializeObject(expected);
+			var stringResponse = JsonSerializer.Serialize(expected);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);
@@ -583,7 +583,7 @@ namespace Grains.Tests.Unit.VideoInformation
 					                              }
 				                              }
 			              };
-			var stringResponse = JsonConvert.SerializeObject(results);
+			var stringResponse = JsonSerializer.Serialize(results);
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 
 			var httpClientFunc = MockHttpClient.GetFakeHttpClient(stringResponse);

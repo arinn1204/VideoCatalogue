@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Grains.VideoInformation.Models.Credits;
 using Grains.VideoInformation.Models.Details;
-using Grains.VideoInformation.Models.SerachResults;
+using Grains.VideoInformation.Models.SearchResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
 using GrainsInterfaces.Models.VideoApi.Enums;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 {
@@ -173,7 +173,12 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 						     .Content
 						     .ReadAsStringAsync()
 						     .ConfigureAwait(false);
-					return JsonConvert.DeserializeObject<TResponse>(responseContent);
+					return JsonSerializer.Deserialize<TResponse>(
+						responseContent,
+						new JsonSerializerOptions
+						{
+							PropertyNameCaseInsensitive = true
+						});
 				};
 			processResponse ??= defaultProcess;
 

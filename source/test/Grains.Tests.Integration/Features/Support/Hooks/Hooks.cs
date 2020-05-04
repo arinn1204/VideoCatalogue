@@ -65,6 +65,7 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 					}));
 
 			service.AddSingleton<IMapper>(mapper);
+			container.RegisterInstanceAs<IMapper>(mapper);
 		}
 
 		[AfterScenario(Order = 0)]

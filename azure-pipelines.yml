@@ -77,6 +77,7 @@ stages:
             arguments: '--configuration $(buildConfiguration)'
             projects: $(integrationTests)
         - task: techtalk.techtalk-specflow-plus.specflow-plus.SpecFlowPlus@0
+          enabled: false
           displayName: 'SpecFlow+ build step SpecFlow.Plus.Runner.Specs'
           inputs:
             projectFilePath: $(featureFiles)

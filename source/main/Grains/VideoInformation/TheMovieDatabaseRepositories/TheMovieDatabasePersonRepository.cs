@@ -11,13 +11,15 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 
 		public Task<HttpResponseMessage> GetPersonDetail(
 			int personId,
-			string baseUrl,
+			string version,
 			HttpClient client)
 		{
 			using var request = new HttpRequestMessage
 			                    {
 				                    Method = HttpMethod.Get,
-				                    RequestUri = new Uri($"{baseUrl}/person/{personId}")
+				                    RequestUri = new Uri(
+					                    $"{version}/person/{personId}",
+					                    UriKind.Relative)
 			                    };
 
 			return client.SendAsync(request);

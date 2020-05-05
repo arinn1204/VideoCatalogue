@@ -9,7 +9,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.Detail
 		Task<HttpResponseMessage> Search(
 			string title,
 			int? year,
-			string baseUrl,
+			string version,
 			HttpClient client,
 			MovieType type);
 	}

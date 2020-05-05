@@ -7,21 +7,21 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.Detail
 	{
 		Task<HttpResponseMessage> GetTvSeriesDetail(
 			int tvId,
-			string baseUrl,
+			string version,
 			HttpClient client);
 
 		Task<HttpResponseMessage> GetTvEpisodeDetail(
 			int tvId,
 			int seasonNumber,
 			int episodeNumber,
-			string baseUrl,
+			string version,
 			HttpClient client);
 
 		Task<HttpResponseMessage> GetTvEpisodeCredits(
 			int tvId,
 			int seasonNumber,
 			int episodeNumber,
-			string baseUrl,
+			string version,
 			HttpClient client);
 	}
 }

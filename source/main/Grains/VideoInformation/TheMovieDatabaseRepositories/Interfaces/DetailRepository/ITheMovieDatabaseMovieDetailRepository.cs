@@ -5,7 +5,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.Detail
 {
 	internal interface ITheMovieDatabaseMovieDetailRepository
 	{
-		Task<HttpResponseMessage> GetMovieCredit(int movieId, string baseUrl, HttpClient client);
-		Task<HttpResponseMessage> GetMovieDetail(int movieId, string baseUrl, HttpClient client);
+		Task<HttpResponseMessage> GetMovieCredit(int movieId, string version, HttpClient client);
+		Task<HttpResponseMessage> GetMovieDetail(int movieId, string version, HttpClient client);
 	}
 }

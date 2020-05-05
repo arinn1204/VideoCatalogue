@@ -11,13 +11,13 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 
 		public Task<HttpResponseMessage> GetMovieDetail(
 			int movieId,
-			string baseUrl,
+			string version,
 			HttpClient client)
 		{
 			using var request = new HttpRequestMessage
 			                    {
 				                    Method = HttpMethod.Get,
-				                    RequestUri = new Uri($"{baseUrl}/movie/{movieId}")
+				                    RequestUri = new Uri($"{version}/movie/{movieId}", UriKind.Relative)
 			                    };
 
 			return client.SendAsync(request);
@@ -25,13 +25,13 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 
 		public Task<HttpResponseMessage> GetMovieCredit(
 			int movieId,
-			string baseUrl,
+			string version,
 			HttpClient client)
 		{
 			using var request = new HttpRequestMessage
 			                    {
 				                    Method = HttpMethod.Get,
-				                    RequestUri = new Uri($"{baseUrl}/movie/{movieId}/credits")
+				                    RequestUri = new Uri($"{version}/movie/{movieId}/credits", UriKind.Relative)
 			                    };
 
 			return client.SendAsync(request);

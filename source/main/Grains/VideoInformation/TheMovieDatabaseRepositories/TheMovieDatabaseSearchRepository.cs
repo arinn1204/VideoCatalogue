@@ -16,7 +16,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		public Task<HttpResponseMessage> Search(
 			string title,
 			int? year,
-			string baseUrl,
+			string version,
 			HttpClient client,
 			MovieType type)
 		{
@@ -26,7 +26,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 				                    RequestUri = BuildSearchUri(
 					                    title,
 					                    year,
-					                    baseUrl,
+					                    version,
 					                    type)
 			                    };
 
@@ -38,7 +38,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		private Uri BuildSearchUri(
 			string title,
 			int? year,
-			string baseUrl,
+			string version,
 			MovieType type)
 		{
 			var parameters =
@@ -63,8 +63,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 
 			var queryParameters = QueryHelpers.BuildQueryParameters(parameters);
 
-			return new Uri($"{baseUrl}/search/{videoType}{queryParameters}");
-			;
+			return new Uri($"{version}/search/{videoType}{queryParameters}", UriKind.Relative);
 		}
 	}
 }

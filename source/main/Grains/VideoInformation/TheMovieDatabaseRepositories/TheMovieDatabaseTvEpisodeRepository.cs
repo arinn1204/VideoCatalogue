@@ -13,14 +13,14 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			int tvId,
 			int seasonNumber,
 			int episodeNumber,
-			string baseUrl,
+			string version,
 			HttpClient client)
 		{
-			var tvUrl = GetTvUrl(baseUrl, tvId);
+			var tvUrl = GetTvUrl(version, tvId);
 			var episodeUrl = GetEpisodeUrl(tvUrl, seasonNumber, episodeNumber);
 			using var request = new HttpRequestMessage(
 				HttpMethod.Get,
-				new Uri($"{episodeUrl.Trim('/')}/credits"));
+				new Uri($"{episodeUrl.Trim('/')}/credits", UriKind.Relative));
 
 			return client.SendAsync(request);
 		}
@@ -29,26 +29,26 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			int tvId,
 			int seasonNumber,
 			int episodeNumber,
-			string baseUrl,
+			string version,
 			HttpClient client)
 		{
-			var tvUrl = GetTvUrl(baseUrl, tvId);
+			var tvUrl = GetTvUrl(version, tvId);
 			var episodeUrl = GetEpisodeUrl(tvUrl, seasonNumber, episodeNumber);
 			using var request = new HttpRequestMessage(
 				HttpMethod.Get,
-				new Uri(episodeUrl));
+				new Uri(episodeUrl, UriKind.Relative));
 
 			return client.SendAsync(request);
 		}
 
 		public Task<HttpResponseMessage> GetTvSeriesDetail(
 			int tvId,
-			string baseUrl,
+			string version,
 			HttpClient client)
 		{
 			using var request = new HttpRequestMessage(
 				HttpMethod.Get,
-				new Uri(GetTvUrl(baseUrl, tvId)));
+				new Uri(GetTvUrl(version, tvId), UriKind.Relative));
 
 			return client.SendAsync(request);
 		}

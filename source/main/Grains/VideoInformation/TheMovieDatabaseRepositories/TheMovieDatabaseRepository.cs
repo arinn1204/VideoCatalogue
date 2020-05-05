@@ -47,7 +47,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		{
 			var response = await _movieRepository.GetMovieCredit(
 				                                      movieId,
-				                                      BuildBaseUri(),
+				                                      GetVersion(),
 				                                      GetClient())
 			                                     .ConfigureAwait(false);
 			return await ProcessResponse<MovieCredit>(response).ConfigureAwait(false);
@@ -62,7 +62,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 				                                          tvId,
 				                                          seasonNumber,
 				                                          episodeNumber,
-				                                          BuildBaseUri(),
+				                                          GetVersion(),
 				                                          GetClient())
 			                                         .ConfigureAwait(false);
 			return await ProcessResponse<TvCredit>(response).ConfigureAwait(false);
@@ -72,7 +72,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		{
 			var response = await _movieRepository.GetMovieDetail(
 				                                      movieId,
-				                                      BuildBaseUri(),
+				                                      GetVersion(),
 				                                      GetClient())
 			                                     .ConfigureAwait(false);
 			return await ProcessResponse<MovieDetail>(response).ConfigureAwait(false);
@@ -82,7 +82,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		{
 			var response = await _personRepository.GetPersonDetail(
 				                                       personId,
-				                                       BuildBaseUri(),
+				                                       GetVersion(),
 				                                       GetClient())
 			                                      .ConfigureAwait(false);
 			return await ProcessResponse<PersonDetail>(response).ConfigureAwait(false);
@@ -93,7 +93,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			var responseMessage = _searchRepository.Search(
 				title,
 				year,
-				BuildBaseUri(),
+				GetVersion(),
 				GetClient(),
 				MovieType.Movie);
 
@@ -120,7 +120,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			var response = await _searchRepository.Search(
 				                                       title,
 				                                       year,
-				                                       BuildBaseUri(),
+				                                       GetVersion(),
 				                                       GetClient(),
 				                                       MovieType.TvSeries)
 			                                      .ConfigureAwait(false);
@@ -143,7 +143,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 				                                          tvId,
 				                                          seasonNumber,
 				                                          episodeNumber,
-				                                          BuildBaseUri(),
+				                                          GetVersion(),
 				                                          GetClient())
 			                                         .ConfigureAwait(false);
 			return await ProcessResponse<TvDetail>(response).ConfigureAwait(false);
@@ -153,7 +153,7 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		{
 			var response = await _tvEpisodeRepository.GetTvSeriesDetail(
 				                                          tvId,
-				                                          BuildBaseUri(),
+				                                          GetVersion(),
 				                                          GetClient())
 			                                         .ConfigureAwait(false);
 			return await ProcessResponse<TvDetail>(response).ConfigureAwait(false);
@@ -185,17 +185,15 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			return processResponse(responseMessage);
 		}
 
-		private string BuildBaseUri()
+		private string GetVersion()
 		{
 			var baseUriSection = _configuration.GetSection(ClientFactoryKey)
 			                                   .GetSection("RequestUri");
 
-			var baseUri = baseUriSection.GetSection("BaseUri")
-			                            .Value.Trim('/');
 			var version = baseUriSection.GetSection("Version")
 			                            .Value.Trim('/');
 
-			return $"{baseUri}/{version}";
+			return version;
 		}
 
 		private HttpClient GetClient()

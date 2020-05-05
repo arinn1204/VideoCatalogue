@@ -129,7 +129,9 @@ namespace Grains.Tests.Unit.VideoInformation
 			var resultString = JsonSerializer.Serialize(results);
 
 			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
-			var httpClientFunc = MockHttpClient.GetFakeHttpClient(resultString);
+			var httpClientFunc = MockHttpClient.GetFakeHttpClient(
+				resultString,
+				baseAddress: "https://api.themoviedb.org/");
 			factory.Setup(s => s.CreateClient("TheMovieDatabase"))
 			       .Returns(
 				        httpClientFunc()

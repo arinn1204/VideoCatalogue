@@ -5,6 +5,6 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.Detail
 {
 	internal interface ITheMovieDatabasePersonDetailRepository
 	{
-		Task<HttpResponseMessage> GetPersonDetail(int personId, string baseUrl, HttpClient client);
+		Task<HttpResponseMessage> GetPersonDetail(int personId, string version, HttpClient client);
 	}
 }

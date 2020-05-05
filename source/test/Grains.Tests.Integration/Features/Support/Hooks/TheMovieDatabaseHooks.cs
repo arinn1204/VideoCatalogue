@@ -26,8 +26,8 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			   .AddTransient<ITheMovieDatabasePersonDetailRepository,
 					TheMovieDatabasePersonRepository>();
 			serviceContainer
-			   .AddTransient<ITheMovieDatabaseMovieDetailRepository, TheMovieDatabaseMovieRepository
-				>();
+			   .AddTransient<ITheMovieDatabaseMovieDetailRepository,
+					TheMovieDatabaseMovieRepository>();
 			serviceContainer
 			   .AddTransient<ITheMovieDatabaseSearchDetailRepository,
 					TheMovieDatabaseSearchRepository>();

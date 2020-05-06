@@ -15,7 +15,7 @@ namespace Grains.VideoInformation.Models.Details
 
 		[JsonPropertyName("imdb_id")]
 		public string ImdbId { get; set; } = string.Empty;
-		
+
 		public string Overview { get; set; } = string.Empty;
 
 		public IEnumerable<GenreDetail> Genres { get; set; }

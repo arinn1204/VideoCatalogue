@@ -19,7 +19,7 @@ namespace Grains.Tests.Unit.TestUtilities
 		{
 			var content = new StringContent(response, Encoding.UTF8, contentType);
 
-			var handler = 
+			var handler =
 				customResponse == null
 					? new MockHandler(content, statusCode)
 					: new MockHandler(customResponse);
@@ -50,14 +50,13 @@ namespace Grains.Tests.Unit.TestUtilities
 			public MockHandler(HttpContent responseContent, HttpStatusCode statusCode)
 			{
 				_createResponse = _ => new HttpResponseMessage
-				                                  {
-					                                  Content = responseContent,
-					                                  StatusCode = statusCode
-				                                  };
+				                       {
+					                       Content = responseContent,
+					                       StatusCode = statusCode
+				                       };
 			}
 
-			public MockHandler(
-				Func<int, HttpResponseMessage> createResponse)
+			public MockHandler(Func<int, HttpResponseMessage> createResponse)
 			{
 				_createResponse = createResponse;
 			}

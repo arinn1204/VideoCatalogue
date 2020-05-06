@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoBogus;
 using AutoFixture;
@@ -9,17 +10,17 @@ using FluentAssertions;
 using Grains.BitTorrent.Transmission;
 using Grains.BitTorrent.Transmission.Models;
 using Grains.Tests.Unit.Fixtures;
+using Grains.Tests.Unit.TestUtilities;
 using GrainsInterfaces.BitTorrent;
 using GrainsInterfaces.BitTorrent.Models;
 using Moq;
 using Xunit;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Grains.Tests.Unit.BitTorrent
 {
 	public class TransmissionTests : IClassFixture<MapperFixture>
 	{
-		private readonly Fixture _fixture;
+#region Setup/Teardown
 
 		public TransmissionTests(MapperFixture mappingFixture)
 		{
@@ -29,18 +30,37 @@ namespace Grains.Tests.Unit.BitTorrent
 			_fixture.Inject(mappingFixture.MappingProfile);
 		}
 
-		[Fact]
-		public async Task ShouldGetActiveTorrents()
+#endregion
+
+		private readonly Fixture _fixture;
+
+		[Theory]
+		[InlineData(0, TorrentStatus.Stopped, null)]
+		[InlineData(1, TorrentStatus.Queued, QueuedStatus.CheckFiles)]
+		[InlineData(2, TorrentStatus.CheckingFiles, null)]
+		[InlineData(3, TorrentStatus.Queued, QueuedStatus.Download)]
+		[InlineData(4, TorrentStatus.Downloading, null)]
+		[InlineData(5, TorrentStatus.Queued, QueuedStatus.Seed)]
+		[InlineData(6, TorrentStatus.Seeding, null)]
+		public async Task ShouldMapTorrentStatus(
+			int statusCode,
+			TorrentStatus expectedTorrentStatus,
+			QueuedStatus? expectedQueuedStatus)
 		{
 			var torrentResponse = new AutoFaker<TorrentResponse>()
 			                     .RuleFor(
 				                      r => r.Files,
-				                      new AutoFaker<FileResponse>()
-					                     .RuleFor(r => r.Length, 10UL)
-					                     .RuleFor(r => r.BytesCompleted, 10UL)
-					                     .Generate(3))
-			                     .RuleFor(r => r.Status, 6)
-			                     .Generate(5);
+				                      new[]
+				                      {
+					                      new FileResponse
+					                      {
+						                      Length = 10,
+						                      BytesCompleted = 10,
+						                      Name = "Mapped!"
+					                      }
+				                      })
+			                     .RuleFor(r => r.Status, statusCode)
+			                     .Generate(1);
 
 			var response = new TransmissionResponse
 			               {
@@ -51,9 +71,7 @@ namespace Grains.Tests.Unit.BitTorrent
 			               };
 			var clientFactory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			var mockClient =
-				TestUtilities.MockHttpClient.GetFakeHttpClient(
-					JsonSerializer.Serialize(response),
-					baseAddress: "http://localhost");
+				MockHttpClient.GetFakeHttpClient(JsonSerializer.Serialize(response));
 
 			clientFactory.Setup(s => s.CreateClient(nameof(Transmission)))
 			             .Returns(mockClient().client);
@@ -64,55 +82,10 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var torrents = await torrentEnumerable.ToListAsync();
 
-			torrents.Count
-			        .Should()
-			        .Be(5);
-
-			torrents.All(a => a.CompletedFileNames.Count() == 3)
-			        .Should()
-			        .BeTrue();
-		}
-
-		[Fact]
-		public async Task ShouldSendTheCorrectRequest()
-		{
-			var torrentResponse = new AutoFaker<TorrentResponse>()
-			                     .RuleFor(
-				                      r => r.Files,
-				                      new AutoFaker<FileResponse>()
-					                     .RuleFor(r => r.Length, 10UL)
-					                     .RuleFor(r => r.BytesCompleted, 10UL)
-					                     .Generate(3))
-			                     .RuleFor(r => r.Status, 6)
-			                     .Generate(5);
-
-			var response = new TransmissionResponse
-			               {
-				               ResponseArguments = new ResponseArguments
-				                                   {
-					                                   TorrentResponses = torrentResponse
-				                                   }
-			               };
-			var clientFactory = _fixture.Freeze<Mock<IHttpClientFactory>>();
-			var mockClient =
-				TestUtilities.MockHttpClient.GetFakeHttpClient(
-					JsonSerializer.Serialize(response),
-					baseAddress: "http://localhost");
-
-			clientFactory.Setup(s => s.CreateClient(nameof(Transmission)))
-			             .Returns(mockClient().client);
-
-			var transmission = _fixture.Create<IBitTorrentClient>();
-
-			var torrentEnumerable = await transmission.GetActiveTorrents();
-
-			await torrentEnumerable.ToListAsync();
-
-			var requestContent = await mockClient().request.Content.ReadAsStringAsync();
-
-			requestContent.Should()
-			              .Be(
-				               @"{""arguments"":{""fields"":[""name"",""status"",""files""]},""method"":""torrent-get""}");
+			var torrent = torrents.Single();
+			(torrent.Status, torrent.QueuedStatus)
+			   .Should()
+			   .Be((expectedTorrentStatus, expectedQueuedStatus));
 		}
 
 		[Fact]
@@ -138,7 +111,7 @@ namespace Grains.Tests.Unit.BitTorrent
 			var clientFactory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			var responseContent = JsonSerializer.Serialize(response);
 			var client =
-				TestUtilities.MockHttpClient.GetFakeHttpClient(
+				MockHttpClient.GetFakeHttpClient(
 					customResponse: counter =>
 					                {
 						                var statusCode = counter == 1
@@ -178,6 +151,50 @@ namespace Grains.Tests.Unit.BitTorrent
 					           headers.Value.All(a => a == "value"));
 		}
 
+		[Fact]
+		public async Task ShouldGetActiveTorrents()
+		{
+			var torrentResponse = new AutoFaker<TorrentResponse>()
+			                     .RuleFor(
+				                      r => r.Files,
+				                      new AutoFaker<FileResponse>()
+					                     .RuleFor(r => r.Length, 10UL)
+					                     .RuleFor(r => r.BytesCompleted, 10UL)
+					                     .Generate(3))
+			                     .RuleFor(r => r.Status, 6)
+			                     .Generate(5);
+
+			var response = new TransmissionResponse
+			               {
+				               ResponseArguments = new ResponseArguments
+				                                   {
+					                                   TorrentResponses = torrentResponse
+				                                   }
+			               };
+			var clientFactory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			var mockClient =
+				MockHttpClient.GetFakeHttpClient(
+					JsonSerializer.Serialize(response),
+					baseAddress: "http://localhost");
+
+			clientFactory.Setup(s => s.CreateClient(nameof(Transmission)))
+			             .Returns(mockClient().client);
+
+			var transmission = _fixture.Create<IBitTorrentClient>();
+
+			var torrentEnumerable = await transmission.GetActiveTorrents();
+
+			var torrents = await torrentEnumerable.ToListAsync();
+
+			torrents.Count
+			        .Should()
+			        .Be(5);
+
+			torrents.All(a => a.CompletedFileNames.Count() == 3)
+			        .Should()
+			        .BeTrue();
+		}
+
 
 		[Fact]
 		public async Task ShouldOnlyMapCompletedFiles()
@@ -212,7 +229,7 @@ namespace Grains.Tests.Unit.BitTorrent
 			               };
 			var clientFactory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			var mockClient =
-				TestUtilities.MockHttpClient.GetFakeHttpClient(JsonSerializer.Serialize(response));
+				MockHttpClient.GetFakeHttpClient(JsonSerializer.Serialize(response));
 
 			clientFactory.Setup(s => s.CreateClient(nameof(Transmission)))
 			             .Returns(mockClient().client);
@@ -230,33 +247,18 @@ namespace Grains.Tests.Unit.BitTorrent
 			        .Be("Mapped!");
 		}
 
-		[Theory]
-		[InlineData(0, TorrentStatus.Stopped, null)]
-		[InlineData(1, TorrentStatus.Queued, QueuedStatus.CheckFiles)]
-		[InlineData(2, TorrentStatus.CheckingFiles, null)]
-		[InlineData(3, TorrentStatus.Queued, QueuedStatus.Download)]
-		[InlineData(4, TorrentStatus.Downloading, null)]
-		[InlineData(5, TorrentStatus.Queued, QueuedStatus.Seed)]
-		[InlineData(6, TorrentStatus.Seeding, null)]
-		public async Task ShouldMapTorrentStatus(
-			int statusCode,
-			TorrentStatus expectedTorrentStatus,
-			QueuedStatus? expectedQueuedStatus)
+		[Fact]
+		public async Task ShouldSendTheCorrectRequest()
 		{
 			var torrentResponse = new AutoFaker<TorrentResponse>()
 			                     .RuleFor(
 				                      r => r.Files,
-				                      new[]
-				                      {
-					                      new FileResponse
-					                      {
-						                      Length = 10,
-						                      BytesCompleted = 10,
-						                      Name = "Mapped!"
-					                      }
-				                      })
-			                     .RuleFor(r => r.Status, statusCode)
-			                     .Generate(1);
+				                      new AutoFaker<FileResponse>()
+					                     .RuleFor(r => r.Length, 10UL)
+					                     .RuleFor(r => r.BytesCompleted, 10UL)
+					                     .Generate(3))
+			                     .RuleFor(r => r.Status, 6)
+			                     .Generate(5);
 
 			var response = new TransmissionResponse
 			               {
@@ -267,7 +269,9 @@ namespace Grains.Tests.Unit.BitTorrent
 			               };
 			var clientFactory = _fixture.Freeze<Mock<IHttpClientFactory>>();
 			var mockClient =
-				TestUtilities.MockHttpClient.GetFakeHttpClient(JsonSerializer.Serialize(response));
+				MockHttpClient.GetFakeHttpClient(
+					JsonSerializer.Serialize(response),
+					baseAddress: "http://localhost");
 
 			clientFactory.Setup(s => s.CreateClient(nameof(Transmission)))
 			             .Returns(mockClient().client);
@@ -276,12 +280,13 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var torrentEnumerable = await transmission.GetActiveTorrents();
 
-			var torrents = await torrentEnumerable.ToListAsync();
+			await torrentEnumerable.ToListAsync();
 
-			var torrent = torrents.Single();
-			(torrent.Status, torrent.QueuedStatus)
-			   .Should()
-			   .Be((expectedTorrentStatus, expectedQueuedStatus));
+			var requestContent = await mockClient().request.Content.ReadAsStringAsync();
+
+			requestContent.Should()
+			              .Be(
+				               @"{""arguments"":{""fields"":[""name"",""status"",""files""]},""method"":""torrent-get""}");
 		}
 	}
 }

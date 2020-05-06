@@ -9,11 +9,13 @@ namespace Grains.VideoInformation.Models.Details
 	{
 		public IEnumerable<GenreDetail> Genres { get; set; }
 			= Enumerable.Empty<GenreDetail>();
+
 		public string ImdbId { get; set; } = string.Empty;
 		public string Overview { get; set; } = string.Empty;
 
 		[JsonPropertyName("first_air_date")]
 		public DateTime ReleaseDate { get; set; }
+
 		public int Id { get; set; }
 
 		[JsonPropertyName("number_of_episodes")]
@@ -21,6 +23,7 @@ namespace Grains.VideoInformation.Models.Details
 
 		[JsonPropertyName("number_of_seasons")]
 		public int NumberOfSeasons { get; set; }
+
 		public string Status { get; set; } = string.Empty;
 		public string Name { get; set; } = string.Empty;
 

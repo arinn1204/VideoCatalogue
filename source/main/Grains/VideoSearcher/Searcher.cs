@@ -106,8 +106,7 @@ namespace Grains.VideoSearcher
 			}
 		}
 
-		private async IAsyncEnumerable<string> GetFiles(
-			string path)
+		private async IAsyncEnumerable<string> GetFiles(string path)
 		{
 			var entries = _fileSystem.Directory.GetFileSystemEntries(path);
 

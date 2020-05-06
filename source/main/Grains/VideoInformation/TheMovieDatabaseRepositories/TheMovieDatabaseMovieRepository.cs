@@ -17,7 +17,9 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			using var request = new HttpRequestMessage
 			                    {
 				                    Method = HttpMethod.Get,
-				                    RequestUri = new Uri($"{version}/movie/{movieId}", UriKind.Relative)
+				                    RequestUri = new Uri(
+					                    $"{version}/movie/{movieId}",
+					                    UriKind.Relative)
 			                    };
 
 			return client.SendAsync(request);
@@ -31,7 +33,9 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			using var request = new HttpRequestMessage
 			                    {
 				                    Method = HttpMethod.Get,
-				                    RequestUri = new Uri($"{version}/movie/{movieId}/credits", UriKind.Relative)
+				                    RequestUri = new Uri(
+					                    $"{version}/movie/{movieId}/credits",
+					                    UriKind.Relative)
 			                    };
 
 			return client.SendAsync(request);

@@ -54,7 +54,7 @@ namespace Grains.Tests.Integration.Features.Assertions
 		{
 			var filename = $"{baseFileName.ToFilePath()}.credits.json";
 			var fileContents = File.ReadAllText(filename, encoding);
-			var detail = 
+			var detail =
 				JsonSerializer.Deserialize<MovieCredit>(
 					fileContents,
 					new JsonSerializerOptions

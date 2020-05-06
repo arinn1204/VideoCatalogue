@@ -490,24 +490,25 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			files
 			   .Should()
-			   .BeEquivalentTo(new[]
-			                   {
-				                   new VideoSearchResults
-				                   {
-					                   Title = "Captain America - Civil War",
-					                   Year = 2016,
-					                   ContainerType = "mkv"
-				                   },
-				                   new VideoSearchResults
-				                   {
-					                   Title = "The Godfather Part II",
-					                   Year = 1974,
-					                   ContainerType = "mkv"
-				                   }
-			                   },
-			                   opts => opts
-			                          .Excluding(e => e.Directory)
-			                          .Excluding(e => e.File));
+			   .BeEquivalentTo(
+					new[]
+					{
+						new VideoSearchResults
+						{
+							Title = "Captain America - Civil War",
+							Year = 2016,
+							ContainerType = "mkv"
+						},
+						new VideoSearchResults
+						{
+							Title = "The Godfather Part II",
+							Year = 1974,
+							ContainerType = "mkv"
+						}
+					},
+					opts => opts
+					       .Excluding(e => e.Directory)
+					       .Excluding(e => e.File));
 		}
 
 		[Fact]

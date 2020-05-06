@@ -6,9 +6,9 @@ using BoDi;
 using Grains.FileFormat;
 using Grains.FileFormat.Models;
 using Grains.Tests.Integration.Features.Support.Wiremock;
-using Grains.VideoSearcher;
+using Grains.VideoLocator;
 using GrainsInterfaces.FileFormat;
-using GrainsInterfaces.VideoSearcher;
+using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
@@ -31,7 +31,7 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		{
 			serviceCollection.AddTransient<IFileFormatRepository, FileFormatRepository>()
 			                 .AddTransient<IFileSystem, FileSystem>()
-			                 .AddTransient<ISearcher, Searcher>()
+			                 .AddTransient<ISearcher, FileSystemSearcher>()
 			                 .AddHttpClient(
 				                  nameof(FileFormatRepository),
 				                  client =>

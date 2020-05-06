@@ -1,7 +1,7 @@
 using System;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.VideoApi;
-using GrainsInterfaces.VideoSearcher;
+using GrainsInterfaces.VideoLocator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

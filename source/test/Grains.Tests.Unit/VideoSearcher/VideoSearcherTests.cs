@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
+using Grains.VideoLocator;
 using GrainsInterfaces.FileFormat;
 using GrainsInterfaces.FileFormat.Models;
 using GrainsInterfaces.Models.VideoSearcher;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
-using VS = Grains.VideoSearcher;
 
 namespace Grains.Tests.Unit.VideoSearcher
 {
@@ -78,7 +78,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 		private async Task<List<VideoSearchResults>> GetResults()
 		{
-			var searcher = _fixture.Create<VS.Searcher>();
+			var searcher = _fixture.Create<FileSystemSearcher>();
 
 			return await (await searcher.Search("Y:"))
 			   .ToListAsync();

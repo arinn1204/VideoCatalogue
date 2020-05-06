@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using GrainsInterfaces.Models.VideoSearcher;
 using Orleans;
 
-namespace GrainsInterfaces.VideoSearcher
+namespace GrainsInterfaces.VideoLocator
 {
 	public interface ISearcher : IGrainWithGuidKey
 	{

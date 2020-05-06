@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grains.Tests.Integration.Features.Models;
 using Grains.Tests.Integration.Features.Support.Hooks;
-using GrainsInterfaces.VideoSearcher;
+using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using TechTalk.SpecFlow;
 

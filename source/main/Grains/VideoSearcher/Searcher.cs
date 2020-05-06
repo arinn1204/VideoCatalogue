@@ -138,7 +138,7 @@ namespace Grains.VideoSearcher
 			}
 		}
 
-		private async ValueTask<bool> IsAcceptableFile(
+		private async Task<bool> IsAcceptableFile(
 			string file,
 			IAsyncEnumerable<string> acceptableFileTypes,
 			IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)

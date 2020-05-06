@@ -339,7 +339,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var files = await GetResults();
 
 			files
-			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+			   .Select(s => Path.Combine(s.Directory, s.File))
 			   .Should()
 			   .BeEquivalentTo(
 					godFather,
@@ -416,7 +416,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var files = await GetResults();
 
 			files
-			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+			   .Select(s => Path.Combine(s.Directory, s.File))
 			   .Should()
 			   .BeEquivalentTo(godFather);
 		}
@@ -490,27 +490,24 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			files
 			   .Should()
-			   .BeEquivalentTo(
-					new[]
-					{
-						new VideoSearchResults
-						{
-							Title = "Captain America - Civil War",
-							Year = 2016,
-							ContainerType = "mkv"
-						},
-						new VideoSearchResults
-						{
-							Title = "The Godfather Part II",
-							Year = 1974,
-							ContainerType = "mkv"
-						}
-					},
-					opts => opts
-					       .Excluding(e => e.OriginalDirectory)
-					       .Excluding(e => e.OriginalFile)
-					       .Excluding(e => e.NewDirectory)
-					       .Excluding(e => e.NewFile));
+			   .BeEquivalentTo(new[]
+			                   {
+				                   new VideoSearchResults
+				                   {
+					                   Title = "Captain America - Civil War",
+					                   Year = 2016,
+					                   ContainerType = "mkv"
+				                   },
+				                   new VideoSearchResults
+				                   {
+					                   Title = "The Godfather Part II",
+					                   Year = 1974,
+					                   ContainerType = "mkv"
+				                   }
+			                   },
+			                   opts => opts
+			                          .Excluding(e => e.Directory)
+			                          .Excluding(e => e.File));
 		}
 
 		[Fact]
@@ -577,7 +574,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var files = await GetResults();
 
 			files
-			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+			   .Select(s => Path.Combine(s.Directory, s.File))
 			   .Should()
 			   .BeEquivalentTo(expectedCivilWar);
 		}
@@ -636,7 +633,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var files = await GetResults();
 
 			files
-			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
+			   .Select(s => Path.Combine(s.Directory, s.File))
 			   .Should()
 			   .BeEquivalentTo(expectedCivilWar);
 		}
@@ -700,79 +697,11 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var files = await GetResults();
 
 			files
-			   .Select(s => Path.Combine(s.OriginalDirectory, s.OriginalFile))
+			   .Select(s => Path.Combine(s.Directory, s.File))
 			   .Should()
 			   .BeEquivalentTo(
 					godFather,
 					expectedCivilWar);
-		}
-
-		[Fact]
-		public async Task ShouldRemovedFilteredKeywords()
-		{
-			_fixture.Freeze<Mock<IFileFormatRepository>>()
-			        .Setup(s => s.GetFilteredKeywords())
-			        .ReturnsAsync(
-				         AsyncEnumerable.Empty<string>()
-				                        .Append("bluray"));
-			var fileSystem = _fixture.Freeze<Mock<IFileSystem>>();
-			var godFather = Path.Combine(
-				".",
-				@"The Godfather Part II (1974) (1080p BluRay x265 afm72).mkv");
-			var civilWar = Path.Combine(
-				".",
-				@"Captain America - Civil War (2016) (2160p BluRay x265 HEVC 10bit HDR AAC 7.1 Tigole)");
-			var expectedCivilWar = Path.Combine(
-				civilWar,
-				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
-
-			var directory = new Mock<IDirectory>();
-			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
-			         .Returns<string>(
-				          path =>
-				          {
-					          return path == "Y:"
-						          ? new[]
-						            {
-							            godFather,
-							            civilWar
-						            }
-						          : new[]
-						            {
-							            expectedCivilWar
-						            };
-				          });
-
-			directory.Setup(s => s.GetFiles(civilWar))
-			         .Returns(
-				          new[]
-				          {
-					          expectedCivilWar
-				          });
-			fileSystem.Setup(s => s.Directory)
-			          .Returns(directory.Object);
-
-			var file = new Mock<IFile>();
-			file.Setup(
-				     s => s.Exists(
-					     It.Is<string>(
-						     item =>
-							     item == godFather || item == expectedCivilWar)))
-			    .Returns(true);
-
-			fileSystem.Setup(s => s.File)
-			          .Returns(file.Object);
-
-			var files = await GetResults();
-
-			files
-			   .Select(s => Path.Combine(s.NewDirectory, s.NewFile))
-			   .Should()
-			   .BeEquivalentTo(
-					godFather.Replace("bluray", "", StringComparison.OrdinalIgnoreCase)
-					         .Replace("  ", " ", StringComparison.OrdinalIgnoreCase),
-					expectedCivilWar.Replace("bluray", "", StringComparison.OrdinalIgnoreCase)
-					                .Replace("  ", " ", StringComparison.OrdinalIgnoreCase));
 		}
 
 		[Fact]

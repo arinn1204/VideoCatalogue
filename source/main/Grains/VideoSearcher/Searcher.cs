@@ -32,11 +32,11 @@ namespace Grains.VideoSearcher
 		{
 			var fileFormats = await _fileFormatRepository.GetAcceptableFileFormats();
 			var fileTypes = await _fileFormatRepository.GetAllowedFileTypes();
-			var files = GetFiles(path, await _fileFormatRepository.GetFilteredKeywords())
+			var files = GetFiles(path)
 			   .WhereAwait(
 					async w
 						=> await IsAcceptableFile(
-								Path.GetFileName(w.newFileName),
+								Path.GetFileName(w),
 								fileTypes,
 								fileFormats.Select(s => s.Patterns))
 						   .ConfigureAwait(false));
@@ -50,17 +50,17 @@ namespace Grains.VideoSearcher
 #endregion
 
 		private static async IAsyncEnumerable<VideoSearchResults> BuildSearchResults(
-			IAsyncEnumerable<(string originalFileName, string newFileName)> files,
+			IAsyncEnumerable<string> files,
 			IAsyncEnumerable<RegisteredFileFormat> fileFormats)
 		{
-			await foreach (var (originalFilePath, newFilePath) in files.ConfigureAwait(false))
+			await foreach (var file in files.ConfigureAwait(false))
 			{
-				var newFile = Path.GetFileName(newFilePath);
+				var fileName = Path.GetFileName(file);
 				var format =
-					await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(newFile)))
+					await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(fileName)))
 					                 .ConfigureAwait(false);
 				var match = format.Patterns.First()
-				                  .Match(newFile);
+				                  .Match(fileName);
 
 				var groups = match.Groups;
 
@@ -92,11 +92,9 @@ namespace Grains.VideoSearcher
 
 				yield return new VideoSearchResults
 				             {
-					             OriginalFile = Path.GetFileName(originalFilePath),
-					             OriginalDirectory =
-						             Path.GetDirectoryName(originalFilePath) ?? string.Empty,
-					             NewFile = Path.GetFileName(newFilePath),
-					             NewDirectory = Path.GetDirectoryName(newFilePath) ?? string.Empty,
+					             File = fileName,
+					             Directory =
+						             Path.GetDirectoryName(file) ?? string.Empty,
 					             Title = groups[format.TitleGroup]
 					                    .Value.Trim(),
 					             Year = year,
@@ -108,9 +106,8 @@ namespace Grains.VideoSearcher
 			}
 		}
 
-		private async IAsyncEnumerable<(string originalFileName, string newFileName)> GetFiles(
-			string path,
-			IAsyncEnumerable<string> filteredKeywords)
+		private async IAsyncEnumerable<string> GetFiles(
+			string path)
 		{
 			var entries = _fileSystem.Directory.GetFileSystemEntries(path);
 
@@ -118,23 +115,11 @@ namespace Grains.VideoSearcher
 			{
 				if (_fileSystem.File.Exists(entry))
 				{
-					var originalFile = entry;
-					var newFile = await filteredKeywords
-					                   .AggregateAsync(
-						                    entry,
-						                    (accumulate, current) => accumulate
-						                                            .Replace(
-							                                             current,
-							                                             string.Empty,
-							                                             StringComparison
-								                                            .OrdinalIgnoreCase)
-						                                            .Replace("  ", " "))
-					                   .ConfigureAwait(false);
-					yield return (originalFile, newFile);
+					yield return entry;
 				}
 				else
 				{
-					await foreach (var file in GetFiles(entry, filteredKeywords)
+					await foreach (var file in GetFiles(entry)
 					   .ConfigureAwait(false))
 					{
 						yield return file;

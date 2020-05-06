@@ -26,17 +26,14 @@ namespace Grains.Tests.Integration.Features.Assertions
 				                     .Select(
 					                      s => new VideoSearchResults
 					                           {
-						                           OriginalDirectory =
+						                           Directory =
 							                           VideoSearcherHooks.DataDirectory,
-						                           NewDirectory = VideoSearcherHooks.DataDirectory,
 						                           ContainerType = "mkv",
 						                           EpisodeNumber = null,
 						                           SeasonNumber = null,
-						                           NewFile =
-							                           $"Title valid {s.ToString("D2")} (2019).mkv",
-						                           OriginalFile =
+						                           File =
 							                           $"Title BluRay valid {s.ToString("D2")} (2019).mkv",
-						                           Title = $"Title valid {s.ToString("D2")}",
+						                           Title = $"Title BluRay valid {s.ToString("D2")}",
 						                           Year = 2019
 					                           }));
 		}

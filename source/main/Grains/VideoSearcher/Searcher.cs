@@ -123,7 +123,7 @@ namespace Grains.VideoSearcher
 			{
 				var current = directoryStack.Pop();
 
-				if (IsFile(current))
+				if (_fileSystem.File.Exists(current))
 				{
 					yield return current;
 				}
@@ -137,9 +137,6 @@ namespace Grains.VideoSearcher
 				}
 			}
 		}
-
-		private bool IsFile(string path)
-			=> _fileSystem.File.Exists(path);
 
 		private async ValueTask<bool> IsAcceptableFile(
 			string file,

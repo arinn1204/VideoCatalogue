@@ -143,11 +143,12 @@ namespace Grains.VideoSearcher
 			IAsyncEnumerable<string> acceptableFileTypes,
 			IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
 		{
-			var hasFileType = await acceptableFileTypes.AnyAsync(
-				                                            fileType => file.EndsWith(
-					                                            fileType,
-					                                            StringComparison.OrdinalIgnoreCase))
-			                                           .ConfigureAwait(false);
+			var hasFileType
+				= await acceptableFileTypes.AnyAsync(
+					                            fileType => file.EndsWith(
+						                            fileType,
+						                            StringComparison.OrdinalIgnoreCase))
+				                           .ConfigureAwait(false);
 			var matchesOnlyOneAcceptableFilePatternSet
 				= await acceptableFileFormats.CountAsync(
 					                              acceptableFormat

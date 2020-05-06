@@ -33,13 +33,14 @@ namespace Grains.VideoSearcher
 			var fileFormats = await _fileFormatRepository.GetAcceptableFileFormats();
 			var fileTypes = await _fileFormatRepository.GetAllowedFileTypes();
 			var files = GetFiles(path)
-			   .WhereAwait(
-					async w
-						=> await IsAcceptableFile(
-								Path.GetFileName(w),
-								fileTypes,
-								fileFormats.Select(s => s.Patterns))
-						   .ConfigureAwait(false));
+			           .ToAsyncEnumerable()
+			           .WhereAwait(
+				            async w
+					            => await IsAcceptableFile(
+							            Path.GetFileName(w),
+							            fileTypes,
+							            fileFormats.Select(s => s.Patterns))
+						           .ConfigureAwait(false));
 
 
 			var searchResults = BuildSearchResults(files, fileFormats);
@@ -106,26 +107,39 @@ namespace Grains.VideoSearcher
 			}
 		}
 
-		private async IAsyncEnumerable<string> GetFiles(string path)
-		{
-			var entries = _fileSystem.Directory.GetFileSystemEntries(path);
+		private IEnumerable<string> GetFiles(string path) => _fileSystem
+		                                                    .Directory.GetFileSystemEntries(path)
+		                                                    .SelectMany(GetFilesUnderPath);
 
-			foreach (var entry in entries)
-			{
-				if (_fileSystem.File.Exists(entry))
+		private IEnumerable<string> GetFilesUnderPath(string root)
+		{
+			var directoryStack = new Stack<string>(
+				new[]
 				{
-					yield return entry;
+					root
+				});
+
+			while (directoryStack.Count > 0)
+			{
+				var current = directoryStack.Pop();
+
+				if (IsFile(current))
+				{
+					yield return current;
 				}
 				else
 				{
-					await foreach (var file in GetFiles(entry)
-					   .ConfigureAwait(false))
+					var items = _fileSystem.Directory.GetFiles(current);
+					foreach (var item in items)
 					{
-						yield return file;
+						directoryStack.Push(item);
 					}
 				}
 			}
 		}
+
+		private bool IsFile(string path)
+			=> _fileSystem.File.Exists(path);
 
 		private async ValueTask<bool> IsAcceptableFile(
 			string file,

@@ -148,16 +148,13 @@ namespace Grains.VideoSearcher
 					                                            fileType,
 					                                            StringComparison.OrdinalIgnoreCase))
 			                                           .ConfigureAwait(false);
-			var matchesOnlyOneAcceptableFilePatternSet = await acceptableFileFormats.CountAsync(
-				                                                                         acceptableFormat
-					                                                                         => acceptableFormat
-						                                                                        .All(
-							                                                                         a => a
-								                                                                        .IsMatch(
-									                                                                         file)))
-			                                                                        .ConfigureAwait(
-				                                                                         false) ==
-			                                             1;
+			var matchesOnlyOneAcceptableFilePatternSet
+				= await acceptableFileFormats.CountAsync(
+					                              acceptableFormat
+						                              => acceptableFormat
+							                             .All(a => a.IsMatch(file)))
+				                             .ConfigureAwait(false) ==
+				  1;
 
 			return hasFileType && matchesOnlyOneAcceptableFilePatternSet;
 		}

@@ -2,7 +2,7 @@
 using BoDi;
 using Grains.BitTorrent.Transmission;
 using Grains.Tests.Integration.Features.Support.Wiremock;
-using GrainsInterfaces.BitTorrentClient.Transmission;
+using GrainsInterfaces.BitTorrentClient;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 

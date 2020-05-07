@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using GrainsInterfaces.BitTorrentClient.Models;
 using Orleans;
 
-namespace GrainsInterfaces.BitTorrentClient.Transmission
+namespace GrainsInterfaces.BitTorrentClient
 {
 	public interface IBitTorrentClient : IGrainWithGuidKey
 	{

@@ -8,8 +8,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Grains.BitTorrent.Transmission.Models;
+using GrainsInterfaces.BitTorrentClient;
 using GrainsInterfaces.BitTorrentClient.Models;
-using GrainsInterfaces.BitTorrentClient.Transmission;
 using Orleans;
 
 namespace Grains.BitTorrent.Transmission

@@ -11,8 +11,8 @@ using Grains.BitTorrent.Transmission;
 using Grains.BitTorrent.Transmission.Models;
 using Grains.Tests.Unit.Fixtures;
 using Grains.Tests.Unit.TestUtilities;
+using GrainsInterfaces.BitTorrentClient;
 using GrainsInterfaces.BitTorrentClient.Models;
-using GrainsInterfaces.BitTorrentClient.Transmission;
 using Moq;
 using Xunit;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Grains.FileFormat.Models;
 using Grains.Tests.Integration.Features.Models;
+using GrainsInterfaces.BitTorrentClient.Models;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Builders

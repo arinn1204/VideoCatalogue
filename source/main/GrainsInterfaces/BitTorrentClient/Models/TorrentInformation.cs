@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Grains.FileFormat.Models
+namespace GrainsInterfaces.BitTorrentClient.Models
 {
 	public class TorrentInformation
 	{

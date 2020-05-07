@@ -9,10 +9,10 @@ using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.BitTorrent.Transmission;
 using Grains.BitTorrent.Transmission.Models;
-using Grains.FileFormat.Interfaces;
-using Grains.FileFormat.Models;
 using Grains.Tests.Unit.Fixtures;
 using Grains.Tests.Unit.TestUtilities;
+using GrainsInterfaces.BitTorrentClient.Models;
+using GrainsInterfaces.BitTorrentClient.Transmission;
 using Moq;
 using Xunit;
 

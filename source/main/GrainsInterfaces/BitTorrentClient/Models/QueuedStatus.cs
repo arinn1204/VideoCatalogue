@@ -1,4 +1,4 @@
-﻿namespace Grains.FileFormat.Models
+﻿namespace GrainsInterfaces.BitTorrentClient.Models
 {
 	public enum QueuedStatus
 	{

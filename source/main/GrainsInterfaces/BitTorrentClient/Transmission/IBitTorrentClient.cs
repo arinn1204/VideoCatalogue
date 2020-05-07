@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Grains.FileFormat.Models;
+using GrainsInterfaces.BitTorrentClient.Models;
 using Orleans;
 
-namespace Grains.FileFormat.Interfaces
+namespace GrainsInterfaces.BitTorrentClient.Transmission
 {
 	public interface IBitTorrentClient : IGrainWithGuidKey
 	{

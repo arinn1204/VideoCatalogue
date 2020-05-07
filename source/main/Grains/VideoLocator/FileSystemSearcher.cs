@@ -30,8 +30,8 @@ namespace Grains.VideoLocator
 
 		public async Task<IAsyncEnumerable<VideoSearchResults>> Search(string path)
 		{
-			var fileFormats = await _fileFormatRepository.GetAcceptableFileFormats();
-			var fileTypes = await _fileFormatRepository.GetAllowedFileTypes();
+			var fileFormats = _fileFormatRepository.GetAcceptableFileFormats();
+			var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
 			var files = GetFiles(path)
 			           .ToAsyncEnumerable()
 			           .WhereAwait(

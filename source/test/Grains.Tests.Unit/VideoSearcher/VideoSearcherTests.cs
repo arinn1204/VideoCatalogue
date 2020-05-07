@@ -39,17 +39,17 @@ namespace Grains.Tests.Unit.VideoSearcher
 			_fixture.Inject<IConfiguration>(configuration);
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAllowedFileTypes())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<string>()
 				                        .Append("mkv"));
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
-			        .ReturnsAsync(AsyncEnumerable.Empty<string>());
+			        .Returns(AsyncEnumerable.Empty<string>());
 		}
 
 #endregion
@@ -99,7 +99,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
@@ -165,7 +165,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
@@ -231,7 +231,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
@@ -361,7 +361,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(
 					                         BuildFileFormat(
@@ -442,7 +442,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(BuildFileFormat(_patterns)));
 
@@ -526,7 +526,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"Captain America - Civil War (2016) (2160p BluRay x265 10bit HDR Tigole).mkv");
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(
 					                         BuildFileFormat(
@@ -644,7 +644,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
-			        .ReturnsAsync(
+			        .Returns(
 				         AsyncEnumerable.Empty<string>()
 				                        .Append("bluray"));
 			var fileSystem = _fixture.Freeze<Mock<IFileSystem>>();

@@ -52,7 +52,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var result = await (await repo.GetFilteredKeywords()).ToListAsync();
+			var result = await repo.GetFilteredKeywords().ToListAsync();
 
 			var (_, request, _) = mockClientBuilder();
 
@@ -100,7 +100,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			_ = await (await repo.GetAcceptableFileFormats()).ToListAsync();
+			_ = await repo.GetAcceptableFileFormats().ToListAsync();
 
 			var (_, request, _) = mockClientBuilder();
 
@@ -126,7 +126,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			_ = await (await repo.GetAllowedFileTypes()).ToListAsync();
+			_ = await repo.GetAllowedFileTypes().ToListAsync();
 
 			var (_, request, _) = mockClientBuilder();
 
@@ -152,7 +152,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var result = await (await repo.GetAllowedFileTypes()).ToListAsync();
+			var result = await repo.GetAllowedFileTypes().ToListAsync();
 
 			result.Should()
 			      .BeEquivalentTo(fileTypes);
@@ -187,7 +187,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var response = await (await repo.GetAcceptableFileFormats()).ToListAsync();
+			var response = await repo.GetAcceptableFileFormats().ToListAsync();
 
 			response.Single()
 			        .Should()
@@ -227,7 +227,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var result = await (await repo.GetFilteredKeywords()).ToListAsync();
+			var result = await repo.GetFilteredKeywords().ToListAsync();
 
 			result.Should()
 			      .BeEquivalentTo(keywords);
@@ -266,7 +266,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var fileFormats = await repo.GetAcceptableFileFormats();
+			var fileFormats = repo.GetAcceptableFileFormats();
 
 			_ = await fileFormats.ToListAsync();
 			_ = await fileFormats.ToListAsync();
@@ -302,7 +302,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var fileFormats = await repo.GetAllowedFileTypes();
+			var fileFormats = repo.GetAllowedFileTypes();
 
 			_ = await fileFormats.ToListAsync();
 			_ = await fileFormats.ToListAsync();
@@ -338,7 +338,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var fileFormats = await repo.GetFilteredKeywords();
+			var fileFormats = repo.GetFilteredKeywords();
 
 			_ = await fileFormats.ToListAsync();
 			_ = await fileFormats.ToListAsync();
@@ -379,7 +379,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var response = await (await repo.GetAcceptableFileFormats()).ToListAsync();
+			var response = await repo.GetAcceptableFileFormats().ToListAsync();
 
 			response.Single()
 			        .Should()

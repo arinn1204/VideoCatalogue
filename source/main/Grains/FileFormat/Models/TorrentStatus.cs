@@ -1,4 +1,4 @@
-﻿namespace GrainsInterfaces.BitTorrent.Models
+﻿namespace Grains.FileFormat.Models
 {
 	public enum TorrentStatus
 	{

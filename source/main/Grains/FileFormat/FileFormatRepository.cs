@@ -27,50 +27,38 @@ namespace Grains.FileFormat
 
 #region IFileFormatRepository Members
 
-		public Task<IAsyncEnumerable<RegisteredFileFormat>> GetAcceptableFileFormats()
+		public IAsyncEnumerable<RegisteredFileFormat> GetAcceptableFileFormats()
 		{
 			var responseContentTask = GetResponseContent("fileFormats");
 
-			return Task.Factory.StartNew(
-				() =>
-				{
-					return AsyncEnumerable.Create(
-						token => EnumerateContent(
-								responseContentTask,
-								(FilePattern response)
-									=> _mapper.Map<RegisteredFileFormat>(response))
-						   .GetAsyncEnumerator(token));
-				});
+			return AsyncEnumerable.Create(
+				token => EnumerateContent(
+						responseContentTask,
+						(FilePattern response)
+							=> _mapper.Map<RegisteredFileFormat>(response))
+				   .GetAsyncEnumerator(token));
 		}
 
-		public Task<IAsyncEnumerable<string>> GetAllowedFileTypes()
+		public IAsyncEnumerable<string> GetAllowedFileTypes()
 		{
 			var responseContentTask = GetResponseContent("fileTypes");
 
-			return Task.Factory.StartNew(
-				() =>
-				{
-					return AsyncEnumerable.Create(
-						token => EnumerateContent(
-								responseContentTask,
-								(string response) => response)
-						   .GetAsyncEnumerator(token));
-				});
+			return AsyncEnumerable.Create(
+				token => EnumerateContent(
+						responseContentTask,
+						(string response) => response)
+				   .GetAsyncEnumerator(token));
 		}
 
-		public Task<IAsyncEnumerable<string>> GetFilteredKeywords()
+		public IAsyncEnumerable<string> GetFilteredKeywords()
 		{
 			var responseContentTask = GetResponseContent("filteredKeywords");
 
-			return Task.Factory.StartNew(
-				() =>
-				{
-					return AsyncEnumerable.Create(
-						token => EnumerateContent(
-								responseContentTask,
-								(string response) => response)
-						   .GetAsyncEnumerator(token));
-				});
+			return AsyncEnumerable.Create(
+				token => EnumerateContent(
+						responseContentTask,
+						(string response) => response)
+				   .GetAsyncEnumerator(token));
 		}
 
 		public async Task<string> GetTargetTitleFormat()

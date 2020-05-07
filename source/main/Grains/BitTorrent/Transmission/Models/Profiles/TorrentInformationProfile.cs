@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
-using GrainsInterfaces.BitTorrent.Models;
+using Grains.FileFormat.Models;
 
 namespace Grains.BitTorrent.Transmission.Models.Profiles
 {

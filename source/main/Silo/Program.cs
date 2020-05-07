@@ -39,13 +39,14 @@ namespace Silo
 			             .Configure<ClusterOptions>(
 				              opt =>
 				              {
-					              opt.ClusterId = "dev";
+					              opt.ClusterId = "Dev";
 					              opt.ServiceId = "OrleansBasic";
 				              })
 			             .ConfigureApplicationParts(
 				              parts => parts.AddApplicationPart(typeof(TheMovieDatabase).Assembly)
 				                            .WithReferences())
-			             .ConfigureLogging(log => log.AddConsole());
+			             .ConfigureLogging(log => log.AddConsole())
+			             .UseLocalhostClustering();
 
 			var silo = builder.Build();
 			await silo.StartAsync();

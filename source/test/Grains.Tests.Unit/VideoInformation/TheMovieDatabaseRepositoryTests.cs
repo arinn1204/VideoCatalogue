@@ -14,7 +14,7 @@ using Grains.VideoInformation.Models.Details;
 using Grains.VideoInformation.Models.SearchResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
-using GrainsInterfaces.Models.VideoApi.Enums;
+using GrainsInterfaces.VideoApi.Models.Enums;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;

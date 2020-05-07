@@ -1,4 +1,4 @@
-﻿namespace GrainsInterfaces.Models.VideoApi
+﻿namespace GrainsInterfaces.VideoApi.Models
 {
 	public class Cast
 	{

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Grains.VideoInformation.Models.Credits;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.VideoApi.Models;
 
 namespace Grains.VideoInformation.Models.Profiles
 {

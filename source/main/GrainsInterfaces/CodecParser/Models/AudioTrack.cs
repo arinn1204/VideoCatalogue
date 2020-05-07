@@ -1,5 +1,5 @@
 ﻿#nullable enable
-namespace GrainsInterfaces.Models.CodecParser
+namespace GrainsInterfaces.CodecParser.Models
 {
 	public class AudioTrack
 	{

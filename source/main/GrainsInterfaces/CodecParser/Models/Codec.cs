@@ -1,4 +1,4 @@
-﻿namespace GrainsInterfaces.Models.CodecParser
+﻿namespace GrainsInterfaces.CodecParser.Models
 {
 	public enum Codec
 	{

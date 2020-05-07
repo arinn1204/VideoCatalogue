@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.VideoApi.Models;
 using Orleans;
 
 namespace GrainsInterfaces.VideoApi

@@ -10,7 +10,7 @@ using Grains.VideoInformation.Models.Details;
 using Grains.VideoInformation.Models.SearchResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
-using GrainsInterfaces.Models.VideoApi.Enums;
+using GrainsInterfaces.VideoApi.Models.Enums;
 using Microsoft.Extensions.Configuration;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories

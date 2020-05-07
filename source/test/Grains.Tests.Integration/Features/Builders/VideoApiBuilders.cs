@@ -1,4 +1,4 @@
-﻿using GrainsInterfaces.Models.VideoApi;
+﻿using GrainsInterfaces.VideoApi.Models;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Builders

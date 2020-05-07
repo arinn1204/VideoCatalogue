@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GrainsInterfaces.FileFormat.Models;
+using Grains.FileFormat.Models;
 
-namespace GrainsInterfaces.FileFormat
+namespace Grains.FileFormat.Interfaces
 {
 	public interface IFileFormatRepository
 	{

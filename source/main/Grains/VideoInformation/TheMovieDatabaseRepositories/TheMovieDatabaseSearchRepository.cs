@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Grains.Helpers;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
-using GrainsInterfaces.Models.VideoApi.Enums;
+using GrainsInterfaces.VideoApi.Models.Enums;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 {

@@ -9,8 +9,8 @@ using Grains.VideoInformation;
 using Grains.VideoInformation.Models.Exceptions;
 using Grains.VideoInformation.Models.SearchResults;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
-using GrainsInterfaces.Models.VideoApi;
-using GrainsInterfaces.Models.VideoApi.Enums;
+using GrainsInterfaces.VideoApi.Models;
+using GrainsInterfaces.VideoApi.Models.Enums;
 using Moq;
 using Xunit;
 

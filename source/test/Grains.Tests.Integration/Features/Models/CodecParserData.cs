@@ -1,4 +1,4 @@
-﻿using GrainsInterfaces.Models.CodecParser;
+﻿using GrainsInterfaces.CodecParser.Models;
 
 namespace Grains.Tests.Integration.Features.Models
 {

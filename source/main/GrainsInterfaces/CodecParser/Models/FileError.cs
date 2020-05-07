@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace GrainsInterfaces.Models.CodecParser
+namespace GrainsInterfaces.CodecParser.Models
 {
 	public class FileError
 	{

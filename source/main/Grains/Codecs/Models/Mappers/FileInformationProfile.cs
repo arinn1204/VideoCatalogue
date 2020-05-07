@@ -6,7 +6,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.Models.Extensions;
-using GrainsInterfaces.Models.CodecParser;
+using GrainsInterfaces.CodecParser.Models;
 using static MoreLinq.Extensions.DistinctByExtension;
 
 namespace Grains.Codecs.Models.Mappers

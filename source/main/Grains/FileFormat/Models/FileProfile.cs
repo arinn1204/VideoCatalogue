@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
-using GrainsInterfaces.FileFormat.Models;
 
 namespace Grains.FileFormat.Models
 {

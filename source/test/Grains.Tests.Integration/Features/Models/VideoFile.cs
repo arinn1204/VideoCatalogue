@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GrainsInterfaces.Models.VideoSearcher;
+using GrainsInterfaces.VideoLocator.Models;
 
 namespace Grains.Tests.Integration.Features.Models
 {

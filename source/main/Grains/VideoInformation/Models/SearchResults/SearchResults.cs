@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using GrainsInterfaces.Models.VideoApi.Enums;
+using GrainsInterfaces.VideoApi.Models.Enums;
 
 namespace Grains.VideoInformation.Models.SearchResults
 {

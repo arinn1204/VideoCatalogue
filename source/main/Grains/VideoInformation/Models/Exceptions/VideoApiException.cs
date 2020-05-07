@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grains.VideoInformation.Models.SearchResults;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.VideoApi.Models;
 
 namespace Grains.VideoInformation.Models.Exceptions
 {

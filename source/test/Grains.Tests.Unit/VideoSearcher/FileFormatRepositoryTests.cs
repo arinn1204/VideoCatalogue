@@ -8,10 +8,9 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using FluentAssertions;
 using Grains.FileFormat;
+using Grains.FileFormat.Interfaces;
 using Grains.FileFormat.Models;
 using Grains.Tests.Unit.TestUtilities;
-using GrainsInterfaces.FileFormat;
-using GrainsInterfaces.FileFormat.Models;
 using Moq;
 using Xunit;
 

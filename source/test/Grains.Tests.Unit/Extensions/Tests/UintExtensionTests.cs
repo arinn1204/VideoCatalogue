@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
 using Grains.Codecs.Models.Extensions;
-using GrainsInterfaces.Models.CodecParser;
+using GrainsInterfaces.CodecParser.Models;
 using Xunit;
 
 namespace Grains.Tests.Unit.Extensions.Tests

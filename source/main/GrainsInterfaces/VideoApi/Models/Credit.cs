@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace GrainsInterfaces.Models.VideoApi
+namespace GrainsInterfaces.VideoApi.Models
 {
 	public class Credit
 	{

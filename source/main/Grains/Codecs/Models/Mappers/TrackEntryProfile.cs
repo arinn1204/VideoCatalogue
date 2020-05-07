@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.Models.Extensions;
-using GrainsInterfaces.Models.CodecParser;
+using GrainsInterfaces.CodecParser.Models;
 
 namespace Grains.Codecs.Models.Mappers
 {

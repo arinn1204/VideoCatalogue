@@ -5,9 +5,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Grains.FileFormat.Interfaces;
 using Grains.FileFormat.Models;
-using GrainsInterfaces.FileFormat;
-using GrainsInterfaces.FileFormat.Models;
 using Orleans;
 
 namespace Grains.FileFormat

@@ -14,7 +14,7 @@ using Grains.Codecs.Matroska.Interfaces;
 using Grains.Helpers.Extensions;
 using Grains.Tests.Unit.Fixtures;
 using GrainsInterfaces.CodecParser;
-using GrainsInterfaces.Models.CodecParser;
+using GrainsInterfaces.CodecParser.Models;
 using Moq;
 using Xunit;
 

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.VideoApi.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;

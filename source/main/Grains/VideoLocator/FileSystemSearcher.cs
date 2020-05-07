@@ -5,10 +5,10 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GrainsInterfaces.FileFormat;
-using GrainsInterfaces.FileFormat.Models;
-using GrainsInterfaces.Models.VideoSearcher;
+using Grains.FileFormat.Interfaces;
+using Grains.FileFormat.Models;
 using GrainsInterfaces.VideoLocator;
+using GrainsInterfaces.VideoLocator.Models;
 using Orleans;
 
 namespace Grains.VideoLocator

@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using BoDi;
 using Grains.Tests.Integration.Extensions.Wiremock;
-using GrainsInterfaces.Models.VideoApi;
 using GrainsInterfaces.VideoApi;
+using GrainsInterfaces.VideoApi.Models;
 using TechTalk.SpecFlow;
 using WireMock.Server;
 

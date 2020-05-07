@@ -6,7 +6,7 @@ using FluentAssertions;
 using Grains.Tests.Integration.Extensions;
 using Grains.VideoInformation.Models.Credits;
 using Grains.VideoInformation.Models.Details;
-using GrainsInterfaces.Models.VideoApi;
+using GrainsInterfaces.VideoApi.Models;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Assertions

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Grains.Tests.Integration.Features.Models;
 using Grains.Tests.Integration.Features.Support.Hooks;
-using GrainsInterfaces.Models.VideoSearcher;
+using GrainsInterfaces.VideoLocator.Models;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Assertions

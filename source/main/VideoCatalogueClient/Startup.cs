@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using GrainsInterfaces.BitTorrentClient;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.VideoApi;
 using GrainsInterfaces.VideoLocator;
@@ -45,6 +46,14 @@ namespace VideoCatalogueClient
 						var searcher = grainFactory.GetGrain<ISearcher>(Guid.NewGuid());
 
 						return searcher;
+					})
+			   .AddTransient(
+					provider =>
+					{
+						var grainFactory = provider.GetRequiredService<IClusterClient>();
+						var btClient = grainFactory.GetGrain<IBitTorrentClient>(Guid.NewGuid());
+
+						return btClient;
 					});
 		}
 

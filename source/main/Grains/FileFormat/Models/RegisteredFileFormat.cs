@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace GrainsInterfaces.FileFormat.Models
+namespace Grains.FileFormat.Models
 {
 	public class RegisteredFileFormat
 	{

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
 using GrainsInterfaces.CodecParser;
-using GrainsInterfaces.Models.CodecParser;
+using GrainsInterfaces.CodecParser.Models;
 using Orleans;
 
 namespace Grains.Codecs

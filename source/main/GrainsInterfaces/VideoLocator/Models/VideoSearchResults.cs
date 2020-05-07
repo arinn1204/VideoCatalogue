@@ -1,4 +1,4 @@
-﻿namespace GrainsInterfaces.Models.VideoSearcher
+﻿namespace GrainsInterfaces.VideoLocator.Models
 {
 	public class VideoSearchResults
 	{

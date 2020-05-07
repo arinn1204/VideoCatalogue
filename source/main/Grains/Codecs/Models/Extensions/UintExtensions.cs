@@ -1,5 +1,5 @@
 ﻿using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Exceptions;
-using GrainsInterfaces.Models.CodecParser;
+using GrainsInterfaces.CodecParser.Models;
 
 namespace Grains.Codecs.Models.Extensions
 {

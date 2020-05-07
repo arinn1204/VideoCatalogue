@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GrainsInterfaces.Models.VideoSearcher;
+using GrainsInterfaces.VideoLocator.Models;
 using Orleans;
 
 namespace GrainsInterfaces.VideoLocator

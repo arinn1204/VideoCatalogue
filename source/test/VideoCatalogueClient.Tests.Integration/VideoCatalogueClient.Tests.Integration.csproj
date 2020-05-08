@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>VideoCatalogueClient.Tetss.Integration</RootNamespace>
+    <RootNamespace>VideoCatalogueClient.Tests.Integration</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,7 @@
       <PackageReference Include="coverlet.collector" Version="1.2.1" />
       <PackageReference Include="FluentAssertions" Version="5.10.3" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+      <PackageReference Include="Microsoft.Orleans.TestingHost" Version="3.1.6"/>
       <PackageReference Include="Moq" Version="4.14.1" />
       <PackageReference Include="SpecFlow" Version="3.1.97" />
       <PackageReference Include="SpecFlow.NUnit.Runners" Version="3.1.97" />

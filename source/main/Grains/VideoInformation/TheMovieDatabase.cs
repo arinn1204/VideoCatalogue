@@ -14,6 +14,7 @@ using Orleans;
 
 [assembly: InternalsVisibleTo("Grains.Tests.Unit")]
 [assembly: InternalsVisibleTo("Grains.Tests.Integration")]
+[assembly: InternalsVisibleTo("Silo")]
 
 namespace Grains.VideoInformation
 {

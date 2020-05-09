@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Grains.Codecs;
 using Grains.Tests.Integration.Extensions;
 using Grains.Tests.Integration.Features.Models;
+using GrainsInterfaces.CodecParser;
 using TechTalk.SpecFlow;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -14,12 +14,12 @@ namespace Grains.Tests.Integration.Features.Actions
 	public class CodecParserAction
 	{
 		private readonly CodecParserData _codecParserData;
-		private readonly Parser _parser;
+		private readonly IParser _parser;
 		private readonly WireMockServer _wireMockServer;
 
 		public CodecParserAction(
 			CodecParserData codecParserData,
-			Parser parser,
+			IParser parser,
 			WireMockServer wireMockServer)
 		{
 			_codecParserData = codecParserData;

@@ -18,7 +18,7 @@ namespace Grains.Codecs.Matroska
 {
 	public class Matroska : IMatroska
 	{
-		private readonly Lazy<EbmlSpecification> _matroskaSpecification;
+		private readonly Lazy<Task<EbmlSpecification>> _matroskaSpecification;
 		private readonly IEbmlReader _reader;
 		private readonly ISegmentReader _segmentReader;
 
@@ -31,19 +31,17 @@ namespace Grains.Codecs.Matroska
 			_segmentReader = segmentReader;
 			_reader = reader;
 			_matroskaSpecification =
-				new Lazy<EbmlSpecification>(
-					() => specification.GetSpecification()
-					                   .GetAwaiter()
-					                   .GetResult());
+				new Lazy<Task<EbmlSpecification>>(() => specification.GetSpecification());
 		}
 
 #region IMatroska Members
 
 		public async IAsyncEnumerable<EbmlDocument> GetFileInformation(Stream stream)
 		{
+			var specification = await _matroskaSpecification.Value;
 			var elements =
-				_matroskaSpecification.Value.Elements.TakeUntil(t => t.Name == "Segment")
-				                      .ToDictionary(k => k.IdString.ConvertHexToString());
+				specification.Elements.TakeUntil(t => t.Name == "Segment")
+				             .ToDictionary(k => k.IdString.ConvertHexToString());
 			var (segmentSequence, segment) = elements.First(f => f.Value.Name == "Segment");
 			var ebmlIdDefinition = elements.First(f => f.Value.Name == "EBML").Value.Id;
 
@@ -118,7 +116,7 @@ namespace Grains.Codecs.Matroska
 					? default
 					: await _segmentReader.GetSegmentInformation(
 						stream,
-						_matroskaSpecification.Value,
+						await _matroskaSpecification.Value,
 						await _reader.GetSize(stream))
 				;
 		}

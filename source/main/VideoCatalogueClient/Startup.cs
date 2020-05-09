@@ -22,39 +22,46 @@ namespace VideoCatalogueClient
 			services.AddControllers();
 
 			services
-			   .AddSingleton(CreateClusterClient)
-			   .AddTransient(
-					provider =>
-					{
-						var grainFactory = provider.GetRequiredService<IClusterClient>();
-						var parser = grainFactory.GetGrain<IParser>(Guid.NewGuid());
+			   .AddSingleton(CreateClusterClient);
 
-						return parser;
-					})
-			   .AddTransient(
-					provider =>
-					{
-						var grainFactory = provider.GetRequiredService<IClusterClient>();
-						var videoApi = grainFactory.GetGrain<IVideoApi>(Guid.NewGuid());
+			AddGrains(services);
+		}
 
-						return videoApi;
-					})
-			   .AddTransient(
-					provider =>
-					{
-						var grainFactory = provider.GetRequiredService<IClusterClient>();
-						var searcher = grainFactory.GetGrain<ISearcher>(Guid.NewGuid());
+		private void AddGrains(IServiceCollection services)
+		{
+			services.AddTransient(
+				         provider =>
+				         {
+					         var grainFactory = provider.GetRequiredService<IClusterClient>();
+					         var parser = grainFactory.GetGrain<IParser>(Guid.NewGuid());
 
-						return searcher;
-					})
-			   .AddTransient(
-					provider =>
-					{
-						var grainFactory = provider.GetRequiredService<IClusterClient>();
-						var btClient = grainFactory.GetGrain<IBitTorrentClient>(Guid.NewGuid());
+					         return parser;
+				         })
+			        .AddTransient(
+				         provider =>
+				         {
+					         var grainFactory = provider.GetRequiredService<IClusterClient>();
+					         var videoApi = grainFactory.GetGrain<IVideoApi>(Guid.NewGuid());
 
-						return btClient;
-					});
+					         return videoApi;
+				         })
+			        .AddTransient(
+				         provider =>
+				         {
+					         var grainFactory = provider.GetRequiredService<IClusterClient>();
+					         var searcher = grainFactory.GetGrain<ISearcher>(Guid.NewGuid());
+
+					         return searcher;
+				         })
+			        .AddTransient(
+				         provider =>
+				         {
+					         var grainFactory = provider.GetRequiredService<IClusterClient>();
+					         var btClient =
+						         grainFactory.GetGrain<IBitTorrentClient>(Guid.NewGuid());
+
+					         return btClient;
+				         });
 		}
 
 		private IClusterClient CreateClusterClient(IServiceProvider serviceProvider)

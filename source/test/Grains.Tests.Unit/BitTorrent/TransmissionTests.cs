@@ -78,9 +78,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrentEnumerable = await transmission.GetActiveTorrents();
-
-			var torrents = await torrentEnumerable.ToListAsync();
+			var torrents = await transmission.GetActiveTorrents();
 
 			var torrent = torrents.Single();
 			(torrent.Status, torrent.QueuedStatus)
@@ -139,9 +137,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrentEnumerable = await transmission.GetActiveTorrents();
-
-			await torrentEnumerable.ToListAsync();
+			await transmission.GetActiveTorrents();
 
 			client().callCounter.Should().Be(2);
 			client()
@@ -182,11 +178,10 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrentEnumerable = await transmission.GetActiveTorrents();
+			var torrents = (await transmission.GetActiveTorrents())
+			   .ToArray();
 
-			var torrents = await torrentEnumerable.ToListAsync();
-
-			torrents.Count
+			torrents.Length
 			        .Should()
 			        .Be(5);
 
@@ -236,9 +231,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrentEnumerable = await transmission.GetActiveTorrents();
-
-			var torrents = await torrentEnumerable.ToListAsync();
+			var torrents = await transmission.GetActiveTorrents();
 
 			torrents.Single()
 			        .CompletedFileNames
@@ -278,9 +271,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrentEnumerable = await transmission.GetActiveTorrents();
-
-			await torrentEnumerable.ToListAsync();
+			await transmission.GetActiveTorrents();
 
 			var requestContent = await mockClient().request.Content.ReadAsStringAsync();
 

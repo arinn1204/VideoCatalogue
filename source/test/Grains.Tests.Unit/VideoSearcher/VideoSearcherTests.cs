@@ -80,8 +80,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			var searcher = _fixture.Create<FileSystemSearcher>();
 
-			return await (await searcher.Search("Y:"))
-			   .ToListAsync();
+			return (await searcher.Search("Y:")).ToList();
 		}
 
 		[Fact]

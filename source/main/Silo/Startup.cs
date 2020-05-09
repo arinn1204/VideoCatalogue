@@ -61,26 +61,14 @@ namespace Silo
 			   .AddTransient<ISearcher, FileSystemSearcher>();
 		}
 
-		private IServiceCollection RegisterHttpClients(IServiceCollection collection) => collection
-		                                                                                .AddHttpClient(
-			                                                                                 _configuration,
-			                                                                                 nameof(
-				                                                                                 Transmission
-			                                                                                 ))
-		                                                                                .AddHttpClient(
-			                                                                                 _configuration,
-			                                                                                 nameof(
-				                                                                                 Specification
-			                                                                                 ))
-		                                                                                .AddHttpClient(
-			                                                                                 _configuration,
-			                                                                                 nameof(
-				                                                                                 FileFormatRepository
-			                                                                                 ))
-		                                                                                .AddHttpClient(
-			                                                                                 _configuration,
-			                                                                                 nameof(
-				                                                                                 TheMovieDatabase
-			                                                                                 ));
+		private IServiceCollection RegisterHttpClients(IServiceCollection collection)
+		{
+			var configuration = _configuration.GetSection("serviceUrls");
+			return collection
+			      .AddHttpClient(configuration, nameof(Transmission))
+			      .AddHttpClient(configuration, nameof(Specification))
+			      .AddHttpClient(configuration, nameof(FileFormatRepository))
+			      .AddHttpClient(configuration, nameof(TheMovieDatabase));
+		}
 	}
 }

@@ -1,11 +1,9 @@
-﻿using System.IO;
-using AutoMapper;
+﻿using AutoMapper;
 using BoDi;
-using Grains.Tests.Integration.Extensions;
+using Grains.Tests.Integration.Features.Support.Configuration;
 using Grains.Tests.Integration.Features.Support.Silo;
 using Grains.Tests.Integration.Features.Support.Wiremock;
 using Grains.VideoInformation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Orleans.TestingHost;
 using TechTalk.SpecFlow;
@@ -57,9 +55,9 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		}
 
 		[BeforeScenario(Order = 0)]
-		public static void SetupMicrosoftDI(IObjectContainer container)
+		public static void SetupServiceCollection(IObjectContainer container)
 		{
-			var configuration = BuildConfiguration();
+			var configuration = ConfigurationBuilder.BuildConfiguration();
 			var services = new ServiceCollection();
 
 			services.AddSingleton(configuration);
@@ -67,19 +65,6 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			container.RegisterInstanceAs<IServiceCollection>(services);
 			container.RegisterInstanceAs(configuration);
 		}
-
-		public static IConfiguration BuildConfiguration()
-		{
-			var location = typeof(StringExtensions).Assembly.Location;
-			var sourceDirectory = Directory.GetParent(location).FullName;
-			return new ConfigurationBuilder()
-			      .AddJsonFile(
-				       Path.Combine(sourceDirectory, "appsettings.json"),
-				       false)
-			      .AddEnvironmentVariables()
-			      .Build();
-		}
-
 
 		[BeforeScenario(Order = 1)]
 		public static void SetupAutoMapper(IObjectContainer container)

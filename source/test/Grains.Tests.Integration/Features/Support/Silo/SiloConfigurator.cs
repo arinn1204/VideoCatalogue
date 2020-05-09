@@ -2,6 +2,8 @@
 using Orleans.Hosting;
 using Orleans.TestingHost;
 using Silo;
+using ConfigurationBuilder =
+	Grains.Tests.Integration.Features.Support.Configuration.ConfigurationBuilder;
 
 namespace Grains.Tests.Integration.Features.Support.Silo
 {
@@ -11,7 +13,7 @@ namespace Grains.Tests.Integration.Features.Support.Silo
 
 		public SiloConfigurator()
 		{
-			_configuration = Hooks.Hooks.BuildConfiguration();
+			_configuration = ConfigurationBuilder.BuildConfiguration();
 		}
 
 #region ISiloConfigurator Members
@@ -22,10 +24,11 @@ namespace Grains.Tests.Integration.Features.Support.Silo
 			   .ConfigureServices(
 					serviceContainer =>
 					{
-						var configuration = new ConfigurationBuilder()
-						                   .AddConfiguration(_configuration)
-						                   .AddConfiguration(hostBuilder.GetConfiguration())
-						                   .Build();
+						var configuration =
+							new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+							   .AddConfiguration(_configuration)
+							   .AddConfiguration(hostBuilder.GetConfiguration())
+							   .Build();
 
 						var startup = new Startup(configuration);
 						startup.ConfigureServices(serviceContainer);

@@ -34,7 +34,7 @@ namespace Grains.BitTorrent.Transmission
 		public async Task<IEnumerable<TorrentInformation>> GetActiveTorrents()
 		{
 			var client = _httpClientFactory.CreateClient(nameof(Transmission));
-			return await GetActiveTorrents(client).ToListAsync();
+			return await GetActiveTorrents(client).ToArrayAsync();
 		}
 
 #endregion

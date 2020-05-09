@@ -76,9 +76,6 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			      .AddJsonFile(
 				       Path.Combine(sourceDirectory, "appsettings.json"),
 				       false)
-			      .AddJsonFile(
-				       Path.Combine(sourceDirectory, "settings.json"),
-				       false)
 			      .AddEnvironmentVariables()
 			      .Build();
 		}

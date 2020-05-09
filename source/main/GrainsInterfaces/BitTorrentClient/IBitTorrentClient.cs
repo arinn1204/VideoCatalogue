@@ -7,6 +7,6 @@ namespace GrainsInterfaces.BitTorrentClient
 {
 	public interface IBitTorrentClient : IGrainWithGuidKey
 	{
-		public Task<IAsyncEnumerable<TorrentInformation>> GetActiveTorrents();
+		public Task<IEnumerable<TorrentInformation>> GetActiveTorrents();
 	}
 }

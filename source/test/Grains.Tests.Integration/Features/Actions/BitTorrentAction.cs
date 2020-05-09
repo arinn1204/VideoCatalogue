@@ -39,7 +39,7 @@ namespace Grains.Tests.Integration.Features.Actions
 		{
 			var data = SetStubs(_wiremock, _data, btClient);
 			var activeTorrents = await _bitTorrentClient.GetActiveTorrents();
-			var response = await activeTorrents.ToListAsync();
+			var response = activeTorrents.ToList();
 			_data.Response = response;
 		}
 

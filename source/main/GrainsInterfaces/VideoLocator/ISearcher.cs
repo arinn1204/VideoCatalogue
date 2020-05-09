@@ -7,6 +7,6 @@ namespace GrainsInterfaces.VideoLocator
 {
 	public interface ISearcher : IGrainWithGuidKey
 	{
-		Task<IAsyncEnumerable<VideoSearchResults>> Search(string path);
+		Task<IEnumerable<VideoSearchResults>> Search(string path);
 	}
 }

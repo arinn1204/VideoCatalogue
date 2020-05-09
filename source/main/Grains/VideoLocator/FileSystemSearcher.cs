@@ -28,7 +28,7 @@ namespace Grains.VideoLocator
 
 #region ISearcher Members
 
-		public async Task<IAsyncEnumerable<VideoSearchResults>> Search(string path)
+		public async Task<IEnumerable<VideoSearchResults>> Search(string path)
 		{
 			var fileFormats = _fileFormatRepository.GetAcceptableFileFormats();
 			var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
@@ -42,9 +42,9 @@ namespace Grains.VideoLocator
 						            fileFormats.Select(s => s.Patterns)));
 
 
-			var searchResults = BuildSearchResults(files, fileFormats);
+			var searchResults = await BuildSearchResults(files, fileFormats).ToArrayAsync();
 
-			return await Task.FromResult(searchResults);
+			return searchResults;
 		}
 
 #endregion

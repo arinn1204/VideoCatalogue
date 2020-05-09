@@ -35,9 +35,7 @@ namespace Grains.Tests.Integration.Features.Actions
 					File.Create(newName);
 				});
 
-			var searchResults = await _searcher.Search(VideoSearcherHooks.DataDirectory);
-
-			_videoFile.VideoDetails = await searchResults.ToListAsync();
+			_videoFile.VideoDetails = await _searcher.Search(VideoSearcherHooks.DataDirectory);
 		}
 	}
 }

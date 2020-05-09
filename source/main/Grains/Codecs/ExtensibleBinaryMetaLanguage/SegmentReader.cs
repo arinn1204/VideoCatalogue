@@ -42,11 +42,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 			                     .ToList(); // list as it should be a short list of skipped ids, this makes it inconsequential to enumerate
 
 			var segment = await _reader.GetElement<Segment>(
-				                            stream,
-				                            segmentSize,
-				                            trackedElements,
-				                            skippedElements)
-			                           .ConfigureAwait(false);
+					stream,
+					segmentSize,
+					trackedElements,
+					skippedElements)
+				;
 
 			return segment;
 		}

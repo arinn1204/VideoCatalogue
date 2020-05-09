@@ -26,7 +26,7 @@ namespace Grains.Helpers.Extensions
 		{
 			var enumerator = @this.GetAsyncEnumerator();
 
-			while (await enumerator.MoveNextAsync().ConfigureAwait(false))
+			while (await enumerator.MoveNextAsync())
 			{
 				yield return enumerator.Current;
 				throw exceptionToThrow;

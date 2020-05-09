@@ -37,15 +37,14 @@ namespace Grains.VideoLocator
 			           .WhereAwait(
 				            async w
 					            => await IsAcceptableFile(
-							            Path.GetFileName(w),
-							            fileTypes,
-							            fileFormats.Select(s => s.Patterns))
-						           .ConfigureAwait(false));
+						            Path.GetFileName(w),
+						            fileTypes,
+						            fileFormats.Select(s => s.Patterns)));
 
 
 			var searchResults = BuildSearchResults(files, fileFormats);
 
-			return await Task.FromResult(searchResults).ConfigureAwait(false);
+			return await Task.FromResult(searchResults);
 		}
 
 #endregion
@@ -54,12 +53,12 @@ namespace Grains.VideoLocator
 			IAsyncEnumerable<string> files,
 			IAsyncEnumerable<RegisteredFileFormat> fileFormats)
 		{
-			await foreach (var file in files.ConfigureAwait(false))
+			await foreach (var file in files)
 			{
 				var fileName = Path.GetFileName(file);
 				var format =
-					await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(fileName)))
-					                 .ConfigureAwait(false);
+						await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(fileName)))
+					;
 				var match = format.Patterns.First()
 				                  .Match(fileName);
 
@@ -144,17 +143,16 @@ namespace Grains.VideoLocator
 			IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
 		{
 			var hasFileType
-				= await acceptableFileTypes.AnyAsync(
-					                            fileType => file.EndsWith(
-						                            fileType,
-						                            StringComparison.OrdinalIgnoreCase))
-				                           .ConfigureAwait(false);
+					= await acceptableFileTypes.AnyAsync(
+						fileType => file.EndsWith(
+							fileType,
+							StringComparison.OrdinalIgnoreCase))
+				;
 			var matchesOnlyOneAcceptableFilePatternSet
 				= await acceptableFileFormats.CountAsync(
-					                              acceptableFormat
-						                              => acceptableFormat
-							                             .All(a => a.IsMatch(file)))
-				                             .ConfigureAwait(false) ==
+					  acceptableFormat
+						  => acceptableFormat
+							 .All(a => a.IsMatch(file))) ==
 				  1;
 
 			return hasFileType && matchesOnlyOneAcceptableFilePatternSet;

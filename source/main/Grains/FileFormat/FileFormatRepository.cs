@@ -61,7 +61,7 @@ namespace Grains.FileFormat
 		}
 
 		public async Task<string> GetTargetTitleFormat()
-			=> await GetResponseContent("targetTitleFormat").ConfigureAwait(false);
+			=> await GetResponseContent("targetTitleFormat");
 
 #endregion
 
@@ -74,11 +74,11 @@ namespace Grains.FileFormat
 				              RequestUri = new Uri(relativePath.TrimStart('/'), UriKind.Relative)
 			              };
 
-			var responseMessage = await client.SendAsync(request).ConfigureAwait(false);
+			var responseMessage = await client.SendAsync(request);
 			var responseContent = await responseMessage
 			                           .Content
 			                           .ReadAsStringAsync()
-			                           .ConfigureAwait(false);
+				;
 			return responseContent;
 		}
 
@@ -87,7 +87,7 @@ namespace Grains.FileFormat
 			Task<string> responseContent,
 			Func<TResponse, TResult> getResult)
 		{
-			var content = await responseContent.ConfigureAwait(false);
+			var content = await responseContent;
 			var acceptableFormats =
 				JsonSerializer.Deserialize<IEnumerable<TResponse>>(content);
 

@@ -22,12 +22,12 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			where T : class, new()
 		{
 			var values = await GetChildren(
-				                   stream,
-				                   elementSize,
-				                   elements,
-				                   skippedElementIds)
-			                  .ToArrayAsync()
-			                  .ConfigureAwait(false);
+						stream,
+						elementSize,
+						elements,
+						skippedElementIds)
+				   .ToArrayAsync()
+				;
 
 			return EbmlConvert.DeserializeTo<T>(values)!;
 		}
@@ -40,10 +40,10 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			Dictionary<byte[], EbmlElement> elements,
 			List<uint> skippedElements)
 		{
-			var size = await GetSize(stream).ConfigureAwait(false);
+			var size = await GetSize(stream);
 			if (element.Type != "master")
 			{
-				var data = await ReadBytes(stream, (int) size).ConfigureAwait(false);
+				var data = await ReadBytes(stream, (int) size);
 				return GetValue(element, data);
 			}
 
@@ -56,7 +56,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 
 			var masterElement = EbmlConvert.DeserializeTo(
 				element.Name,
-				await values.ConfigureAwait(false));
+				await values);
 
 			return (element.Name, masterElement);
 		}
@@ -80,11 +80,11 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 
 			while (stream.Position < endPosition)
 			{
-				var element = await GetElement(elements, stream, endPosition).ConfigureAwait(false);
+				var element = await GetElement(elements, stream, endPosition);
 
 				if (skippedElementIds.Contains(element!.Id))
 				{
-					var size = await GetSize(stream).ConfigureAwait(false);
+					var size = await GetSize(stream);
 					stream.Seek(size, SeekOrigin.Current);
 					continue;
 				}
@@ -94,7 +94,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 						element,
 						elements,
 						skippedElementIds)
-				   .ConfigureAwait(false);
+					;
 
 				yield return value;
 			}
@@ -109,7 +109,7 @@ namespace Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers
 			var readElement = default(EbmlElement);
 			while (stream.Position < endPosition)
 			{
-				var dataRead = await ReadBytes(stream, 1).ConfigureAwait(false);
+				var dataRead = await ReadBytes(stream, 1);
 				data = data.Concat(dataRead);
 				var readIds = elements
 				             .Where(w => w.Key.ContainsSequence(data))

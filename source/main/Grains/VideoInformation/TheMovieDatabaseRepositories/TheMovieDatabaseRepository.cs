@@ -46,11 +46,11 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		public async Task<MovieCredit> GetMovieCredit(int movieId)
 		{
 			var response = await _movieRepository.GetMovieCredit(
-				                                      movieId,
-				                                      GetVersion(),
-				                                      GetClient())
-			                                     .ConfigureAwait(false);
-			return await ProcessResponse<MovieCredit>(response).ConfigureAwait(false);
+					movieId,
+					GetVersion(),
+					GetClient())
+				;
+			return await ProcessResponse<MovieCredit>(response);
 		}
 
 		public async Task<TvCredit> GetTvEpisodeCredit(
@@ -59,33 +59,33 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			int episodeNumber)
 		{
 			var response = await _tvEpisodeRepository.GetTvEpisodeCredits(
-				                                          tvId,
-				                                          seasonNumber,
-				                                          episodeNumber,
-				                                          GetVersion(),
-				                                          GetClient())
-			                                         .ConfigureAwait(false);
-			return await ProcessResponse<TvCredit>(response).ConfigureAwait(false);
+					tvId,
+					seasonNumber,
+					episodeNumber,
+					GetVersion(),
+					GetClient())
+				;
+			return await ProcessResponse<TvCredit>(response);
 		}
 
 		public async Task<MovieDetail> GetMovieDetail(int movieId)
 		{
 			var response = await _movieRepository.GetMovieDetail(
-				                                      movieId,
-				                                      GetVersion(),
-				                                      GetClient())
-			                                     .ConfigureAwait(false);
-			return await ProcessResponse<MovieDetail>(response).ConfigureAwait(false);
+					movieId,
+					GetVersion(),
+					GetClient())
+				;
+			return await ProcessResponse<MovieDetail>(response);
 		}
 
 		public async Task<PersonDetail> GetPersonDetail(int personId)
 		{
 			var response = await _personRepository.GetPersonDetail(
-				                                       personId,
-				                                       GetVersion(),
-				                                       GetClient())
-			                                      .ConfigureAwait(false);
-			return await ProcessResponse<PersonDetail>(response).ConfigureAwait(false);
+					personId,
+					GetVersion(),
+					GetClient())
+				;
+			return await ProcessResponse<PersonDetail>(response);
 		}
 
 		public IAsyncEnumerable<SearchResult> SearchMovie(string title, int? year = null)
@@ -102,9 +102,9 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 
 			async IAsyncEnumerable<SearchResult> Process(Task<HttpResponseMessage> responseTask)
 			{
-				var response = await responseTask.ConfigureAwait(false);
+				var response = await responseTask;
 				var result = await ProcessResponse<SearchResultWrapper<SearchResult>>(response)
-				   .ConfigureAwait(false);
+					;
 
 				foreach (var searchResult in result.SearchResults ??
 				                             Enumerable.Empty<SearchResult>())
@@ -118,14 +118,14 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 		public async IAsyncEnumerable<TvSearchResult> SearchTvSeries(string title, int? year = null)
 		{
 			var response = await _searchRepository.Search(
-				                                       title,
-				                                       year,
-				                                       GetVersion(),
-				                                       GetClient(),
-				                                       MovieType.TvSeries)
-			                                      .ConfigureAwait(false);
+					title,
+					year,
+					GetVersion(),
+					GetClient(),
+					MovieType.TvSeries)
+				;
 			var result = await ProcessResponse<SearchResultWrapper<TvSearchResult>>(response)
-			   .ConfigureAwait(false);
+				;
 
 			foreach (var searchResult in result.SearchResults ?? Enumerable.Empty<TvSearchResult>())
 			{
@@ -140,23 +140,23 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 			int episodeNumber)
 		{
 			var response = await _tvEpisodeRepository.GetTvEpisodeDetail(
-				                                          tvId,
-				                                          seasonNumber,
-				                                          episodeNumber,
-				                                          GetVersion(),
-				                                          GetClient())
-			                                         .ConfigureAwait(false);
-			return await ProcessResponse<TvDetail>(response).ConfigureAwait(false);
+					tvId,
+					seasonNumber,
+					episodeNumber,
+					GetVersion(),
+					GetClient())
+				;
+			return await ProcessResponse<TvDetail>(response);
 		}
 
 		public async Task<TvDetail> GetTvSeriesDetail(int tvId)
 		{
 			var response = await _tvEpisodeRepository.GetTvSeriesDetail(
-				                                          tvId,
-				                                          GetVersion(),
-				                                          GetClient())
-			                                         .ConfigureAwait(false);
-			return await ProcessResponse<TvDetail>(response).ConfigureAwait(false);
+					tvId,
+					GetVersion(),
+					GetClient())
+				;
+			return await ProcessResponse<TvDetail>(response);
 		}
 
 #endregion
@@ -169,10 +169,10 @@ namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 				async response =>
 				{
 					var responseContent =
-						await response
-						     .Content
-						     .ReadAsStringAsync()
-						     .ConfigureAwait(false);
+							await response
+							     .Content
+							     .ReadAsStringAsync()
+						;
 					return JsonSerializer.Deserialize<TResponse>(
 						responseContent,
 						new JsonSerializerOptions

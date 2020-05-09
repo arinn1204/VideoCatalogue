@@ -1,9 +1,7 @@
 ﻿using System;
 using BoDi;
-using Grains.BitTorrent.Transmission;
-using Grains.Tests.Integration.Features.Support.Wiremock;
 using GrainsInterfaces.BitTorrentClient;
-using Microsoft.Extensions.DependencyInjection;
+using Orleans.TestingHost;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Support.Hooks
@@ -13,17 +11,11 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 	{
 		[BeforeScenario("@Transmission")]
 		public void SetupTransmission(
-			IServiceCollection serviceCollection,
-			IObjectContainer container)
+			IObjectContainer container,
+			TestCluster cluster)
 		{
-			serviceCollection.AddHttpClient(
-				nameof(Transmission),
-				client => client.BaseAddress = new Uri($"{WiremockSettings.Url}/transmission/rpc"));
-
-			serviceCollection.AddTransient<IBitTorrentClient, Transmission>();
-
-			var provider = serviceCollection.BuildServiceProvider();
-			container.RegisterInstanceAs(provider.GetRequiredService<IBitTorrentClient>());
+			var btClient = cluster.GrainFactory.GetGrain<IBitTorrentClient>(Guid.NewGuid());
+			container.RegisterInstanceAs(btClient);
 		}
 	}
 }

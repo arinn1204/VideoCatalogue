@@ -1,16 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Text.Json;
 using BoDi;
-using Grains.FileFormat;
-using Grains.FileFormat.Interfaces;
 using Grains.FileFormat.Models;
-using Grains.Tests.Integration.Features.Support.Wiremock;
-using Grains.VideoLocator;
 using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Orleans.TestingHost;
 using TechTalk.SpecFlow;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -26,22 +21,10 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 
 		[BeforeScenario("VideoSearcher")]
 		public static void SetupVideoSearcher(
-			IServiceCollection serviceCollection,
-			IObjectContainer objectContainer)
+			IObjectContainer objectContainer,
+			TestCluster cluster)
 		{
-			serviceCollection.AddTransient<IFileFormatRepository, FileFormatRepository>()
-			                 .AddTransient<IFileSystem, FileSystem>()
-			                 .AddTransient<ISearcher, FileSystemSearcher>()
-			                 .AddHttpClient(
-				                  nameof(FileFormatRepository),
-				                  client =>
-				                  {
-					                  client.BaseAddress = new Uri(
-						                  $"{WiremockSettings.Url}/api/videoFile/");
-				                  });
-
-			var serviceProvider = serviceCollection.BuildServiceProvider();
-			var searcher = serviceProvider.GetRequiredService<ISearcher>();
+			var searcher = cluster.GrainFactory.GetGrain<ISearcher>(Guid.NewGuid());
 			objectContainer.RegisterInstanceAs(searcher);
 		}
 

@@ -1,14 +1,7 @@
 ﻿using System;
 using BoDi;
-using Grains.Codecs;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Interfaces;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers;
-using Grains.Codecs.ExtensibleBinaryMetaLanguage.Readers.Interfaces;
-using Grains.Codecs.Matroska;
-using Grains.Codecs.Matroska.Interfaces;
-using Grains.Tests.Integration.Features.Support.Wiremock;
-using Microsoft.Extensions.DependencyInjection;
+using GrainsInterfaces.CodecParser;
+using Orleans.TestingHost;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Support.Hooks
@@ -18,22 +11,11 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 	{
 		[BeforeScenario("@Matroska")]
 		public static void SetupMicrosoftDi(
-			IServiceCollection serviceCollection,
-			IObjectContainer objectContainer)
+			IObjectContainer objectContainer,
+			TestCluster cluster)
 		{
-			serviceCollection.AddHttpClient(
-				"MatroskaClient",
-				client => client.BaseAddress = new Uri(
-					$"{WiremockSettings.Url}/Matroska-Org/foundation-source/master/spectool/specdata.xml"));
-			serviceCollection.AddTransient<ISpecification, Specification>();
-			serviceCollection.AddTransient<IMatroska, Matroska>();
-			serviceCollection.AddTransient<IEbmlReader, EbmlReader>();
-			serviceCollection.AddTransient<ISegmentReader, SegmentReader>();
-
-			serviceCollection.AddTransient<Parser, Parser>();
-			objectContainer.RegisterInstanceAs(
-				serviceCollection.BuildServiceProvider()
-				                 .GetService<Parser>());
+			var parser = cluster.GrainFactory.GetGrain<IParser>(Guid.NewGuid());
+			objectContainer.RegisterInstanceAs(parser);
 		}
 	}
 }

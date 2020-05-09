@@ -8,13 +8,13 @@ using Grains.Codecs.Matroska.Models;
 
 namespace Grains.Codecs.ExtensibleBinaryMetaLanguage
 {
-	public class Specification
+	public class MatroskaSpecification
 		: ISpecification
 	{
-		private const string ClientRegistrationName = "MatroskaClient";
+		private const string ClientRegistrationName = nameof(MatroskaSpecification);
 		private readonly IHttpClientFactory _httpClientFactory;
 
-		public Specification(IHttpClientFactory httpClientFactory)
+		public MatroskaSpecification(IHttpClientFactory httpClientFactory)
 		{
 			_httpClientFactory = httpClientFactory;
 		}

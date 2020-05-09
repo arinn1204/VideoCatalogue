@@ -42,7 +42,7 @@ namespace Silo
 			RegisterHttpClients(serviceCollection)
 			   .AddSingleton(_configuration)
 			   .AddSingleton<IMapper>(mapper)
-			   .AddTransient<ISpecification, Specification>()
+			   .AddTransient<ISpecification, MatroskaSpecification>()
 			   .AddTransient<IMatroska, Matroska>()
 			   .AddTransient<IEbmlReader, EbmlReader>()
 			   .AddTransient<ISegmentReader, SegmentReader>()
@@ -66,7 +66,7 @@ namespace Silo
 			var configuration = _configuration.GetSection("serviceUrls");
 			return collection
 			      .AddHttpClient(configuration, nameof(Transmission))
-			      .AddHttpClient(configuration, nameof(Specification))
+			      .AddHttpClient(configuration, nameof(MatroskaSpecification))
 			      .AddHttpClient(configuration, nameof(FileFormatRepository))
 			      .AddHttpClient(configuration, nameof(TheMovieDatabase));
 		}

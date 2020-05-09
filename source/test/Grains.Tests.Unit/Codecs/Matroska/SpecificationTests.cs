@@ -39,12 +39,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				"application/xml",
 				"https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml");
 			_fixture.Freeze<Mock<IHttpClientFactory>>()
-			        .Setup(s => s.CreateClient("MatroskaClient"))
+			        .Setup(s => s.CreateClient(nameof(MatroskaSpecification)))
 			        .Returns(
 				         client()
 					        .client);
 
-			var something = _fixture.Create<Specification>();
+			var something = _fixture.Create<MatroskaSpecification>();
 
 			var specification = await something.GetSpecification();
 
@@ -75,12 +75,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				"application/xml",
 				"https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml");
 			_fixture.Freeze<Mock<IHttpClientFactory>>()
-			        .Setup(s => s.CreateClient("MatroskaClient"))
+			        .Setup(s => s.CreateClient(nameof(MatroskaSpecification)))
 			        .Returns(
 				         client()
 					        .client);
 
-			var something = _fixture.Create<Specification>();
+			var something = _fixture.Create<MatroskaSpecification>();
 
 			var specification = await something.GetSpecification();
 
@@ -111,12 +111,12 @@ namespace Grains.Tests.Unit.Codecs.Matroska
 				"https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml",
 				HttpStatusCode.ProxyAuthenticationRequired);
 			_fixture.Freeze<Mock<IHttpClientFactory>>()
-			        .Setup(s => s.CreateClient("MatroskaClient"))
+			        .Setup(s => s.CreateClient(nameof(MatroskaSpecification)))
 			        .Returns(
 				         client()
 					        .client);
 
-			var something = _fixture.Create<Specification>();
+			var something = _fixture.Create<MatroskaSpecification>();
 
 			Func<Task> specification = something.GetSpecification;
 

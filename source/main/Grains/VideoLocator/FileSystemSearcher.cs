@@ -143,11 +143,10 @@ namespace Grains.VideoLocator
 			IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
 		{
 			var hasFileType
-					= await acceptableFileTypes.AnyAsync(
-						fileType => file.EndsWith(
-							fileType,
-							StringComparison.OrdinalIgnoreCase))
-				;
+				= await acceptableFileTypes.AnyAsync(
+					fileType => file.EndsWith(
+						fileType,
+						StringComparison.OrdinalIgnoreCase));
 			var matchesOnlyOneAcceptableFilePatternSet
 				= await acceptableFileFormats.CountAsync(
 					  acceptableFormat

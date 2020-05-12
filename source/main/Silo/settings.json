@@ -6,8 +6,8 @@
   "serviceUrls": {
     "Transmission": "http://10.0.0.199:9091/transmission/rpc",
     "TheMovieDatabase": "https://api.themoviedb.org",
-    "Specification": "https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml",
-    "FileFormatRepository": "http://localhost:9080"
+    "MatroskaSpecification": "https://raw.githubusercontent.com/Matroska-Org/foundation-source/master/spectool/specdata.xml",
+    "FileFormatRepository": "http://localhost:9080/api/videoFile/"
   },
   "TheMovieDatabase": {
     "Authorization": "",

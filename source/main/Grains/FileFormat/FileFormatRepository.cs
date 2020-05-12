@@ -89,7 +89,12 @@ namespace Grains.FileFormat
 		{
 			var content = await responseContent;
 			var acceptableFormats =
-				JsonSerializer.Deserialize<IEnumerable<TResponse>>(content);
+				JsonSerializer.Deserialize<IEnumerable<TResponse>>(
+					content,
+					new JsonSerializerOptions
+					{
+						PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+					});
 
 			foreach (var acceptableFormat in acceptableFormats)
 			{

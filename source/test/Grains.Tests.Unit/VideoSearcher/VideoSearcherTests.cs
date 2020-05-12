@@ -436,8 +436,13 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var sonsOfAnarchy = Path.Combine(
 				"Y:",
 				"Sons of Anarchy (2008) - S07E13 - Papa's Goods (1080p BluRay x265 ImE).mkv");
+			var sonsOfAnarchyWithPeriod = Path.Combine(
+				"Y:",
+				"Sons of Anarchy (2008) - S07.E13 - Papa's Goods (1080p BluRay x265 ImE).mkv");
 
-			_patterns = _patterns.Append(@"^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$");
+			_patterns = _patterns.Append(@"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$")
+			                     .Append(@"^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$")
+			                     .Append(@"^(?:(?![sS]\d{1,2}\.[eE]\d{1,2}).)*$");
 
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
@@ -455,7 +460,8 @@ namespace Grains.Tests.Unit.VideoSearcher
 						            {
 							            godFather,
 							            civilWar,
-							            sonsOfAnarchy
+							            sonsOfAnarchy,
+							            sonsOfAnarchyWithPeriod
 						            }
 						          : new[]
 						            {
@@ -479,7 +485,8 @@ namespace Grains.Tests.Unit.VideoSearcher
 						     item =>
 							     item == godFather ||
 							     item == expectedCivilWar ||
-							     item == sonsOfAnarchy)))
+							     item == sonsOfAnarchy ||
+							     item == sonsOfAnarchyWithPeriod)))
 			    .Returns(true);
 
 			fileSystem.Setup(s => s.File)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
@@ -31,6 +31,28 @@ namespace Grains.Tests.Unit.VideoSearcher
 #endregion
 
 		private readonly Fixture _fixture;
+
+		[Theory]
+		[InlineData(
+			@"[{""patterns"":[""(.*(?=\\(\\d{3,4}\\)))\\s*\\(\\d{4}\\).*\\.([a-zA-Z]{3,4})$&FILTER&^(?:(?![sS]\\d{1,2}\\.?[eE]\\d{1,2}).)*$""],""titleGroup"":1,""yearGroup"":2,""containerGroup"":3}]")]
+		public async Task ShouldBeAbleToMapResponse(string response)
+		{
+			var mockClientBuilder =
+				MockHttpClient.GetFakeHttpClient(
+					response,
+					baseAddress: "http://localhost/api/videoFile/");
+
+			var (client, _, _) = mockClientBuilder();
+			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
+			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
+			       .Returns(client);
+
+			var repo = _fixture.Create<IFileFormatRepository>();
+			var result = await repo.GetAcceptableFileFormats().ToArrayAsync();
+
+			result.Should()
+			      .NotBeEmpty();
+		}
 
 		[Fact]
 		public async Task ShouldBuildFilteredKeywordPath()

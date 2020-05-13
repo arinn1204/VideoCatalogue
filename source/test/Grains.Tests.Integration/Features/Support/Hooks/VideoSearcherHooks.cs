@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using BoDi;
 using Grains.FileFormat.Models;
@@ -33,9 +34,6 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			IConfiguration configuration,
 			WireMockServer wiremock)
 		{
-			var filePattern =
-				@"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$&FILTER&^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$";
-
 			wiremock.Given(
 				         Request.Create()
 				                .UsingGet()
@@ -48,14 +46,24 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 						                  {
 							                  new FilePattern
 							                  {
-								                  Patterns = new[]
-								                             {
-									                             filePattern
-								                             },
+								                  Pattern = new Pattern
+								                            {
+									                            Capture =
+										                            @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$",
+									                            PositiveFilters = new[]
+									                                              {
+										                                              @"^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$"
+									                                              }
+								                            },
 								                  TitleGroup = 1,
 								                  YearGroup = 2,
 								                  ContainerGroup = 3
 							                  }
+						                  },
+						                  new JsonSerializerOptions
+						                  {
+							                  Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+							                  PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 						                  })));
 
 			wiremock.Given(

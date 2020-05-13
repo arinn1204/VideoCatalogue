@@ -2,7 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -34,7 +36,20 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 		[Theory]
 		[InlineData(
-			@"[{""patterns"":[""(.*(?=\\(\\d{3,4}\\)))\\s*\\(\\d{4}\\).*\\.([a-zA-Z]{3,4})$&FILTER&^(?:(?![sS]\\d{1,2}\\.?[eE]\\d{1,2}).)*$""],""titleGroup"":1,""yearGroup"":2,""containerGroup"":3}]")]
+			@"[
+	{
+		""pattern"": {
+			""capture"": ""(.*(?=\\(\\d{3,4}\\)))\\s*\\(\\d{4}\\).*\\.([a-zA-Z]{3,4})$"",
+			""filters"": [
+				""^(?:(?![sS]\\d{1,2}\\.?"",
+				""[eE]\\d{1,2}).)*$""
+			]
+		},
+		""titleGroup"": 1,
+		""yearGroup"": 2,
+		""containerGroup"": 3 
+	}
+]")]
 		public async Task ShouldBeAbleToMapResponse(string response)
 		{
 			var mockClientBuilder =
@@ -73,7 +88,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			       .Returns(client);
 
 			var repo = _fixture.Create<IFileFormatRepository>();
-			var result = await repo.GetFilteredKeywords().ToListAsync();
+			_ = await repo.GetFilteredKeywords().ToListAsync();
 
 			var (_, request, _) = mockClientBuilder();
 
@@ -189,16 +204,29 @@ namespace Grains.Tests.Unit.VideoSearcher
 						{
 							new FilePattern
 							{
-								Patterns = new[]
-								           {
-									           @"^(.d+)$"
-								           },
+								Pattern = new Pattern
+								          {
+									          Capture = @"^(.d+)$",
+									          PositiveFilters = new[]
+									                            {
+										                            ".*"
+									                            },
+									          NegativeFilters = new[]
+									                            {
+										                            @"\d{5}\.?\d+"
+									                            }
+								          },
 								ContainerGroup = 1,
 								EpisodeGroup = 3,
 								SeasonGroup = 5,
 								TitleGroup = 2,
 								YearGroup = 0
 							}
+						},
+						new JsonSerializerOptions
+						{
+							Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+							PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 						}),
 					baseAddress: "http://localhost/api/videoFile/");
 
@@ -221,12 +249,25 @@ namespace Grains.Tests.Unit.VideoSearcher
 					         TitleGroup = 2,
 					         YearGroup = 0
 				         },
-				         opts => opts.Excluding(e => e.Patterns));
+				         opts => opts.Excluding(e => e.CapturePattern));
 
 			response.Single()
-			        .Patterns
+			        .CapturePattern
 			        .Should()
-			        .Match(pattern => pattern.Single().ToString() == @"^(.d+)$");
+			        .BeEquivalentTo(
+				         new CapturePattern
+				         {
+					         Capture = new Regex(@"^(.d+)$"),
+					         PositiveFilters = new[]
+					                           {
+						                           new Regex(@".*")
+					                           },
+					         NegativeFilters = new[]
+					                           {
+						                           new Regex(@"\d{5}\.?\d+")
+					                           }
+				         },
+				         opts => opts.ExcludingFields());
 		}
 
 		[Fact]
@@ -268,10 +309,10 @@ namespace Grains.Tests.Unit.VideoSearcher
 						{
 							new FilePattern
 							{
-								Patterns = new[]
-								           {
-									           @"^(.d+)$"
-								           },
+								Pattern = new Pattern
+								          {
+									          Capture = @"^(.d+)$"
+								          },
 								ContainerGroup = 1,
 								EpisodeGroup = 3,
 								SeasonGroup = 5,
@@ -369,58 +410,6 @@ namespace Grains.Tests.Unit.VideoSearcher
 			var (_, _, callCount) = mockClientBuilder();
 
 			callCount.Should().Be(1);
-		}
-
-		[Fact]
-		public async Task ShouldSplitFilterInFilePatternsForFileFormat()
-		{
-			var mockClientBuilder =
-				MockHttpClient.GetFakeHttpClient(
-					JsonSerializer.Serialize(
-						new[]
-						{
-							new FilePattern
-							{
-								Patterns = new[]
-								           {
-									           @"^(.d+)$&FILTER&.*"
-								           },
-								ContainerGroup = 1,
-								EpisodeGroup = 3,
-								SeasonGroup = 5,
-								TitleGroup = 2,
-								YearGroup = 0
-							}
-						}),
-					baseAddress: "http://localhost/api/videoFile/");
-
-			var (client, _, _) = mockClientBuilder();
-			var factory = _fixture.Freeze<Mock<IHttpClientFactory>>();
-			factory.Setup(s => s.CreateClient(nameof(FileFormatRepository)))
-			       .Returns(client);
-
-			var repo = _fixture.Create<IFileFormatRepository>();
-			var response = await repo.GetAcceptableFileFormats().ToListAsync();
-
-			response.Single()
-			        .Should()
-			        .BeEquivalentTo(
-				         new RegisteredFileFormat
-				         {
-					         ContainerGroup = 1,
-					         EpisodeGroup = 3,
-					         SeasonGroup = 5,
-					         TitleGroup = 2,
-					         YearGroup = 0
-				         },
-				         opts => opts.Excluding(e => e.Patterns));
-
-			response.Single()
-			        .Patterns
-			        .Should()
-			        .Match(
-				         pattern => pattern.First().ToString() == @"^(.d+)$" &&
-				                    pattern.Skip(1).First().ToString() == ".*");
 		}
 
 		[Fact]

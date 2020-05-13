@@ -26,10 +26,11 @@ namespace Grains.Tests.Unit.VideoSearcher
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
-			_patterns = new[]
-			            {
-				            @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).+\.([a-zA-Z]{3,4})$"
-			            };
+			_capturePatterns = new CapturePattern
+			                   {
+				                   Capture = new Regex(
+					                   @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).+\.([a-zA-Z]{3,4})$")
+			                   };
 
 			var configuration = new ConfigurationBuilder()
 			                   .AddJsonFile("appsettings.json")
@@ -46,7 +47,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
-				                        .Append(BuildFileFormat(_patterns)));
+				                        .Append(BuildFileFormat(_capturePatterns)));
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetFilteredKeywords())
 			        .Returns(AsyncEnumerable.Empty<string>());
@@ -55,26 +56,24 @@ namespace Grains.Tests.Unit.VideoSearcher
 #endregion
 
 		private readonly Fixture _fixture;
-		private IEnumerable<string> _patterns;
+		private readonly CapturePattern _capturePatterns;
 
 		private RegisteredFileFormat BuildFileFormat(
-			IEnumerable<string> regex,
+			CapturePattern capturePattern,
 			int titleGroup = 1,
 			int? yearGroup = 2,
 			int? seasonGroup = null,
 			int? episodeGroup = null,
 			int containerGroup = 3)
-		{
-			return new RegisteredFileFormat
-			       {
-				       Patterns = regex.Select(s => new Regex(s)),
-				       TitleGroup = titleGroup,
-				       ContainerGroup = containerGroup,
-				       EpisodeGroup = episodeGroup,
-				       SeasonGroup = seasonGroup,
-				       YearGroup = yearGroup
-			       };
-		}
+			=> new RegisteredFileFormat
+			   {
+				   CapturePattern = capturePattern,
+				   TitleGroup = titleGroup,
+				   ContainerGroup = containerGroup,
+				   EpisodeGroup = episodeGroup,
+				   SeasonGroup = seasonGroup,
+				   YearGroup = yearGroup
+			   };
 
 		private async Task<List<VideoSearchResults>> GetResults()
 		{
@@ -100,7 +99,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
-				                        .Append(BuildFileFormat(_patterns)));
+				                        .Append(BuildFileFormat(_capturePatterns)));
 
 			var directory = new Mock<IDirectory>();
 			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
@@ -166,7 +165,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
-				                        .Append(BuildFileFormat(_patterns)));
+				                        .Append(BuildFileFormat(_capturePatterns)));
 
 			var directory = new Mock<IDirectory>();
 			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
@@ -232,7 +231,7 @@ namespace Grains.Tests.Unit.VideoSearcher
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
-				                        .Append(BuildFileFormat(_patterns)));
+				                        .Append(BuildFileFormat(_capturePatterns)));
 
 			var directory = new Mock<IDirectory>();
 			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
@@ -364,15 +363,15 @@ namespace Grains.Tests.Unit.VideoSearcher
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(
 					                         BuildFileFormat(
-						                         new[]
+						                         new CapturePattern
 						                         {
-							                         @"Captain America"
+							                         Capture = new Regex(@"Captain America")
 						                         }))
 				                        .Append(
 					                         BuildFileFormat(
-						                         new[]
+						                         new CapturePattern
 						                         {
-							                         ".*"
+							                         Capture = new Regex(@".*")
 						                         })));
 
 			var directory = new Mock<IDirectory>();
@@ -440,15 +439,22 @@ namespace Grains.Tests.Unit.VideoSearcher
 				"Y:",
 				"Sons of Anarchy (2008) - S07.E13 - Papa's Goods (1080p BluRay x265 ImE).mkv");
 
-			_patterns = _patterns.Append(@"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$")
-			                     .Append(@"^(?:(?![sS]\d{1,2}[eE]\d{1,2}).)*$")
-			                     .Append(@"^(?:(?![sS]\d{1,2}\.[eE]\d{1,2}).)*$");
+			var pattern = new CapturePattern
+			              {
+				              Capture = new Regex(
+					              @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$"),
+				              PositiveFilters = new[]
+				                                {
+					                                new Regex(
+						                                @"^(?:(?![sS]\d{1,2}\.?[eE]\d{1,2}).)*$")
+				                                }
+			              };
 
 			_fixture.Freeze<Mock<IFileFormatRepository>>()
 			        .Setup(s => s.GetAcceptableFileFormats())
 			        .Returns(
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
-				                        .Append(BuildFileFormat(_patterns)));
+				                        .Append(BuildFileFormat(pattern)));
 
 			var directory = new Mock<IDirectory>();
 			directory.Setup(s => s.GetFileSystemEntries(It.IsAny<string>()))
@@ -536,9 +542,9 @@ namespace Grains.Tests.Unit.VideoSearcher
 				         AsyncEnumerable.Empty<RegisteredFileFormat>()
 				                        .Append(
 					                         BuildFileFormat(
-						                         new[]
+						                         new CapturePattern
 						                         {
-							                         @"Captain America"
+							                         Capture = new Regex(@"Captain America")
 						                         })));
 
 			var directory = new Mock<IDirectory>();

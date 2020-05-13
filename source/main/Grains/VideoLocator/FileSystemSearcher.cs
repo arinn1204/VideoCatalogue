@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Grains.FileFormat.Interfaces;
 using Grains.FileFormat.Models;
+using Grains.FileFormat.Models.Extensions;
 using GrainsInterfaces.VideoLocator;
 using GrainsInterfaces.VideoLocator.Models;
 using Orleans;
@@ -39,7 +39,7 @@ namespace Grains.VideoLocator
 					            => await IsAcceptableFile(
 						            Path.GetFileName(w),
 						            fileTypes,
-						            fileFormats.Select(s => s.Patterns)));
+						            fileFormats.Select(s => s.CapturePattern)));
 
 
 			var searchResults = await BuildSearchResults(files, fileFormats).ToArrayAsync();
@@ -57,11 +57,9 @@ namespace Grains.VideoLocator
 			{
 				var fileName = Path.GetFileName(file);
 				var format =
-						await fileFormats.SingleAsync(s => s.Patterns.All(a => a.IsMatch(fileName)))
-					;
-				var match = format.Patterns.First()
-				                  .Match(fileName);
+					await fileFormats.SingleAsync(s => s.CapturePattern.IsMatch(fileName));
 
+				var match = format.CapturePattern.Capture.Match(fileName);
 				var groups = match.Groups;
 
 				var year = format.YearGroup.HasValue &&
@@ -140,7 +138,7 @@ namespace Grains.VideoLocator
 		private async Task<bool> IsAcceptableFile(
 			string file,
 			IAsyncEnumerable<string> acceptableFileTypes,
-			IAsyncEnumerable<IEnumerable<Regex>> acceptableFileFormats)
+			IAsyncEnumerable<CapturePattern> acceptableFileFormats)
 		{
 			var hasFileType
 				= await acceptableFileTypes.AnyAsync(
@@ -148,11 +146,7 @@ namespace Grains.VideoLocator
 						fileType,
 						StringComparison.OrdinalIgnoreCase));
 			var matchesOnlyOneAcceptableFilePatternSet
-				= await acceptableFileFormats.CountAsync(
-					  acceptableFormat
-						  => acceptableFormat
-							 .All(a => a.IsMatch(file))) ==
-				  1;
+				= await acceptableFileFormats.CountAsync(c => c.IsMatch(file)) == 1;
 
 			return hasFileType && matchesOnlyOneAcceptableFilePatternSet;
 		}

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
 
@@ -11,18 +10,19 @@ namespace Grains.FileFormat.Models
 		{
 			CreateMap<FilePattern, RegisteredFileFormat>()
 			   .ForMember(
-					dest => dest.Patterns,
-					src => src.MapFrom(m => m.Patterns.SelectMany(BuildRegex)));
-		}
+					dest => dest.CapturePattern,
+					src => src.MapFrom(s => s.Pattern));
 
-		private IEnumerable<Regex> BuildRegex(string pattern)
-		{
-			var parts = pattern.Split("&FILTER&");
-
-			foreach (var part in parts)
-			{
-				yield return new Regex(part);
-			}
+			CreateMap<Pattern, CapturePattern>()
+			   .ForMember(
+					dest => dest.Capture,
+					src => src.MapFrom(m => new Regex(m.Capture)))
+			   .ForMember(
+					dest => dest.NegativeFilters,
+					src => src.MapFrom(m => m.NegativeFilters.Select(s => new Regex(s))))
+			   .ForMember(
+					dest => dest.PositiveFilters,
+					src => src.MapFrom(m => m.PositiveFilters.Select(s => new Regex(s))));
 		}
 	}
 }

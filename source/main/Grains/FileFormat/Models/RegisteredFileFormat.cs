@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-
-namespace Grains.FileFormat.Models
+﻿namespace Grains.FileFormat.Models
 {
 	public class RegisteredFileFormat
 	{
-		public IEnumerable<Regex> Patterns { get; set; }
-			= Enumerable.Empty<Regex>();
+		public CapturePattern CapturePattern { get; set; }
+			= new CapturePattern();
 
 		public int TitleGroup { get; set; }
 		public int? YearGroup { get; set; }

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Grains.FileFormat.Models
+﻿namespace Grains.FileFormat.Models
 {
 	public class FilePattern
 	{
-		public IEnumerable<string> Patterns { get; set; }
-			= Enumerable.Empty<string>();
+		public Pattern Pattern { get; set; }
+			= new Pattern();
 
 		public int TitleGroup { get; set; }
 		public int? YearGroup { get; set; }

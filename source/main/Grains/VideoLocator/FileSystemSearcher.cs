@@ -32,22 +32,31 @@ namespace Grains.VideoLocator
 		{
 			var fileFormats = _fileFormatRepository.GetAcceptableFileFormats();
 			var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
-			var files = GetFiles(path)
-			           .ToAsyncEnumerable()
-			           .WhereAwait(
-				            async w
-					            => await IsAcceptableFile(
-						            Path.GetFileName(w),
-						            fileTypes,
-						            fileFormats.Select(s => s.CapturePattern)));
-
-
-			var searchResults = await BuildSearchResults(files, fileFormats).ToArrayAsync();
-
-			return searchResults;
+			return await GetSearchResults(path, fileTypes, fileFormats).ToArrayAsync();
 		}
 
 #endregion
+
+		private IAsyncEnumerable<VideoSearchResults> GetSearchResults(
+			string path,
+			IAsyncEnumerable<string> fileTypes,
+			IAsyncEnumerable<RegisteredFileFormat> fileFormats)
+		{
+			var files = GetFiles(path);
+			var acceptableFiles = files
+			                     .ToAsyncEnumerable()
+			                     .WhereAwait(
+				                      async w
+					                      => await IsAcceptableFile(
+						                      Path.GetFileName(w),
+						                      fileTypes,
+						                      fileFormats.Select(s => s.CapturePattern)));
+
+
+			var searchResults = BuildSearchResults(acceptableFiles, fileFormats);
+
+			return searchResults;
+		}
 
 		private static async IAsyncEnumerable<VideoSearchResults> BuildSearchResults(
 			IAsyncEnumerable<string> files,

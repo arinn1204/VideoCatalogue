@@ -1,12 +1,16 @@
 ﻿using System;
+using BenchmarkDotNet.Running;
 
 namespace Grains.Performance
 {
-	internal class Program
+	public class Program
 	{
-		private static void Main(string[] args)
+		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			BenchmarkRunner.Run(typeof(Program).Assembly);
+
+			Console.WriteLine("Press any key to exit.");
+			Console.ReadKey();
 		}
 	}
 }

@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Integration", "test\VideoCatalogueClient.Tests.Integration\VideoCatalogueClient.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains.Performance", "performance\Grains.Performance\Grains.Performance.csproj", "{423EF1BD-3888-4280-9ED3-C77082CD8338}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{8BB00F91-7763-4810-AD08-7E51B8405F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BB00F91-7763-4810-AD08-7E51B8405F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BB00F91-7763-4810-AD08-7E51B8405F4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{423EF1BD-3888-4280-9ED3-C77082CD8338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{423EF1BD-3888-4280-9ED3-C77082CD8338}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{423EF1BD-3888-4280-9ED3-C77082CD8338}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{423EF1BD-3888-4280-9ED3-C77082CD8338}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{DE82DD2B-74E7-43ED-91F9-4D046BE57AA0} = {FD8AEBC8-F729-40A8-8A07-FF922A205865}
 		{2B8FA2E3-7D7D-4C13-982C-2175FC68339D} = {FD8AEBC8-F729-40A8-8A07-FF922A205865}
 		{8BB00F91-7763-4810-AD08-7E51B8405F4A} = {FD8AEBC8-F729-40A8-8A07-FF922A205865}
+		{423EF1BD-3888-4280-9ED3-C77082CD8338} = {FD8AEBC8-F729-40A8-8A07-FF922A205865}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {18ACD39D-4CA2-46F9-8876-CB440A5A9321}

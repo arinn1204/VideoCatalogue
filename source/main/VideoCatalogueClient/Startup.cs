@@ -1,13 +1,10 @@
-using System;
+﻿using System;
 using System.Net;
 using GrainsInterfaces.BitTorrentClient;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.VideoApi;
 using GrainsInterfaces.VideoLocator;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Orleans;
 using Orleans.Configuration;
 
@@ -19,8 +16,6 @@ namespace VideoCatalogueClient
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllers();
-
 			services
 			   .AddSingleton(CreateClusterClient);
 
@@ -84,27 +79,6 @@ namespace VideoCatalogueClient
 			client.Connect().Wait();
 
 			return client;
-		}
-
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			else
-			{
-				app.UseExceptionHandler("/error")
-				   .UseHsts();
-			}
-
-			app.UseRouting();
-
-			app
-			   .UseHttpsRedirection()
-			   .UseRouting()
-			   .UseEndpoints(endpoints => endpoints.MapControllers());
 		}
 	}
 }

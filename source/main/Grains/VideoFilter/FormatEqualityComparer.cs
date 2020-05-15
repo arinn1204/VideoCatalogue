@@ -19,15 +19,15 @@ namespace Grains.VideoFilter
 
 		public bool Equals(string x, string y)
 		{
-			var pattern = Deserialize(x) ?? Deserialize(y);
+			var (capturePattern, stringToMatch) =
+				(Deserialize(x), Deserialize(y)) switch
+				{
+					(Pattern pattern, null) => (_mapper.Map<CapturePattern>(pattern), y),
+					(null, Pattern pattern) => (_mapper.Map<CapturePattern>(pattern), x),
+					_                       => (null as CapturePattern, string.Empty)
+				};
 
-			if (pattern == null)
-			{
-				return false;
-			}
-
-			var capturePattern = _mapper.Map<CapturePattern>(pattern);
-			return capturePattern.IsMatch(y);
+			return capturePattern?.IsMatch(stringToMatch) ?? x.Equals(y);
 		}
 
 		public int GetHashCode(string obj) => 1;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -26,27 +27,23 @@ namespace Grains.VideoLocator
 
 		public async Task<string[]> FindFiles(string rootPath)
 		{
-			var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
-			var allFiles = GetFiles(rootPath);
+			var allFiles = await GetFiles(rootPath).ToArrayAsync();
 
-			return await allFiles.ToAsyncEnumerable()
-			                     .Join(
-				                      fileTypes,
-				                      left => Path.GetExtension(left)?.ToUpperInvariant(),
-				                      right => right.ToUpperInvariant(),
-				                      (first, second) => first)
-			                     .ToArrayAsync();
+			return allFiles;
 		}
 
 #endregion
 
-		private IEnumerable<string> GetFiles(string path) => _fileSystem
-		                                                    .Directory
-		                                                    .GetFileSystemEntries(path)
-		                                                    .SelectMany(GetFilesUnderPath);
+		private IAsyncEnumerable<string> GetFiles(string path) => _fileSystem
+		                                                         .Directory
+		                                                         .GetFileSystemEntries(path)
+		                                                         .ToAsyncEnumerable()
+		                                                         .SelectMany(GetFilesUnderPath);
 
-		private IEnumerable<string> GetFilesUnderPath(string root)
+		private async IAsyncEnumerable<string> GetFilesUnderPath(string root)
 		{
+			var fileTypes =
+				await _fileFormatRepository.GetAllowedFileTypes().ToArrayAsync();
 			var directoryStack = new Stack<string>(
 				new[]
 				{
@@ -59,11 +56,16 @@ namespace Grains.VideoLocator
 
 				if (_fileSystem.File.Exists(current))
 				{
-					yield return current;
+					if (fileTypes.Contains(
+						Path.GetExtension(current).Trim('.'),
+						StringComparer.OrdinalIgnoreCase))
+					{
+						yield return await Task.FromResult(current);
+					}
 				}
 				else
 				{
-					var items = _fileSystem.Directory.GetFiles(current);
+					var items = _fileSystem.Directory.GetFileSystemEntries(current);
 					foreach (var item in items)
 					{
 						directoryStack.Push(item);

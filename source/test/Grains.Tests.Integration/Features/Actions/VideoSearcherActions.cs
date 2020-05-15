@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grains.Tests.Integration.Features.Models;
 using Grains.Tests.Integration.Features.Support.Hooks;
+using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using TechTalk.SpecFlow;
@@ -12,16 +13,19 @@ namespace Grains.Tests.Integration.Features.Actions
 	[Binding]
 	public class VideoSearcherActions
 	{
+		private readonly IVideoFilter _filter;
 		private readonly ISearcher _searcher;
 		private readonly VideoFile _videoFile;
 
 		public VideoSearcherActions(
 			VideoFile videoFile,
 			IConfiguration configuration,
-			ISearcher searcher)
+			ISearcher searcher,
+			IVideoFilter filter)
 		{
 			_videoFile = videoFile;
 			_searcher = searcher;
+			_filter = filter;
 		}
 
 		[When(@"I view the available movies")]
@@ -35,7 +39,8 @@ namespace Grains.Tests.Integration.Features.Actions
 					File.Create(newName);
 				});
 
-			_videoFile.VideoDetails = await _searcher.Search(VideoSearcherHooks.DataDirectory);
+			var files = await _searcher.FindFiles(VideoSearcherHooks.DataDirectory);
+			_videoFile.VideoDetails = await _filter.GetAcceptableFiles(files);
 		}
 	}
 }

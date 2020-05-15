@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using BoDi;
 using Grains.FileFormat.Models;
+using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using Orleans.TestingHost;
@@ -26,7 +27,9 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			TestCluster cluster)
 		{
 			var searcher = cluster.GrainFactory.GetGrain<ISearcher>(Guid.NewGuid());
+			var filter = cluster.GrainFactory.GetGrain<IVideoFilter>(Guid.NewGuid());
 			objectContainer.RegisterInstanceAs(searcher);
+			objectContainer.RegisterInstanceAs(filter);
 		}
 
 		[BeforeScenario("VideoSearcher")]

@@ -171,6 +171,143 @@ namespace Grains.Tests.Unit.VideoSearcher
 		}
 
 		[Fact]
+		public async Task ShouldFilterOutFilesWithTooManyMatches()
+		{
+			var capturePatterns = new CapturePattern
+			                      {
+				                      Capture = new Regex(
+					                      @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*[sS](\d{1,2})\.?[eE](\d{1,2}).*\.([a-zA-Z]{3,4})$")
+			                      };
+
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
+			        .Setup(s => s.GetAcceptableFileFormats())
+			        .Returns(
+				         AsyncEnumerable.Empty<RegisteredFileFormat>()
+				                        .Append(
+					                         BuildFileFormat(
+						                         new CapturePattern
+						                         {
+							                         Capture = new Regex(
+								                         @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*\.([a-zA-Z]{3,4})$")
+						                         }))
+				                        .Append(
+					                         BuildFileFormat(
+						                         capturePatterns,
+						                         seasonGroup: 3,
+						                         episodeGroup: 4,
+						                         containerGroup: 5)));
+
+			var filter = _fixture.Create<IVideoFilter>();
+			var filteredFiles = await filter.GetAcceptableFiles(
+				new[]
+				{
+					"Some Title That Is Wrong (2019) s01e01.mkv",
+					"Some Title That Is Right (2019).mkv"
+				});
+
+			filteredFiles
+			   .Single()
+			   .Should()
+			   .BeEquivalentTo(
+					new VideoSearchResults
+					{
+						Directory = string.Empty,
+						File = "Some Title That Is Right (2019).mkv",
+						Title = "Some Title That Is Right",
+						Year = 2019,
+						ContainerType = "mkv"
+					});
+		}
+
+		[Fact]
+		public async Task ShouldLeaveDirectoryBlankIfOnlyGivenAFile()
+		{
+			var capturePatterns = new CapturePattern
+			                      {
+				                      Capture = new Regex(
+					                      @"(.*(?=\(\d{3,4}\)))\s*\((\d{4})\).*[sS](\d{1,2})\.?[eE](\d{1,2}).*\.([a-zA-Z]{3,4})$")
+			                      };
+
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
+			        .Setup(s => s.GetAcceptableFileFormats())
+			        .Returns(
+				         AsyncEnumerable.Empty<RegisteredFileFormat>()
+				                        .Append(
+					                         BuildFileFormat(
+						                         capturePatterns,
+						                         seasonGroup: 3,
+						                         episodeGroup: 4,
+						                         containerGroup: 5)));
+
+			var filter = _fixture.Create<IVideoFilter>();
+			var filteredFiles = await filter.GetAcceptableFiles(
+				new[]
+				{
+					"Some Title That Is Right (2019) s01e01.mkv"
+				});
+
+			filteredFiles
+			   .Single()
+			   .Should()
+			   .BeEquivalentTo(
+					new VideoSearchResults
+					{
+						Directory = string.Empty,
+						File = "Some Title That Is Right (2019) s01e01.mkv",
+						Title = "Some Title That Is Right",
+						Year = 2019,
+						ContainerType = "mkv",
+						SeasonNumber = 1,
+						EpisodeNumber = 1
+					});
+		}
+
+
+		[Fact]
+		public async Task ShouldNotMapYearIfItDoesntExist()
+		{
+			var capturePatterns = new CapturePattern
+			                      {
+				                      Capture = new Regex(
+					                      @"(.*)[sS](\d{1,2})\.?[eE](\d{1,2}).*\.([a-zA-Z]{3,4})$")
+			                      };
+
+			_fixture.Freeze<Mock<IFileFormatRepository>>()
+			        .Setup(s => s.GetAcceptableFileFormats())
+			        .Returns(
+				         AsyncEnumerable.Empty<RegisteredFileFormat>()
+				                        .Append(
+					                         BuildFileFormat(
+						                         capturePatterns,
+						                         yearGroup: null,
+						                         seasonGroup: 2,
+						                         episodeGroup: 3,
+						                         containerGroup: 4)));
+
+			var filter = _fixture.Create<IVideoFilter>();
+			var filteredFiles = await filter.GetAcceptableFiles(
+				new[]
+				{
+					Path.Combine("root", "directory", "Some Title That Is Right s01e01.mkv")
+				});
+
+			filteredFiles
+			   .Single()
+			   .Should()
+			   .BeEquivalentTo(
+					new VideoSearchResults
+					{
+						Directory = Path.Combine("root", "directory"),
+						File = "Some Title That Is Right s01e01.mkv",
+						Title = "Some Title That Is Right",
+						Year = null,
+						ContainerType = "mkv",
+						SeasonNumber = 1,
+						EpisodeNumber = 1
+					});
+		}
+
+		[Fact]
 		public async Task ShouldReturnEmptyArrayIfNoFilesMatchFilter()
 		{
 			var capturePatterns = new CapturePattern

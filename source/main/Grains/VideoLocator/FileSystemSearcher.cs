@@ -24,7 +24,7 @@ namespace Grains.VideoLocator
 
 #region ISearcher Members
 
-		public async Task<IEnumerable<string>> FindFiles(string rootPath)
+		public async Task<string[]> FindFiles(string rootPath)
 		{
 			var fileTypes = _fileFormatRepository.GetAllowedFileTypes();
 			var allFiles = GetFiles(rootPath);

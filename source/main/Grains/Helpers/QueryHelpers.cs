@@ -14,10 +14,11 @@ namespace Grains.Helpers
 					"?",
 					(acc, current) =>
 					{
-						var key = UrlEncoder.Default.Encode(current.Key);
-						var value = UrlEncoder.Default.Encode(current.Value);
+						var (key, value) = current;
+						var encodedKey = UrlEncoder.Default.Encode(key);
+						var encodedValue = UrlEncoder.Default.Encode(value);
 
-						acc += $"{key}={value}&";
+						acc += $"{encodedKey}={encodedValue}&";
 
 						return acc;
 					},

@@ -11,7 +11,7 @@ using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.SegmentInformation;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage.Models.Segment.Tracks;
 using Grains.Codecs.Matroska.Interfaces;
-using Grains.Helpers.Extensions;
+using Grains.Tests.Unit.Extensions;
 using Grains.Tests.Unit.Fixtures;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.CodecParser.Models;

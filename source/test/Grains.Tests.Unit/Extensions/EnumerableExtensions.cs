@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Grains.Helpers.Extensions
+namespace Grains.Tests.Unit.Extensions
 {
 	public static class EnumerableExtensions
 	{

@@ -18,7 +18,7 @@ namespace Grains.Performance.Benchmarks.VideoFilter
 		}
 
 		[Benchmark]
-		public async Task<VideoSearchResults[]> GetAllFiles()
+		public async Task<VideoSearchResults[]> FilterAllFiles()
 		{
 			var repo = Services.GetRequiredService<IVideoFilter>();
 			return await repo.GetAcceptableFiles(_files);

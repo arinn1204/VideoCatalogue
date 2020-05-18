@@ -18,7 +18,6 @@
         <Folder Include="Benchmarks\BitTorrentClient"/>
         <Folder Include="Benchmarks\CodecParser"/>
         <Folder Include="Benchmarks\VideoApi"/>
-        <Folder Include="Benchmarks\VideoLocator"/>
     </ItemGroup>
 
     <ItemGroup>

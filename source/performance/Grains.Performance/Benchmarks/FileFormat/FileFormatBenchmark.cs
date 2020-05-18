@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Grains.FileFormat.Interfaces;
+using Grains.FileFormat.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Grains.Performance.Benchmarks.FileFormat
@@ -9,31 +10,31 @@ namespace Grains.Performance.Benchmarks.FileFormat
 	public class FileFormatBenchmark : BenchmarkSetup
 	{
 		[Benchmark]
-		public async Task GetFilteredKeywords()
+		public async Task<string[]> GetFilteredKeywords()
 		{
 			var repo = Services.GetRequiredService<IFileFormatRepository>();
-			await repo.GetFilteredKeywords().ToArrayAsync();
+			return await repo.GetFilteredKeywords().ToArrayAsync();
 		}
 
 		[Benchmark]
-		public async Task GetTargetTitleFormat()
+		public async Task<string> GetTargetTitleFormat()
 		{
 			var repo = Services.GetRequiredService<IFileFormatRepository>();
-			await repo.GetTargetTitleFormat();
+			return await repo.GetTargetTitleFormat();
 		}
 
 		[Benchmark]
-		public async Task GetAcceptableFileFormats()
+		public async Task<RegisteredFileFormat[]> GetAcceptableFileFormats()
 		{
 			var repo = Services.GetRequiredService<IFileFormatRepository>();
-			await repo.GetAcceptableFileFormats().ToArrayAsync();
+			return await repo.GetAcceptableFileFormats().ToArrayAsync();
 		}
 
 		[Benchmark]
-		public async Task GetAllowedFileTypes()
+		public async Task<string[]> GetAllowedFileTypes()
 		{
 			var repo = Services.GetRequiredService<IFileFormatRepository>();
-			await repo.GetAllowedFileTypes().ToArrayAsync();
+			return await repo.GetAllowedFileTypes().ToArrayAsync();
 		}
 	}
 }

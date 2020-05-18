@@ -8,17 +8,18 @@ namespace Grains.Performance.Benchmarks.VideoLocator
 	public class SearcherBenchmark : BenchmarkSetup
 	{
 		[Benchmark]
-		public async Task GetAllFiles()
+		public async Task<string[]> GetAllFiles()
 		{
 			var repo = Services.GetRequiredService<ISearcher>();
-			await repo.FindFiles(@"Y:\");
+			return await repo.FindFiles(@"Y:\");
 		}
 
 		[Benchmark]
-		public async Task SearchOneDirectory()
+		public async Task<string[]> SearchOneDirectory()
 		{
 			var repo = Services.GetRequiredService<ISearcher>();
-			await repo.FindFiles(@"Y:\Its.Always.Sunny.in.Philadelphia.S01-S12.DVDRip.XviD-SCENE");
+			return await repo.FindFiles(
+				@"Y:\Its.Always.Sunny.in.Philadelphia.S01-S12.DVDRip.XviD-SCENE");
 		}
 	}
 }

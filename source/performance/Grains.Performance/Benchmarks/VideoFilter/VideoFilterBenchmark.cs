@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Attributes;
 using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator;
+using GrainsInterfaces.VideoLocator.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Grains.Performance.Benchmarks.VideoFilter
@@ -17,10 +18,10 @@ namespace Grains.Performance.Benchmarks.VideoFilter
 		}
 
 		[Benchmark]
-		public async Task GetAllFiles()
+		public async Task<VideoSearchResults[]> GetAllFiles()
 		{
 			var repo = Services.GetRequiredService<IVideoFilter>();
-			await repo.GetAcceptableFiles(_files);
+			return await repo.GetAcceptableFiles(_files);
 		}
 	}
 }

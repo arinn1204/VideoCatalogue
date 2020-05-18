@@ -10,9 +10,9 @@ namespace Grains.Performance.Benchmarks.VideoFilter
 	{
 		private string[] _files;
 
-		[GlobalSetup]
-		public async Task SetupFiles()
+		public override async Task Setup()
 		{
+			await base.Setup();
 			_files = await Services.GetRequiredService<ISearcher>().FindFiles(@"Y:\");
 		}
 

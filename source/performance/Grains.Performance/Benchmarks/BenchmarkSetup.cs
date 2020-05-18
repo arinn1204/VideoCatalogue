@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Threading.Tasks;
+using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silo;
@@ -10,7 +11,7 @@ namespace Grains.Performance.Benchmarks
 		protected ServiceProvider Services { get; private set; }
 
 		[GlobalSetup]
-		public void Setup()
+		public virtual async Task Setup()
 		{
 			var serviceCollection = new ServiceCollection();
 			var configuration = new ConfigurationBuilder()

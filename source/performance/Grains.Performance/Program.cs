@@ -1,5 +1,7 @@
-﻿using System;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
+using Grains.Performance.Benchmarks.FileFormat;
+using Grains.Performance.Benchmarks.VideoFilter;
+using Grains.Performance.Benchmarks.VideoLocator;
 
 namespace Grains.Performance
 {
@@ -7,10 +9,9 @@ namespace Grains.Performance
 	{
 		public static void Main(string[] args)
 		{
-			BenchmarkRunner.Run(typeof(Program).Assembly);
-
-			Console.WriteLine("Press any key to exit.");
-			Console.ReadKey();
+			BenchmarkRunner.Run<FileFormatBenchmark>();
+			BenchmarkRunner.Run<VideoFilterBenchmark>();
+			BenchmarkRunner.Run<SearcherBenchmark>();
 		}
 	}
 }

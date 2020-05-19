@@ -14,8 +14,6 @@ using Grains.VideoInformation;
 using Grains.VideoInformation.TheMovieDatabaseRepositories;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
 using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository;
-using Grains.VideoLocator;
-using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -57,8 +55,7 @@ namespace Silo
 			   .AddTransient<ITheMovieDatabaseTvEpisodeDetailRepository,
 					TheMovieDatabaseTvEpisodeRepository>()
 			   .AddTransient<IFileFormatRepository, FileFormatRepository>()
-			   .AddTransient<IFileSystem, FileSystem>()
-			   .AddTransient<ISearcher, FileSystemSearcher>();
+			   .AddTransient<IFileSystem, FileSystem>();
 		}
 
 		private IServiceCollection RegisterHttpClients(IServiceCollection collection)

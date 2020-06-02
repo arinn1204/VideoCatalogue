@@ -24,11 +24,9 @@ namespace Grains.VideoLocator
 
 #region ISearcher Members
 
-		public async Task<string[]> FindFiles(string rootPath)
+		public IAsyncEnumerable<string> FindFiles(string rootPath)
 		{
-			var allFiles = await GetFiles(rootPath).ToArrayAsync();
-
-			return allFiles;
+			return GetFiles(rootPath);
 		}
 
 #endregion

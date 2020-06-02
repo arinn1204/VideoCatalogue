@@ -26,10 +26,10 @@ namespace Grains.VideoFilter
 
 #region IVideoFilter Members
 
-		public async Task<VideoSearchResults[]> GetAcceptableFiles(IEnumerable<string> allFiles)
+		public IAsyncEnumerable<VideoSearchResults> GetAcceptableFiles(IEnumerable<string> allFiles)
 		{
 			var fileFormats = _fileFormatRepository.GetAcceptableFileFormats();
-			return await GetSearchResults(allFiles, fileFormats).ToArrayAsync();
+			return GetSearchResults(allFiles, fileFormats);
 		}
 
 #endregion

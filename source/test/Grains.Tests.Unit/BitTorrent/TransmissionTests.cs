@@ -78,7 +78,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrents = await transmission.GetActiveTorrents();
+			var torrents = await transmission.GetActiveTorrents().ToArrayAsync();
 
 			var torrent = torrents.Single();
 			(torrent.Status, torrent.QueuedStatus)
@@ -137,7 +137,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			await transmission.GetActiveTorrents();
+			await transmission.GetActiveTorrents().ToArrayAsync();
 
 			client().callCounter.Should().Be(2);
 			client()
@@ -178,7 +178,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrents = (await transmission.GetActiveTorrents())
+			var torrents = (await transmission.GetActiveTorrents().ToArrayAsync())
 			   .ToArray();
 
 			torrents.Length
@@ -231,7 +231,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			var torrents = await transmission.GetActiveTorrents();
+			var torrents = await transmission.GetActiveTorrents().ToArrayAsync();
 
 			torrents.Single()
 			        .CompletedFileNames
@@ -271,7 +271,7 @@ namespace Grains.Tests.Unit.BitTorrent
 
 			var transmission = _fixture.Create<IBitTorrentClient>();
 
-			await transmission.GetActiveTorrents();
+			await transmission.GetActiveTorrents().ToArrayAsync();
 
 			var requestContent = await mockClient().request.Content.ReadAsStringAsync();
 

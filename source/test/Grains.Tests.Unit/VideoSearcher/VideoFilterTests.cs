@@ -71,11 +71,18 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					Path.Combine("root", "directory", "Some Title (2019).mkv"),
-					Path.Combine("root", "directory", "Some Title That Is Wrong s01e01 (2019).mkv")
-				});
+				                                 new[]
+				                                 {
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title (2019).mkv"),
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title That Is Wrong s01e01 (2019).mkv")
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Single()
@@ -108,10 +115,14 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					Path.Combine("root", "directory", "Some Title (2019).mkv")
-				});
+				                                 new[]
+				                                 {
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title (2019).mkv")
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Single()
@@ -149,10 +160,14 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					Path.Combine("root", "directory", "Some Title That Is Right (2019) s01e01.mkv")
-				});
+				                                 new[]
+				                                 {
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title That Is Right (2019) s01e01.mkv")
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Single()
@@ -199,11 +214,12 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					"Some Title That Is Wrong (2019) s01e01.mkv",
-					"Some Title That Is Right (2019).mkv"
-				});
+				                                 new[]
+				                                 {
+					                                 "Some Title That Is Wrong (2019) s01e01.mkv",
+					                                 "Some Title That Is Right (2019).mkv"
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Single()
@@ -241,10 +257,11 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					"Some Title That Is Right (2019) s01e01.mkv"
-				});
+				                                 new[]
+				                                 {
+					                                 "Some Title That Is Right (2019) s01e01.mkv"
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Single()
@@ -286,10 +303,14 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					Path.Combine("root", "directory", "Some Title That Is Right s01e01.mkv")
-				});
+				                                 new[]
+				                                 {
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title That Is Right s01e01.mkv")
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Single()
@@ -329,11 +350,18 @@ namespace Grains.Tests.Unit.VideoSearcher
 
 			var filter = _fixture.Create<IVideoFilter>();
 			var filteredFiles = await filter.GetAcceptableFiles(
-				new[]
-				{
-					Path.Combine("root", "directory", "Some Title S01E02 (2019).mkv"),
-					Path.Combine("root", "directory", "Some Title That Is Wrong s01e01 (2019).mkv")
-				});
+				                                 new[]
+				                                 {
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title S01E02 (2019).mkv"),
+					                                 Path.Combine(
+						                                 "root",
+						                                 "directory",
+						                                 "Some Title That Is Wrong s01e01 (2019).mkv")
+				                                 })
+			                                .ToArrayAsync();
 
 			filteredFiles
 			   .Should()

@@ -32,6 +32,7 @@ namespace Grains.Performance.Benchmarks.VideoFilter
 			_filter = services.GetService<IVideoFilter>();
 			_files = services.GetService<ISearcher>()
 			                 .FindFiles(@"Y:")
+			                 .ToArrayAsync()
 			                 .GetAwaiter()
 			                 .GetResult()
 			                 .ToArray();
@@ -42,7 +43,7 @@ namespace Grains.Performance.Benchmarks.VideoFilter
 		[Benchmark]
 		public async Task<VideoSearchResults[]> FilterAllFiles()
 		{
-			return await _filter.GetAcceptableFiles(_files);
+			return await _filter.GetAcceptableFiles(_files).ToArrayAsync();
 		}
 	}
 }

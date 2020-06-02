@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GrainsInterfaces.VideoLocator
 {
 	public interface ISearcher
 	{
-		Task<string[]> FindFiles(string rootPath);
+		IAsyncEnumerable<string> FindFiles(string rootPath);
 	}
 }

@@ -55,7 +55,7 @@ namespace Grains.Tests.Unit.VideoLocator
 			          .Returns(file.Object);
 
 			var searcher = _fixture.Create<ISearcher>();
-			var files = await searcher.FindFiles("directory");
+			var files = await searcher.FindFiles("directory").ToArrayAsync();
 
 			files.Should()
 			     .BeEmpty();
@@ -83,7 +83,7 @@ namespace Grains.Tests.Unit.VideoLocator
 			          .Returns(file.Object);
 
 			var searcher = _fixture.Create<ISearcher>();
-			var files = await searcher.FindFiles("directory");
+			var files = await searcher.FindFiles("directory").ToArrayAsync();
 
 			files.Single()
 			     .Should()
@@ -128,7 +128,7 @@ namespace Grains.Tests.Unit.VideoLocator
 			          .Returns(file.Object);
 
 			var searcher = _fixture.Create<ISearcher>();
-			var files = await searcher.FindFiles("directory");
+			var files = await searcher.FindFiles("directory").ToArrayAsync();
 
 			files.Should()
 			     .BeEquivalentTo(

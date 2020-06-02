@@ -37,10 +37,9 @@ namespace Grains.Tests.Integration.Features.Actions
 		[When(@"the client goes to view the active torrents in (.*)")]
 		public async Task TheClientGoesToViewActiveTorrents(string btClient)
 		{
-			var data = SetStubs(_wiremock, _data, btClient);
-			var activeTorrents = await _bitTorrentClient.GetActiveTorrents();
-			var response = activeTorrents.ToList();
-			_data.Response = response;
+			_ = SetStubs(_wiremock, _data, btClient);
+			var activeTorrents = await _bitTorrentClient.GetActiveTorrents().ToListAsync();
+			_data.Response = activeTorrents;
 		}
 
 		private string SetStubs(WireMockServer wiremock, BitTorrentData data, string btClient)

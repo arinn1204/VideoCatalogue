@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Client;
 using GrainsInterfaces.VideoLocator;
@@ -35,7 +36,7 @@ namespace Grains.Performance.Benchmarks.VideoLocator
 		[Benchmark]
 		public async Task<string[]> SearchOneDirectory()
 		{
-			return await _searcher.FindFiles(Directory);
+			return await _searcher.FindFiles(Directory).ToArrayAsync();
 		}
 	}
 }

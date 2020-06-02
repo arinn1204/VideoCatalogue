@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using BoDi;
+using Client;
 using Grains.Tests.Integration.Features.Support.Configuration;
-using Grains.Tests.Integration.Features.Support.Silo;
 using Grains.Tests.Integration.Features.Support.Wiremock;
 using Grains.VideoInformation;
 using Microsoft.Extensions.DependencyInjection;
-using Orleans.TestingHost;
 using TechTalk.SpecFlow;
 using WireMock.Server;
 
@@ -28,26 +27,6 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 			wiremock.Dispose();
 		}
 
-		[BeforeTestRun]
-		public static void SetupCluster(IObjectContainer objectContainer)
-		{
-			var testClusterBuilder = new TestClusterBuilder();
-			testClusterBuilder.AddSiloBuilderConfigurator<SiloConfigurator>();
-
-			var cluster = testClusterBuilder.Build();
-			cluster.Deploy();
-
-			objectContainer.RegisterInstanceAs(cluster);
-		}
-
-		[AfterTestRun]
-		public static void StopCluster(IObjectContainer objectContainer)
-		{
-			var cluster = objectContainer.Resolve<TestCluster>();
-			cluster.StopAllSilos();
-			cluster.Dispose();
-		}
-
 		[BeforeScenario]
 		public static void ClearStubs(WireMockServer wiremock)
 		{
@@ -58,12 +37,17 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		public static void SetupServiceCollection(IObjectContainer container)
 		{
 			var configuration = ConfigurationBuilder.BuildConfiguration();
-			var services = new ServiceCollection();
+			var serviceCollection = new ServiceCollection();
 
-			services.AddSingleton(configuration);
+			var startup = new Startup(configuration);
+			startup.ConfigureServices(serviceCollection);
 
-			container.RegisterInstanceAs<IServiceCollection>(services);
+			container.RegisterInstanceAs<IServiceCollection>(serviceCollection);
 			container.RegisterInstanceAs(configuration);
+
+			container.RegisterFactoryAs(
+				objectContainer
+					=> objectContainer.Resolve<IServiceCollection>().BuildServiceProvider());
 		}
 
 		[BeforeScenario(Order = 1)]

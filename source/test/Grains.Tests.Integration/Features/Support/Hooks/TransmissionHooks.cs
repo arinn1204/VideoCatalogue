@@ -1,7 +1,6 @@
-﻿using System;
-using BoDi;
+﻿using BoDi;
 using GrainsInterfaces.BitTorrentClient;
-using Orleans.TestingHost;
+using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Support.Hooks
@@ -12,9 +11,9 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		[BeforeScenario("@Transmission")]
 		public void SetupTransmission(
 			IObjectContainer container,
-			TestCluster cluster)
+			ServiceProvider services)
 		{
-			var btClient = cluster.GrainFactory.GetGrain<IBitTorrentClient>(Guid.NewGuid());
+			var btClient = services.GetRequiredService<IBitTorrentClient>();
 			container.RegisterInstanceAs(btClient);
 		}
 	}

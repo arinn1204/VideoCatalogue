@@ -7,7 +7,7 @@ using Grains.FileFormat.Models;
 using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
-using Orleans.TestingHost;
+using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -24,10 +24,10 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		[BeforeScenario("VideoSearcher")]
 		public static void SetupVideoSearcher(
 			IObjectContainer objectContainer,
-			TestCluster cluster)
+			ServiceProvider services)
 		{
-			var searcher = cluster.GrainFactory.GetGrain<ISearcher>(Guid.NewGuid());
-			var filter = cluster.GrainFactory.GetGrain<IVideoFilter>(Guid.NewGuid());
+			var searcher = services.GetRequiredService<ISearcher>();
+			var filter = services.GetRequiredService<IVideoFilter>();
 			objectContainer.RegisterInstanceAs(searcher);
 			objectContainer.RegisterInstanceAs(filter);
 		}

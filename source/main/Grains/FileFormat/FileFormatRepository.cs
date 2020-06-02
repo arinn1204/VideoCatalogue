@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Grains.FileFormat.Interfaces;
 using Grains.FileFormat.Models;
-using Orleans;
 
 namespace Grains.FileFormat
 {
-	public class FileFormatRepository : Grain, IFileFormatRepository
+	public class FileFormatRepository : IFileFormatRepository
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;

@@ -8,11 +8,10 @@ using Grains.FileFormat.Models;
 using Grains.FileFormat.Models.Extensions;
 using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator.Models;
-using Orleans;
 
 namespace Grains.VideoFilter
 {
-	public class Filter : Grain, IVideoFilter
+	public class Filter : IVideoFilter
 	{
 		private readonly IFileFormatRepository _fileFormatRepository;
 		private readonly IMapper _mapper;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VideoCatalogueClient
+namespace Client
 {
 	public class Program
 	{

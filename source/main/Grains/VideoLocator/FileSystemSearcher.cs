@@ -6,11 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grains.FileFormat.Interfaces;
 using GrainsInterfaces.VideoLocator;
-using Orleans;
 
 namespace Grains.VideoLocator
 {
-	public class FileSystemSearcher : Grain, ISearcher
+	public class FileSystemSearcher : ISearcher
 	{
 		private readonly IFileFormatRepository _fileFormatRepository;
 		private readonly IFileSystem _fileSystem;

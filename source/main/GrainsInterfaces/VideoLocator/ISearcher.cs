@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Orleans;
 
 namespace GrainsInterfaces.VideoLocator
 {
-	public interface ISearcher : IGrainWithGuidKey
+	public interface ISearcher
 	{
 		Task<string[]> FindFiles(string rootPath);
 	}

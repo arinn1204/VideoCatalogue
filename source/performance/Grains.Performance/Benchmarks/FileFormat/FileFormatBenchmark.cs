@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Client;
 using Grains.FileFormat.Interfaces;
 using Grains.FileFormat.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silo;
 
 namespace Grains.Performance.Benchmarks.FileFormat
 {

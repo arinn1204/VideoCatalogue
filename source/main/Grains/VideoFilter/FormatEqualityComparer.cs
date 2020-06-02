@@ -17,7 +17,7 @@ namespace Grains.VideoFilter
 
 #region IEqualityComparer<string> Members
 
-		public bool Equals(string x, string y)
+		public bool Equals(string? x, string? y)
 		{
 			var (capturePattern, stringToMatch) =
 				(Deserialize(x), Deserialize(y)) switch
@@ -27,14 +27,14 @@ namespace Grains.VideoFilter
 					_                       => (null as CapturePattern, string.Empty)
 				};
 
-			return capturePattern?.IsMatch(stringToMatch) ?? x.Equals(y);
+			return capturePattern?.IsMatch(stringToMatch ?? string.Empty) ?? x?.Equals(y) == true;
 		}
 
 		public int GetHashCode(string obj) => 1;
 
 #endregion
 
-		private Pattern? Deserialize(string attempt)
+		private Pattern? Deserialize(string? attempt)
 		{
 			var pattern = default(Pattern);
 			try

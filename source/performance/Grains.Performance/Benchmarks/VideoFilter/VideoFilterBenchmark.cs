@@ -3,14 +3,12 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Grains.VideoFilter;
-using Grains.VideoLocator;
+using Client;
 using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator;
 using GrainsInterfaces.VideoLocator.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silo;
 
 namespace Grains.Performance.Benchmarks.VideoFilter
 {
@@ -29,8 +27,6 @@ namespace Grains.Performance.Benchmarks.VideoFilter
 			var serviceContainer = new ServiceCollection();
 			var startup = new Startup(configuration);
 			startup.ConfigureServices(serviceContainer);
-			serviceContainer.AddTransient<IVideoFilter, Filter>();
-			serviceContainer.AddTransient<ISearcher, FileSystemSearcher>();
 			var services = serviceContainer.BuildServiceProvider();
 
 			_filter = services.GetService<IVideoFilter>();

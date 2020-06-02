@@ -1,7 +1,6 @@
-﻿using System;
-using BoDi;
+﻿using BoDi;
 using GrainsInterfaces.VideoApi;
-using Orleans.TestingHost;
+using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Support.Hooks
@@ -12,9 +11,9 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		[BeforeScenario("@VideoApi")]
 		public void SetupVideoApi(
 			IObjectContainer container,
-			TestCluster cluster)
+			ServiceProvider services)
 		{
-			var videoApi = cluster.GrainFactory.GetGrain<IVideoApi>(Guid.NewGuid());
+			var videoApi = services.GetRequiredService<IVideoApi>();
 			container.RegisterInstanceAs(videoApi);
 		}
 	}

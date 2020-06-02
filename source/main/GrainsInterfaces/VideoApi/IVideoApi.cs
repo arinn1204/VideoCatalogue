@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using GrainsInterfaces.VideoApi.Models;
-using Orleans;
 
 namespace GrainsInterfaces.VideoApi
 {
-	public interface IVideoApi : IGrainWithGuidKey
+	public interface IVideoApi
 	{
 		Task<VideoDetail> GetVideoDetails(VideoRequest request);
 	}

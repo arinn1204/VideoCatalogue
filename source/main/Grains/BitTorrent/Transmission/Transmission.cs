@@ -10,11 +10,10 @@ using AutoMapper;
 using Grains.BitTorrent.Transmission.Models;
 using GrainsInterfaces.BitTorrentClient;
 using GrainsInterfaces.BitTorrentClient.Models;
-using Orleans;
 
 namespace Grains.BitTorrent.Transmission
 {
-	public class Transmission : Grain, IBitTorrentClient
+	public class Transmission : IBitTorrentClient
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapper _mapper;

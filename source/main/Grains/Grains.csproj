@@ -10,11 +10,6 @@
       <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.1.3" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.3" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.3" />
-      <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.1.6">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.1.6" />
       <PackageReference Include="morelinq" Version="3.3.2" />
       <PackageReference Include="System.Interactive" Version="4.1.1" />
       <PackageReference Include="System.Interactive.Async" Version="4.1.1" />
@@ -26,38 +21,4 @@
     <ItemGroup>
         <ProjectReference Include="..\GrainsInterfaces\GrainsInterfaces.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Extensions\SegmentExtensions.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\SegmentInformation\ChapterTranslate.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\SegmentInformation\Info.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Audio.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Colour.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentCompression.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentEncoding.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentEncryption.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\ContentEncryptionAesSettings.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\MasteringMetadata.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Projection.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Track.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackCombinePlanes.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackEntry.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackJoinBlocks.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackOperation.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackPlane.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\TrackTranslate.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\Models\Tracks\Video.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackEntryReader.cs" />
-        <Orleans_CodeGenInputs Remove="Codecs\ExtensibleBinaryMetaLanguage\SegmentChildren\Tracks\TrackReader.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\GenreDetail.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\MovieDetail.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\PersonDetail.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\ProductionCompanyDetail.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Details\TvDetail.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\Exceptions\VideoApiException.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\SerachResults\SearchResults.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\SerachResults\SearchResultWrapper.cs" />
-        <Orleans_CodeGenInputs Remove="VideoInformation\Models\VideoApi\SerachResults\TvSearchResults.cs" />
-    </ItemGroup>
-
 </Project>

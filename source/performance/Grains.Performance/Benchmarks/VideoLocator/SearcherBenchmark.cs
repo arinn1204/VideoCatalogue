@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using Grains.VideoLocator;
+using Client;
 using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silo;
 
 namespace Grains.Performance.Benchmarks.VideoLocator
 {
@@ -29,7 +28,6 @@ namespace Grains.Performance.Benchmarks.VideoLocator
 			var serviceContainer = new ServiceCollection();
 			var startup = new Startup(configuration);
 			startup.ConfigureServices(serviceContainer);
-			serviceContainer.AddTransient<ISearcher, FileSystemSearcher>();
 			var services = serviceContainer.BuildServiceProvider();
 			_searcher = services.GetService<ISearcher>();
 		}

@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\main\VideoCatalogueClient\VideoCatalogueClient.csproj" />
+    <Folder Include="Features"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features" />
+      <ProjectReference Include="..\..\main\Client\Client.csproj"/>
   </ItemGroup>
 
 </Project>

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\main\VideoCatalogueClient\VideoCatalogueClient.csproj" />
+      <ProjectReference Include="..\..\main\Client\Client.csproj"/>
   </ItemGroup>
 
 </Project>

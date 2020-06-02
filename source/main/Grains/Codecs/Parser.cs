@@ -6,11 +6,10 @@ using AutoMapper;
 using Grains.Codecs.Matroska.Interfaces;
 using GrainsInterfaces.CodecParser;
 using GrainsInterfaces.CodecParser.Models;
-using Orleans;
 
 namespace Grains.Codecs
 {
-	public class Parser : Grain, IParser
+	public class Parser : IParser
 	{
 		private readonly IMapper _mapper;
 		private readonly IMatroska _matroska;

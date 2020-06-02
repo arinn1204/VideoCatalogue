@@ -1,7 +1,6 @@
-﻿using System;
-using BoDi;
+﻿using BoDi;
 using GrainsInterfaces.CodecParser;
-using Orleans.TestingHost;
+using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
 namespace Grains.Tests.Integration.Features.Support.Hooks
@@ -12,9 +11,9 @@ namespace Grains.Tests.Integration.Features.Support.Hooks
 		[BeforeScenario("@Matroska")]
 		public static void SetupMicrosoftDi(
 			IObjectContainer objectContainer,
-			TestCluster cluster)
+			ServiceProvider services)
 		{
-			var parser = cluster.GrainFactory.GetGrain<IParser>(Guid.NewGuid());
+			var parser = services.GetRequiredService<IParser>();
 			objectContainer.RegisterInstanceAs(parser);
 		}
 	}

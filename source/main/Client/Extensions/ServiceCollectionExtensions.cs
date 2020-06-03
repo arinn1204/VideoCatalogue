@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Client
+namespace Client.Extensions
 {
 	public static class ServiceCollectionExtensions
 	{

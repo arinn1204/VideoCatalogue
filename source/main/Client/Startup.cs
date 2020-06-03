@@ -1,5 +1,10 @@
 ﻿using System.IO.Abstractions;
 using AutoMapper;
+using Azure.Storage.Queues;
+using Client.Extensions;
+using Client.HostedServices.Models;
+using Client.HostedServices.Services;
+using Client.Interfaces;
 using Grains.BitTorrent.Transmission;
 using Grains.Codecs;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
@@ -24,10 +29,11 @@ using GrainsInterfaces.VideoFilter;
 using GrainsInterfaces.VideoLocator;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Client
 {
-	public class Startup
+	public class Startup : IStartup
 	{
 		private readonly IConfiguration _configuration;
 
@@ -36,15 +42,43 @@ namespace Client
 			_configuration = configuration;
 		}
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-		public void ConfigureServices(IServiceCollection serviceCollection)
+#region IStartup Members
+
+		public IServiceCollection ConfigureServices(IServiceCollection serviceCollection)
 		{
 			var mapper = BuildMapper();
 
-			RegisterHttpClients(serviceCollection)
+			RegisterHttpClients(serviceCollection);
+			RegisterDependencies(serviceCollection, mapper);
+
+			serviceCollection
+			   .AddOptions()
+			   .Configure<QueueInformationSettings>(_configuration.GetSection("VideoQueue"))
+			   .AddHostedService(
+					provider =>
+					{
+						var queueInformationSettings
+							= provider.GetRequiredService<IOptions<QueueInformationSettings>>();
+						var configuration = provider.GetRequiredService<IConfiguration>();
+						var connectionString = configuration.BuildConnectionString("AzureStorage");
+						var queueClient = new QueueClient(
+							connectionString,
+							queueInformationSettings.Value.QueueName);
+						return new VideoQueueWorker(queueInformationSettings, queueClient);
+					});
+
+			return serviceCollection;
+		}
+
+#endregion
+
+		private void RegisterDependencies(
+			IServiceCollection serviceCollection,
+			IMapper mapper)
+		{
+			serviceCollection
 			   .AddSingleton(_configuration)
-			   .AddSingleton<IMapper>(mapper)
+			   .AddSingleton(mapper)
 			   .AddTransient<IBitTorrentClient, Transmission>()
 			   .AddTransient<IParser, Parser>()
 			   .AddTransient<IVideoApi, TheMovieDatabase>()
@@ -68,7 +102,7 @@ namespace Client
 			   .AddTransient<IFileSystem, FileSystem>();
 		}
 
-		private static Mapper BuildMapper()
+		private static IMapper BuildMapper()
 		{
 			var mapper = new Mapper(
 				new MapperConfiguration(
@@ -79,14 +113,14 @@ namespace Client
 			return mapper;
 		}
 
-		private IServiceCollection RegisterHttpClients(IServiceCollection collection)
+		private void RegisterHttpClients(IServiceCollection collection)
 		{
 			var configuration = _configuration.GetSection("serviceUrls");
-			return collection
-			      .AddHttpClient(configuration, nameof(Transmission))
-			      .AddHttpClient(configuration, nameof(MatroskaSpecification))
-			      .AddHttpClient(configuration, nameof(FileFormatRepository))
-			      .AddHttpClient(configuration, nameof(TheMovieDatabase));
+			collection
+			   .AddHttpClient(configuration, nameof(Transmission))
+			   .AddHttpClient(configuration, nameof(MatroskaSpecification))
+			   .AddHttpClient(configuration, nameof(FileFormatRepository))
+			   .AddHttpClient(configuration, nameof(TheMovieDatabase));
 		}
 	}
 }

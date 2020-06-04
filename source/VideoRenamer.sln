@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains.Tests.Unit", "test\G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grains.Tests.Integration", "test\Grains.Tests.Integration\Grains.Tests.Integration.csproj", "{DE82DD2B-74E7-43ED-91F9-4D046BE57AA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Unit", "test\VideoCatalogueClient.Tests.Unit\VideoCatalogueClient.Tests.Unit.csproj", "{2B8FA2E3-7D7D-4C13-982C-2175FC68339D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Tests.Unit", "test\Client.Tests.Unit\Client.Tests.Unit.csproj", "{2B8FA2E3-7D7D-4C13-982C-2175FC68339D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCatalogueClient.Tests.Integration", "test\VideoCatalogueClient.Tests.Integration\VideoCatalogueClient.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Tests.Integration", "test\Client.Tests.Integration\Client.Tests.Integration.csproj", "{8BB00F91-7763-4810-AD08-7E51B8405F4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grains.Performance", "performance\Grains.Performance\Grains.Performance.csproj", "{423EF1BD-3888-4280-9ED3-C77082CD8338}"
 EndProject

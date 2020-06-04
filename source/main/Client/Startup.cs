@@ -5,6 +5,8 @@ using Client.Extensions;
 using Client.HostedServices.Models;
 using Client.HostedServices.Services;
 using Client.Interfaces;
+using Client.Services;
+using Client.Services.Interfaces;
 using Grains.BitTorrent.Transmission;
 using Grains.Codecs;
 using Grains.Codecs.ExtensibleBinaryMetaLanguage;
@@ -64,7 +66,8 @@ namespace Client
 						var queueClient = new QueueClient(
 							connectionString,
 							queueInformationSettings.Value.QueueName);
-						return new VideoQueueWorker(queueInformationSettings, queueClient);
+						var renamer = provider.GetRequiredService<IVideoRenamer>();
+						return new VideoQueueWorker(queueInformationSettings, renamer, queueClient);
 					});
 
 			return serviceCollection;
@@ -79,6 +82,7 @@ namespace Client
 			serviceCollection
 			   .AddSingleton(_configuration)
 			   .AddSingleton(mapper)
+			   .AddTransient<IVideoRenamer, VideoRenamer>()
 			   .AddTransient<IBitTorrentClient, Transmission>()
 			   .AddTransient<IParser, Parser>()
 			   .AddTransient<IVideoApi, TheMovieDatabase>()

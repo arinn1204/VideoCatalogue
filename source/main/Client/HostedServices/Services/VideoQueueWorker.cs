@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Queues;
-using Azure.Storage.Queues.Models;
 using Client.HostedServices.Models;
+using Client.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -16,11 +15,13 @@ namespace Client.HostedServices.Services
 	{
 		private readonly QueueInformationSettings _options;
 		private readonly QueueClient _queueClient;
+		private readonly IVideoRenamer _renamer;
 
 		public VideoQueueWorker(
 			IOptions<QueueInformationSettings> options,
+			IVideoRenamer videoRenamer,
 			QueueClient queueClient)
-			=> (_options, _queueClient) = (options.Value, queueClient);
+			=> (_options, _queueClient, _renamer) = (options.Value, queueClient, videoRenamer);
 
 #region IHostedService Members
 
@@ -50,7 +51,7 @@ namespace Client.HostedServices.Services
 
 				var messages = responses.Value;
 
-				await ProcessMessage(messages, cancellationToken);
+				await _renamer.ProcessMessage(messages, cancellationToken);
 
 				var deleteMessages = messages.Aggregate(
 					Enumerable.Empty<Task>(),
@@ -70,12 +71,5 @@ namespace Client.HostedServices.Services
 		}
 
 #endregion
-
-		private async Task ProcessMessage(
-			IEnumerable<QueueMessage> message,
-			CancellationToken cancellationToken)
-		{
-			await Task.CompletedTask;
-		}
 	}
 }

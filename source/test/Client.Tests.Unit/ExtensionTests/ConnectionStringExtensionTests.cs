@@ -12,7 +12,7 @@ namespace Client.Tests.Unit.ExtensionTests
 
 		public ConnectionStringExtensionTests(ConfigurationFixture configurationFixture)
 		{
-			_configuration = configurationFixture.Configuration;
+			_configuration = configurationFixture.TestConfiguration;
 		}
 
 		[Theory]

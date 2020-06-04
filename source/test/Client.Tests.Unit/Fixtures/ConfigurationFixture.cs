@@ -10,12 +10,18 @@ namespace Client.Tests.Unit.Fixtures
 			Environment.SetEnvironmentVariable(
 				"TEST_ConnectionStrings:AzureStorageWithPasskey:Password",
 				"hunter2");
+			TestConfiguration = new ConfigurationBuilder()
+			                   .AddJsonFile("appsettings.test.json")
+			                   .AddEnvironmentVariables("TEST_")
+			                   .Build();
+
 			Configuration = new ConfigurationBuilder()
 			               .AddJsonFile("appsettings.json")
 			               .AddEnvironmentVariables("TEST_")
 			               .Build();
 		}
 
+		public IConfiguration TestConfiguration { get; }
 		public IConfiguration Configuration { get; }
 
 #region IDisposable Members

@@ -25,9 +25,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings.json">
+        <None Update="appsettings.test.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\..\main\Client\appsettings.json">
+            <Link>appsettings.json</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

@@ -91,9 +91,12 @@ namespace Client
 			   .AddTransient<ISpecification, MatroskaSpecification>()
 			   .AddTransient<IMatroska, Matroska>()
 			   .AddTransient<IEbmlReader, EbmlReader>()
+			   .AddTransient<IReader, EbmlReader>()
 			   .AddTransient<ISegmentReader, SegmentReader>()
-			   .AddTransient<ITheMovieDatabaseRepository,
-					TheMovieDatabaseRepository>()
+			   .AddTransient<ITheMovieDatabaseRepository, TheMovieDatabaseRepository>()
+			   .AddTransient<ITheMovieDatabaseMovieRepository, TheMovieDatabaseRepository>()
+			   .AddTransient<ITheMovieDatabasePersonRepository, TheMovieDatabaseRepository>()
+			   .AddTransient<ITheMovieDatabaseTvEpisodeRepository, TheMovieDatabaseRepository>()
 			   .AddTransient<ITheMovieDatabasePersonDetailRepository,
 					TheMovieDatabasePersonRepository>()
 			   .AddTransient<ITheMovieDatabaseMovieDetailRepository,

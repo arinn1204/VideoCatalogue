@@ -5,7 +5,7 @@ using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepo
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 {
-	internal class TheMovieDatabasePersonRepository : ITheMovieDatabasePersonDetailRepository
+	public class TheMovieDatabasePersonRepository : ITheMovieDatabasePersonDetailRepository
 	{
 #region ITheMovieDatabasePersonDetailRepository Members
 

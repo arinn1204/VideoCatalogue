@@ -9,7 +9,7 @@ using GrainsInterfaces.VideoApi.Models.Enums;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 {
-	internal class TheMovieDatabaseSearchRepository : ITheMovieDatabaseSearchDetailRepository
+	public class TheMovieDatabaseSearchRepository : ITheMovieDatabaseSearchDetailRepository
 	{
 #region ITheMovieDatabaseSearchDetailRepository Members
 

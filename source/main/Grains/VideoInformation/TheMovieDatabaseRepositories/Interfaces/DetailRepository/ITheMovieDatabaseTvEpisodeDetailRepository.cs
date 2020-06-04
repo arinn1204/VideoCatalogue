@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository
 {
-	internal interface ITheMovieDatabaseTvEpisodeDetailRepository
+	public interface ITheMovieDatabaseTvEpisodeDetailRepository
 	{
 		Task<HttpResponseMessage> GetTvSeriesDetail(
 			int tvId,

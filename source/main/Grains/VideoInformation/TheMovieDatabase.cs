@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Grains.VideoInformation.Models.Details;
@@ -10,10 +9,6 @@ using Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces;
 using GrainsInterfaces.VideoApi;
 using GrainsInterfaces.VideoApi.Models;
 using GrainsInterfaces.VideoApi.Models.Enums;
-
-[assembly: InternalsVisibleTo("Grains.Tests.Unit")]
-[assembly: InternalsVisibleTo("Grains.Tests.Integration")]
-[assembly: InternalsVisibleTo("Client")]
 
 namespace Grains.VideoInformation
 {

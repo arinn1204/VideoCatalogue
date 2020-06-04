@@ -15,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories
 {
-	internal class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
+	public class TheMovieDatabaseRepository : ITheMovieDatabaseRepository
 	{
 		private const string ClientFactoryKey = nameof(TheMovieDatabase);
 		private readonly IConfiguration _configuration;

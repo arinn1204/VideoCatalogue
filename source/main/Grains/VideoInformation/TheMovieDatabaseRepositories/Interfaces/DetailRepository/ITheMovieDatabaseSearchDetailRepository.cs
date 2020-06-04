@@ -4,7 +4,7 @@ using GrainsInterfaces.VideoApi.Models.Enums;
 
 namespace Grains.VideoInformation.TheMovieDatabaseRepositories.Interfaces.DetailRepository
 {
-	internal interface ITheMovieDatabaseSearchDetailRepository
+	public interface ITheMovieDatabaseSearchDetailRepository
 	{
 		Task<HttpResponseMessage> Search(
 			string title,

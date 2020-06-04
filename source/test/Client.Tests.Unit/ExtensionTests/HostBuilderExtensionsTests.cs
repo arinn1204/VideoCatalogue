@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using AutoMapper;
 using Client.Extensions;
+using Client.Services.Interfaces;
 using Client.Tests.Unit.Fixtures;
 using FluentAssertions;
 using Grains.BitTorrent.Transmission;
@@ -42,6 +44,17 @@ namespace Client.Tests.Unit.ExtensionTests
 			                .Assembly
 			                .GetTypes()
 			                .Where(w => w.IsInterface && w.IsPublic);
+
+
+			yield return new object[]
+			             {
+				             typeof(IVideoRenamer)
+			             };
+
+			yield return new object[]
+			             {
+				             typeof(IFileSystem)
+			             };
 
 			yield return new object[]
 			             {

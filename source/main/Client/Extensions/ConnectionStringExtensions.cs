@@ -18,7 +18,7 @@ namespace Client.Extensions
 			}
 
 			var password = configuration
-			              .GetSection($"ConnectionStrings:{connectionString}:password")
+			              .GetSection($"ConnectionStrings:{connectionStringKey}:password")
 			              .Value;
 			connectionString = connectionString.Replace(CipherKey, password);
 			return connectionString;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -11,7 +12,6 @@ using Azure.Storage.Queues.Models;
 using Client.HostedServices.Models;
 using Client.HostedServices.Services;
 using Client.Services.Interfaces;
-using Client.Tests.Unit.Fixtures;
 using FluentAssertions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -20,15 +20,15 @@ using Xunit;
 
 namespace Client.Tests.Unit.HostedServices
 {
-	public class VideoQueueWorkerTests : IClassFixture<ConfigurationFixture>
+	public class VideoQueueWorkerTests
 	{
 #region Setup/Teardown
 
-		public VideoQueueWorkerTests(ConfigurationFixture fixture)
+		public VideoQueueWorkerTests()
 		{
 			_fixture = new Fixture();
 			_fixture.Customize(new AutoMoqCustomization());
-			_fixture.Register<IHostedService>(() => _fixture.Create<VideoQueueWorker>());
+			_fixture.Register<BackgroundService>(() => _fixture.Create<VideoQueueWorker>());
 			var options = Options.Create(
 				new QueueInformationSettings
 				{
@@ -83,8 +83,8 @@ namespace Client.Tests.Unit.HostedServices
 			     .ReturnsAsync(
 				      () =>
 				      {
-					      var response = new Mock<Response>();
-					      return response.Object;
+					      var deleteResponse = new Mock<Response>();
+					      return deleteResponse.Object;
 				      });
 			queue.Setup(
 				      s => s.ReceiveMessagesAsync(
@@ -95,14 +95,14 @@ namespace Client.Tests.Unit.HostedServices
 				      () =>
 				      {
 					      var message = new Mock<QueueMessage>();
-					      var response = new Mock<Response<QueueMessage[]>>();
-					      response.Setup(s => s.Value)
-					              .Returns(
-						               new[]
-						               {
-							               message.Object
-						               });
-					      return Task.FromResult(response.Object);
+					      var receiveResponse = new Mock<Response<QueueMessage[]>>();
+					      receiveResponse.Setup(s => s.Value)
+					                     .Returns(
+						                      new[]
+						                      {
+							                      message.Object
+						                      });
+					      return Task.FromResult(receiveResponse.Object);
 				      });
 		}
 
@@ -110,6 +110,24 @@ namespace Client.Tests.Unit.HostedServices
 
 		private readonly Fixture _fixture;
 		private readonly CancellationToken _cancellationToken;
+
+		private async Task Execute()
+		{
+			var service = _fixture.Create<BackgroundService>();
+			var executeMethod = service
+			                   .GetType()
+			                   .GetMethod(
+				                    "ExecuteAsync",
+				                    BindingFlags.NonPublic | BindingFlags.Instance)
+				!.Invoke(
+				service,
+				new object[]
+				{
+					_cancellationToken
+				}) as Task;
+
+			await executeMethod!;
+		}
 
 		[Fact]
 		public async Task ShouldContinueIfCreateReturnsNull()
@@ -121,8 +139,7 @@ namespace Client.Tests.Unit.HostedServices
 			queue.Setup(s => s.CreateIfNotExistsAsync(null, _cancellationToken))
 			     .ReturnsAsync(null as Response);
 
-			await _fixture.Create<IHostedService>().StartAsync(_cancellationToken);
-
+			await Execute();
 			queue.Verify(v => v.ExistsAsync(_cancellationToken), Times.Exactly(2));
 		}
 
@@ -136,8 +153,7 @@ namespace Client.Tests.Unit.HostedServices
 			queue.Setup(s => s.CreateIfNotExistsAsync(null, _cancellationToken))
 			     .ReturnsAsync(response.Object);
 
-			await _fixture.Create<IHostedService>().StartAsync(_cancellationToken);
-
+			await Execute();
 			queue.Verify(v => v.ExistsAsync(_cancellationToken), Times.Never);
 		}
 
@@ -163,8 +179,7 @@ namespace Client.Tests.Unit.HostedServices
 					      return Task.FromResult(response.Object);
 				      });
 
-			await _fixture.Create<IHostedService>().StartAsync(_cancellationToken);
-
+			await Execute();
 			renamer.Verify(
 				v => v.ProcessMessage(It.IsAny<IEnumerable<QueueMessage>>(), _cancellationToken),
 				Times.Never);
@@ -200,7 +215,7 @@ namespace Client.Tests.Unit.HostedServices
 					      return Task.FromResult(response.Object);
 				      });
 
-			await _fixture.Create<IHostedService>().StartAsync(_cancellationToken);
+			await Execute();
 
 			timeout.Should()
 			       .Be(TimeSpan.FromMinutes(300));

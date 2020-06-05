@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace Client.HostedServices.Services
 {
-	public class VideoQueueWorker : IHostedService
+	public class VideoQueueWorker : BackgroundService
 	{
 		private readonly QueueInformationSettings _options;
 		private readonly QueueClient _queueClient;
@@ -23,9 +23,7 @@ namespace Client.HostedServices.Services
 			QueueClient queueClient)
 			=> (_options, _queueClient, _renamer) = (options.Value, queueClient, videoRenamer);
 
-#region IHostedService Members
-
-		public async Task StartAsync(CancellationToken cancellationToken)
+		protected override async Task ExecuteAsync(CancellationToken cancellationToken)
 		{
 			var response =
 				await _queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
@@ -61,12 +59,5 @@ namespace Client.HostedServices.Services
 				await Task.WhenAll(deleteMessages);
 			}
 		}
-
-		public Task StopAsync(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
-
-#endregion
 	}
 }

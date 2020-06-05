@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Queues.Models;
@@ -30,11 +31,13 @@ namespace Client.Services
 
 #region IVideoRenamer Members
 
-		public async Task ProcessMessage(
+		public async Task<IEnumerable<RenamerResult>> ProcessMessage(
 			IEnumerable<QueueMessage> message,
 			CancellationToken cancellationToken)
 		{
 			await Task.CompletedTask;
+
+			return Enumerable.Empty<RenamerResult>();
 		}
 
 #endregion

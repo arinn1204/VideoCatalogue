@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using Azure.Storage.Queues;
 using Client.HostedServices.Models;
 using Client.Services.Interfaces;
@@ -27,12 +27,10 @@ namespace Client.HostedServices.Services
 
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
-			var timeout = _options.TimeoutValue;
-
 			var response =
 				await _queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-			if (response.Status != (int) HttpStatusCode.OK)
+			if (response?.Status >= 400)
 			{
 				return;
 			}
@@ -41,25 +39,24 @@ namespace Client.HostedServices.Services
 			{
 				var responses = await _queueClient.ReceiveMessagesAsync(
 					1,
-					TimeSpan.FromMinutes(timeout),
+					TimeSpan.FromMinutes(_options.TimeoutValue),
 					cancellationToken);
 
 				if (responses.Value.Length <= 0)
 				{
-					return;
+					continue;
 				}
 
-				var messages = responses.Value;
-
-				await _renamer.ProcessMessage(messages, cancellationToken);
-
-				var deleteMessages = messages.Aggregate(
-					Enumerable.Empty<Task>(),
-					(current, message) => current.Append(
-						_queueClient.DeleteMessageAsync(
-							message.MessageId,
-							message.PopReceipt,
-							cancellationToken)));
+				var results = await _renamer.ProcessMessage(responses.Value, cancellationToken);
+				var deleteMessages =
+					results.Where(w => w.Result == Result.Success)
+					       .Aggregate(
+						        Enumerable.Empty<Task<Response>>(),
+						        (current, result) => current.Append(
+							        _queueClient.DeleteMessageAsync(
+								        result.MessageId,
+								        result.PopReceipt,
+								        cancellationToken)));
 
 				await Task.WhenAll(deleteMessages);
 			}
